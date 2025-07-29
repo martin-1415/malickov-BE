@@ -1,0 +1,35 @@
+
+######################
+# Spring boot specific
+######################
+
+# Java build
+malickov-BE/target/*
+*.jar
+*.war
+
+# Maven or Gradle wrapper logs
+.mvn/
+!/.mvn/wrapper/maven-wrapper.jar
+**/mvnw
+**/mvnw.cmd
+.gradle/
+build/
+
+# IDE files
+# IntelliJ
+.idea/
+*.iml
+*.iws
+
+# Logs
+*.log
+
+# Environment/Sensitive config
+#.env
+#*.local.*
+#application-local.yml
+#application-dev.yml
+#application-test.yml
+
+
