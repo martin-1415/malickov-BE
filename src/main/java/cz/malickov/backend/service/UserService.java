@@ -1,11 +1,11 @@
 package cz.malickov.backend.service;
 
+import cz.malickov.backend.dto.RoleDTO;
 import cz.malickov.backend.dto.UserInboundDTO;
 import cz.malickov.backend.dto.UserOutboundDTO;
 import cz.malickov.backend.entity.User;
 import cz.malickov.backend.repository.UserRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -22,7 +22,6 @@ public class UserService {
     }
 
     // @TODO add authorization
-    @Transactional
     public void saveUser(User user) {
         // Validate required fields
         if (validateUser(user)) {
@@ -88,6 +87,7 @@ public class UserService {
                         .firstName(u.getFirstName())
                         .lastName(u.getLastName())
                         .email(u.getEmail())
+                        .userRole(new RoleDTO(u.getUserRole().getRoleName()))
                         .build()
                 )
                 .sorted(Comparator.comparing(UserOutboundDTO::getLastName)) // :: method refrence, stejny jako u -> u.getFirstName()

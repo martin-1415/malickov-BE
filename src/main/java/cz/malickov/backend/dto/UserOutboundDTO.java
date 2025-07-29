@@ -15,6 +15,5 @@ public class UserOutboundDTO {
     private String lastName;
     private String firstName;
     private String email;
-
-
+    private RoleDTO userRole;
 }

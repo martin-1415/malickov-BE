@@ -3,6 +3,7 @@ package cz.malickov.backend.entity;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -43,10 +44,22 @@ public class User {
     @ToString.Exclude
     private String passwordHash;
 
-    public User(String lastName, String firstName, String email){
+    @JsonProperty("active")
+    @Column(name = "active")
+    @NotNull(message = "Active must be set.")
+    private boolean active;
+
+    @JsonProperty("userRole")
+    @ManyToOne
+    @JoinColumn(name = "role_id", nullable = false)
+    private Role userRole;
+
+    public User(String lastName, String firstName, String email, boolean active, Role user_role){
         this.lastName = lastName;
         this.firstName = firstName;
         this.email = email;
+        this.active = active;
+        this.userRole = user_role;
     }
 
     public User() {

@@ -23,7 +23,6 @@ public class UserController {
     @GetMapping("/allUsers")
     public ResponseEntity<List<UserOutboundDTO>> getAllUser() {
         List<UserOutboundDTO> usersDto = userService.getAllUsers();
-        System.out.println(usersDto);
         return ResponseEntity.ok(usersDto);
     }
 
@@ -33,7 +32,6 @@ public class UserController {
 
         try {
             userService.updateUser(userUpdated);
-            int i =7/0;
             return ResponseEntity.ok("User updated");
         }catch (Exception e){
             return ResponseEntity.badRequest().body("User not updated: "+e.getMessage() );
