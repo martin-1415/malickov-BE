@@ -1,8 +1,0 @@
-/home/pescador/Desktop/GIT/malickov2/malickov-backend/src/main/java/cz/malickov/backend/BackendApplication.java
-/home/pescador/Desktop/GIT/malickov2/malickov-backend/src/main/java/cz/malickov/backend/controller/UserController.java
-/home/pescador/Desktop/GIT/malickov2/malickov-backend/src/main/java/cz/malickov/backend/dto/UserInboundDTO.java
-/home/pescador/Desktop/GIT/malickov2/malickov-backend/src/main/java/cz/malickov/backend/dto/UserOutboundDTO.java
-/home/pescador/Desktop/GIT/malickov2/malickov-backend/src/main/java/cz/malickov/backend/entity/User.java
-/home/pescador/Desktop/GIT/malickov2/malickov-backend/src/main/java/cz/malickov/backend/error/UserNotFoundException.java
-/home/pescador/Desktop/GIT/malickov2/malickov-backend/src/main/java/cz/malickov/backend/repository/UserRepository.java
-/home/pescador/Desktop/GIT/malickov2/malickov-backend/src/main/java/cz/malickov/backend/service/UserService.java
