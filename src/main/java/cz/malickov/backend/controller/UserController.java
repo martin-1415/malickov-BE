@@ -5,8 +5,12 @@ import cz.malickov.backend.dto.UserInboundDTO;
 import cz.malickov.backend.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.util.List;
+import java.util.Map;
+
+
 
 @RestController
 public class UserController {
@@ -18,6 +22,14 @@ public class UserController {
         this.userService = userService;
     }
 
+
+    @PostMapping("/register")
+    public ResponseEntity<UserOutboundDTO> getUser(@RequestBody UserInboundDTO userInboundDTO) {
+
+        UserOutboundDTO saved = this.userService.registerUser(userInboundDTO);
+        return ResponseEntity.ok().body(saved);
+
+    }
 
     @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("/allUsers")
@@ -37,5 +49,15 @@ public class UserController {
             return ResponseEntity.badRequest().body("User not updated: "+e.getMessage() );
         }
     }
+
+    @CrossOrigin(origins = "http://localhost:4200")
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody UserInboundDTO userUpdated) {
+
+        return ResponseEntity.ok("JWT");
+
+    }
+
+
 
 }

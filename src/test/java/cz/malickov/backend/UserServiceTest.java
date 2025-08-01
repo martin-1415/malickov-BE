@@ -1,8 +1,9 @@
 
 package cz.malickov.backend;
 
-import cz.malickov.backend.entity.Role;
+import cz.malickov.backend.dto.UserInboundDTO;
 import cz.malickov.backend.entity.User;
+import cz.malickov.backend.enums.Role;
 import cz.malickov.backend.repository.UserRepository;
 import cz.malickov.backend.service.UserService;
 import org.junit.jupiter.api.Test;
@@ -30,10 +31,10 @@ class UserServiceTest {
     @Test
     void shouldCreateUserSuccessfully() {
 
-        Role userRole = new Role("ROLE_PARENT");
-        User mockUser = new User("doe","john", "john@example.com", true, userRole);
+        Role role = Role.ROLE_PARENT;
+        UserInboundDTO mockUser = new UserInboundDTO("john","doe","d@d.cz","ffff",true, role);
 
-        userService.saveUser(mockUser);
+        userService.registerUser(mockUser);
         verify(userRepository).save(any(User.class));
     }
 }

@@ -1,5 +1,6 @@
 package cz.malickov.backend.dto;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,6 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class RoleDTO {
-    private String roleName;
+public class UserLoginDTO {
+    private String email;
+    private String password;
 }

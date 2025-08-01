@@ -1,12 +1,20 @@
 package cz.malickov.backend.service;
 
-import cz.malickov.backend.dto.RoleDTO;
 import cz.malickov.backend.dto.UserInboundDTO;
 import cz.malickov.backend.dto.UserOutboundDTO;
 import cz.malickov.backend.entity.User;
+import cz.malickov.backend.error.UserAlreadyExists;
+import cz.malickov.backend.model.CustomUserDetails;
 import cz.malickov.backend.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -14,19 +22,53 @@ import java.util.stream.Collectors;
 
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
 
-    public UserService(UserRepository userRepository) {
+
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    public UserService(UserRepository userRepository, @Value("${security.bcrypt.strength}") int bCryptStrength ) {
         this.userRepository = userRepository;
+        this.bCryptPasswordEncoder = new BCryptPasswordEncoder(bCryptStrength);
     }
 
-    // @TODO add authorization
-    public void saveUser(User user) {
-        // Validate required fields
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user = userRepository
+                .findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(email));
+
+        return new CustomUserDetails(user);
+    }
+
+
+    public UserOutboundDTO registerUser(UserInboundDTO userInboundDTO) {
+
+        User user = User.builder()
+                .lastName(userInboundDTO.getLastName())
+                .firstName(userInboundDTO.getFirstName())
+                .email(userInboundDTO.getEmail())
+                .password(bCryptPasswordEncoder.encode(userInboundDTO.getPassword()))
+                .roleName(userInboundDTO.getRoleName())
+                .active(true)
+                .build();
+        user.setCreatedAt(LocalDateTime.now());
+        user.setActive(true);
+
+
         if (validateUser(user)) {
             userRepository.save(user);
+        }else{
+            throw new RuntimeException("Provided data for new user are not valid.");
         }
+
+        return new UserOutboundDTO(
+                user.getFirstName(),
+                user.getLastName(),
+                user.getEmail(),
+                user.isActive(),
+                user.getRoleName().toString()
+        );
     }
 
     private boolean validateUser(User user) {
@@ -38,18 +80,17 @@ public class UserService {
         }
 
         if (!this.validateEmail(user.getEmail())) {
-            throw new IllegalArgumentException("Email in correct form is required");
+            throw new IllegalArgumentException("Email has incorrect form.");
         } else {
 
             Optional<String> foundEmail = userRepository.findAll()// not optimal, but no performance needed here
                     .stream()
                     .map(users -> users.getEmail())
-                    .filter(email -> email != null)  // Filter out null emails, should not be there but somehow was, i deleted the record
                     .filter(emails -> emails.equals(user.getEmail()))
                     .findFirst();
 
             if (foundEmail.isPresent()) {
-                throw new IllegalArgumentException("Email already exists.");
+                throw new UserAlreadyExists(user.getEmail());
             }
 
         }
@@ -65,16 +106,16 @@ public class UserService {
 
 
     public User updateUser(UserInboundDTO userUpdated) {
-        Optional<User> optionalUser = userRepository.findById(userUpdated.getUserId());
+        Optional<User> optionalUser = userRepository.findByEmail(userUpdated.getEmail());
 
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
             user.setLastName(userUpdated.getLastName());
             user.setFirstName(userUpdated.getFirstName());
             user.setEmail(userUpdated.getEmail());
-            return userRepository.save(user); // Hibernate tracks changes and updates the record
+            return userRepository.save(user);
         } else {
-            throw new RuntimeException("User not found with id: " + userUpdated.getUserId());
+            throw new RuntimeException("User not found with email: " + userUpdated.getEmail());
         }
     }
 
@@ -83,11 +124,11 @@ public class UserService {
         List<User> users = userRepository.findAll();
         List<UserOutboundDTO> usersDto= users.stream()
                 .map(u -> UserOutboundDTO.builder()
-                        .userId(u.getUserId())
                         .firstName(u.getFirstName())
                         .lastName(u.getLastName())
                         .email(u.getEmail())
-                        .userRole(new RoleDTO(u.getUserRole().getRoleName()))
+                        .active(u.isActive())
+                        .roleName(u.getRoleName().toString())
                         .build()
                 )
                 .sorted(Comparator.comparing(UserOutboundDTO::getLastName)) // :: method refrence, stejny jako u -> u.getFirstName()
@@ -95,32 +136,6 @@ public class UserService {
 
         return usersDto;
     }
-
-
-    public Map<Character, Integer> getOccurence(String text){
-        Map<Character, Integer> map = new HashMap<>();
-
-        if(text == null){
-            return map;
-        }
-
-        for (int i = 0; i < text.length(); i++) {
-            char c = text.charAt(i);
-            Integer occurence = map.get(c);
-            if(occurence == null){
-                map.put(c,1);
-            }else{
-                map.put(c,occurence+1);
-            }
-
-        return map;
-        }
-
-        return null;
-    }
-
-
-
 
 
 }

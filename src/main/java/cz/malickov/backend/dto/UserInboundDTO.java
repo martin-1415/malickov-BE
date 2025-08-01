@@ -1,4 +1,5 @@
 package cz.malickov.backend.dto;
+import cz.malickov.backend.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,8 +9,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserInboundDTO {
-    private Integer userId;
-    private String lastName;
     private String firstName;
+    private String lastName;
     private String email;
+    private String password;
+    private boolean active;
+    private Role roleName;
 }

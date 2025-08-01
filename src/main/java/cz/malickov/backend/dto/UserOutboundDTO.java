@@ -11,9 +11,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserOutboundDTO {
 
-    private Integer userId;
     private String lastName;
     private String firstName;
     private String email;
-    private RoleDTO userRole;
+    private boolean active;
+    private String roleName ;
 }

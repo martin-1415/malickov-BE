@@ -1,6 +1,7 @@
 package cz.malickov.backend.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import cz.malickov.backend.enums.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -33,33 +34,34 @@ public class User {
 
     @JsonProperty("email")
     @NotBlank(message = "Email is required")
+    @Column(name = "email",nullable = false,unique = true)
     private String email;
 
     @JsonProperty("createdAt")
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    @JsonProperty("passwordHash")
-    @Column(name = "password_hash")
+    @JsonProperty("password")
+    @Column(name = "password")
     @ToString.Exclude
-    private String passwordHash;
+    private String password;
 
     @JsonProperty("active")
     @Column(name = "active")
     @NotNull(message = "Active must be set.")
     private boolean active;
 
-    @JsonProperty("userRole")
-    @ManyToOne
-    @JoinColumn(name = "role_id", nullable = false)
-    private Role userRole;
+    @JsonProperty("roleName")
+    @Column(name = "role_name", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Role roleName;
 
-    public User(String lastName, String firstName, String email, boolean active, Role user_role){
+    public User(String lastName, String firstName, String email, boolean active, Role roleName){
         this.lastName = lastName;
         this.firstName = firstName;
         this.email = email;
         this.active = active;
-        this.userRole = user_role;
+        this.roleName = roleName;
     }
 
     public User() {

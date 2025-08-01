@@ -3,7 +3,7 @@
 ######################
 
 # Java build
-/target/
+target/
 *.jar
 *.war
 
