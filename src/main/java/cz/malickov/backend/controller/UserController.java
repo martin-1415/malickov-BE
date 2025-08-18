@@ -1,11 +1,11 @@
 package cz.malickov.backend.controller;
 
+import cz.malickov.backend.dto.UserLoginDTO;
 import cz.malickov.backend.dto.UserOutboundDTO;
 import cz.malickov.backend.dto.UserInboundDTO;
 import cz.malickov.backend.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.util.List;
 import java.util.Map;
@@ -52,9 +52,10 @@ public class UserController {
 
     @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody UserInboundDTO userUpdated) {
+    public ResponseEntity<String> login(@RequestBody UserLoginDTO userLogin) {
 
-        return ResponseEntity.ok("JWT");
+
+        return ResponseEntity.ok(userService.verify(userLogin));
 
     }
 

@@ -16,3 +16,4 @@ spring:
 security:
   bcrypt:
     strength: 12
+  JwtValidityMillis: 18000000

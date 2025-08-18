@@ -1,12 +1,16 @@
 package cz.malickov.backend.service;
 
 import cz.malickov.backend.dto.UserInboundDTO;
+import cz.malickov.backend.dto.UserLoginDTO;
 import cz.malickov.backend.dto.UserOutboundDTO;
 import cz.malickov.backend.entity.User;
 import cz.malickov.backend.error.UserAlreadyExists;
 import cz.malickov.backend.model.CustomUserDetails;
 import cz.malickov.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -22,25 +26,18 @@ import java.util.stream.Collectors;
 
 
 @Service
-public class UserService implements UserDetailsService {
+public class UserService{
     private final UserRepository userRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final AuthenticationManager authManager;
+    private final JWTService jwtService;
 
-
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
-
-    public UserService(UserRepository userRepository, @Value("${security.bcrypt.strength}") int bCryptStrength ) {
+    public UserService(UserRepository userRepository, @Value("${security.bcrypt.strength}") int bCryptStrength, AuthenticationManager authManager, JWTService jwtService ) {
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = new BCryptPasswordEncoder(bCryptStrength);
+        this.authManager = authManager;
+        this.jwtService = jwtService;
     }
-
-    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository
-                .findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(email));
-
-        return new CustomUserDetails(user);
-    }
-
 
     public UserOutboundDTO registerUser(UserInboundDTO userInboundDTO) {
 
@@ -138,4 +135,14 @@ public class UserService implements UserDetailsService {
     }
 
 
+    public String verify(UserLoginDTO userLogin) {
+        Authentication authentication =
+                authManager.authenticate(new UsernamePasswordAuthenticationToken(userLogin.getEmail(), userLogin.getPassword()));
+        
+        if (authentication.isAuthenticated()) {
+            return jwtService.generateToken(userLogin.getEmail());
+        }else{
+            throw new RuntimeException("Invalid username or password");
+        }
+    }
 }
