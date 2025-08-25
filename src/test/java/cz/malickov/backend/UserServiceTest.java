@@ -31,7 +31,7 @@ class UserServiceTest {
     @Test
     void shouldCreateUserSuccessfully() {
 
-        Role role = Role.ROLE_PARENT;
+        Role role = Role.PARENT;
         UserInboundDTO mockUser = new UserInboundDTO("john","doe","d@d.cz","ffff",true, role);
 
         userService.registerUser(mockUser);

@@ -5,15 +5,11 @@ import cz.malickov.backend.dto.UserLoginDTO;
 import cz.malickov.backend.dto.UserOutboundDTO;
 import cz.malickov.backend.entity.User;
 import cz.malickov.backend.error.UserAlreadyExists;
-import cz.malickov.backend.model.CustomUserDetails;
 import cz.malickov.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -145,4 +141,5 @@ public class UserService{
             throw new RuntimeException("Invalid username or password");
         }
     }
+
 }

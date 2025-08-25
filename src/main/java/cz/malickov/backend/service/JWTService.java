@@ -1,5 +1,7 @@
 package cz.malickov.backend.service;
 
+import cz.malickov.backend.enums.Role;
+import cz.malickov.backend.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -11,11 +13,9 @@ import org.springframework.stereotype.Service;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
+
 
 @Service
 public class JWTService {
@@ -24,8 +24,10 @@ public class JWTService {
     private int JwtValidityMillis;
 
     private String secretKey;
+    private UserRepository userRepository;
 
-    public JWTService() {
+    public JWTService(UserRepository userRepository) {
+        this.userRepository = userRepository;
         try {
             KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
             this.secretKey = Base64.getEncoder().encodeToString(keyGenerator.generateKey().getEncoded());
@@ -39,6 +41,9 @@ public class JWTService {
     public String generateToken(String email) {
 
         Map<String,Object> claims = new HashMap<>();
+        List role = List.of(userRepository.findByEmail(email).get().getRoleName());
+        claims.put("roles", role);
+
         return Jwts.builder()
                 .claims()
                 .add(claims)

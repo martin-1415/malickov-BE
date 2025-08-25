@@ -5,10 +5,11 @@ import cz.malickov.backend.dto.UserOutboundDTO;
 import cz.malickov.backend.dto.UserInboundDTO;
 import cz.malickov.backend.service.UserService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
+import cz.malickov.backend.enums.Role;
 
 
 
@@ -32,6 +33,7 @@ public class UserController {
     }
 
     @CrossOrigin(origins = "http://localhost:4200")
+    @PreAuthorize("hasRole('DIRECTOR')")
     @GetMapping("/allUsers")
     public ResponseEntity<List<UserOutboundDTO>> getAllUser() {
         List<UserOutboundDTO> usersDto = userService.getAllUsers();
@@ -53,12 +55,7 @@ public class UserController {
     @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody UserLoginDTO userLogin) {
-
-
         return ResponseEntity.ok(userService.verify(userLogin));
-
     }
-
-
 
 }

@@ -3,6 +3,7 @@ package cz.malickov.backend.service;
 import cz.malickov.backend.entity.User;
 import cz.malickov.backend.model.CustomUserDetails;
 import cz.malickov.backend.repository.UserRepository;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -26,4 +27,5 @@ public class UserDetailsLoginService  implements UserDetailsService {
 
         return new CustomUserDetails(user);
     }
+
 }
