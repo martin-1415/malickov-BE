@@ -39,8 +39,9 @@ public class SecurityConfig {
                 .csrf( customizer -> customizer.disable())
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers("/login","/swagger-ui.html")
-                        .permitAll()
-                        .anyRequest().authenticated())
+                            .permitAll()
+                        .anyRequest()
+                            .authenticated())
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

@@ -26,11 +26,12 @@ public class JWTService {
     private String secretKey;
     private UserRepository userRepository;
 
+    // @TODO Create secretkey randomly do not hardcode it, it is hardcoded for convenience of testing
     public JWTService(UserRepository userRepository) {
         this.userRepository = userRepository;
         try {
             KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
-            this.secretKey = Base64.getEncoder().encodeToString(keyGenerator.generateKey().getEncoded());
+            this.secretKey = "6/VrpJJUITHdOeWm8kykDJ3EzGmToaaRziM3af+JoAk=";//Base64.getEncoder().encodeToString(keyGenerator.generateKey().getEncoded());
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }

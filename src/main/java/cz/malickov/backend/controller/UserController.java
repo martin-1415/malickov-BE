@@ -3,12 +3,19 @@ package cz.malickov.backend.controller;
 import cz.malickov.backend.dto.UserLoginDTO;
 import cz.malickov.backend.dto.UserOutboundDTO;
 import cz.malickov.backend.dto.UserInboundDTO;
+import cz.malickov.backend.error.ApiException;
 import cz.malickov.backend.service.UserService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+
 import cz.malickov.backend.enums.Role;
 
 
@@ -23,12 +30,25 @@ public class UserController {
         this.userService = userService;
     }
 
+    @PreAuthorize("hasAnyRole('DIRECTOR','MANAGER')")
+    @CrossOrigin(origins = "http://localhost:4200")
+    @PostMapping("/newParent")
+    public ResponseEntity<UserOutboundDTO> createUser(@RequestBody UserInboundDTO userInboundDTO, Authentication authentication) {
 
-    @PostMapping("/register")
-    public ResponseEntity<UserOutboundDTO> getUser(@RequestBody UserInboundDTO userInboundDTO) {
 
-        UserOutboundDTO saved = this.userService.registerUser(userInboundDTO);
-        return ResponseEntity.ok().body(saved);
+
+        authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        String currentUserRole = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .findFirst().orElse(null); // null role cannot get here
+
+        // manager can create only parents, not employees, autentication adds ROLE_ prefix
+        if ( currentUserRole.equals("ROLE_MANAGER") && userInboundDTO.getRoleName() != Role.PARENT) {
+            throw new ApiException(HttpStatus.FORBIDDEN,"Your role cannot create employees of the kindergarten.");
+        }
+        UserOutboundDTO savedUser = this.userService.registerUser(userInboundDTO);
+        return ResponseEntity.ok().body(savedUser);
 
     }
 
@@ -57,5 +77,4 @@ public class UserController {
     public ResponseEntity<String> login(@RequestBody UserLoginDTO userLogin) {
         return ResponseEntity.ok(userService.verify(userLogin));
     }
-
 }

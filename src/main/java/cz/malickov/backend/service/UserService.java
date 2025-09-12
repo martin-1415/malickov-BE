@@ -4,9 +4,10 @@ import cz.malickov.backend.dto.UserInboundDTO;
 import cz.malickov.backend.dto.UserLoginDTO;
 import cz.malickov.backend.dto.UserOutboundDTO;
 import cz.malickov.backend.entity.User;
-import cz.malickov.backend.error.UserAlreadyExists;
+import cz.malickov.backend.error.ApiException;
 import cz.malickov.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -36,12 +37,11 @@ public class UserService{
     }
 
     public UserOutboundDTO registerUser(UserInboundDTO userInboundDTO) {
-
         User user = User.builder()
                 .lastName(userInboundDTO.getLastName())
                 .firstName(userInboundDTO.getFirstName())
                 .email(userInboundDTO.getEmail())
-                .password(bCryptPasswordEncoder.encode(userInboundDTO.getPassword()))
+                //.password(bCryptPasswordEncoder.encode(userInboundDTO.getPassword())) zatim neposilam password bude to v aktivaci a zmene hesla
                 .roleName(userInboundDTO.getRoleName())
                 .active(true)
                 .build();
@@ -65,25 +65,20 @@ public class UserService{
     }
 
     private boolean validateUser(User user) {
-        if (user.getLastName() == null) {
-            throw new IllegalArgumentException("Last name is required");
+        if (user.getLastName().isBlank()) {
+            throw new ApiException(HttpStatus.BAD_REQUEST,"Last name is required");
         }
-        if (user.getFirstName() == null) {
-            throw new IllegalArgumentException("First name is required");
+        if (user.getFirstName().isBlank()) {
+            throw new ApiException(HttpStatus.BAD_REQUEST,"First name is required");
         }
 
         if (!this.validateEmail(user.getEmail())) {
-            throw new IllegalArgumentException("Email has incorrect form.");
+            throw new ApiException(HttpStatus.BAD_REQUEST,"Email has incorrect form.");
         } else {
 
-            Optional<String> foundEmail = userRepository.findAll()// not optimal, but no performance needed here
-                    .stream()
-                    .map(users -> users.getEmail())
-                    .filter(emails -> emails.equals(user.getEmail()))
-                    .findFirst();
-
-            if (foundEmail.isPresent()) {
-                throw new UserAlreadyExists(user.getEmail());
+            Optional<User> optionalUser = userRepository.findByEmail(user.getEmail());
+            if (optionalUser.isPresent()) {
+                throw new ApiException(HttpStatus.BAD_REQUEST,"User with such email already exixsts");
             }
 
         }
@@ -108,7 +103,7 @@ public class UserService{
             user.setEmail(userUpdated.getEmail());
             return userRepository.save(user);
         } else {
-            throw new RuntimeException("User not found with email: " + userUpdated.getEmail());
+            throw new ApiException(HttpStatus.NOT_FOUND,"User not found with email: " + userUpdated.getEmail());
         }
     }
 
@@ -130,7 +125,7 @@ public class UserService{
         return usersDto;
     }
 
-
+    // verifing a user against the database during the login
     public String verify(UserLoginDTO userLogin) {
         Authentication authentication =
                 authManager.authenticate(new UsernamePasswordAuthenticationToken(userLogin.getEmail(), userLogin.getPassword()));

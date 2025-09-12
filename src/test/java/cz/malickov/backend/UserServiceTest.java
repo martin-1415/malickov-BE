@@ -32,7 +32,7 @@ class UserServiceTest {
     void shouldCreateUserSuccessfully() {
 
         Role role = Role.PARENT;
-        UserInboundDTO mockUser = new UserInboundDTO("john","doe","d@d.cz","ffff",true, role);
+        UserInboundDTO mockUser = new UserInboundDTO("john","doe","d@d.cz",true, role);
 
         userService.registerUser(mockUser);
         verify(userRepository).save(any(User.class));

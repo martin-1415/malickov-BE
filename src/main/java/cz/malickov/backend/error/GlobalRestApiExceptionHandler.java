@@ -7,14 +7,14 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.Map;
 
 @RestControllerAdvice
-public class GlobalExceptionHandler {
+public class GlobalRestApiExceptionHandler {
 
 
-    @ExceptionHandler(UserAlreadyExists.class)
-    public ResponseEntity<Map<String, String>> handleIllegalArgument(UserAlreadyExists ex) {
+    @ExceptionHandler(ApiException.class)
+    public ResponseEntity<Map<String, String>> handleIllegalArgument(ApiException ex) {
         return ResponseEntity.badRequest().body(
                 Map.of(
-                        "error", "Bad Request",
+                        "error", ex.getStatus().toString(),
                         "message", ex.getMessage()
                 )
         );

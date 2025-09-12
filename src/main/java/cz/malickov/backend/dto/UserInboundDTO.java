@@ -12,7 +12,6 @@ public class UserInboundDTO {
     private String firstName;
     private String lastName;
     private String email;
-    private String password;
     private boolean active;
     private Role roleName;
 }
