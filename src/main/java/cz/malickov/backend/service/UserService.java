@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -36,7 +37,7 @@ public class UserService{
         this.jwtService = jwtService;
     }
 
-    public UserOutboundDTO registerUser(UserInboundDTO userInboundDTO) {
+    public User registerUser(UserInboundDTO userInboundDTO) {
         User user = User.builder()
                 .lastName(userInboundDTO.getLastName())
                 .firstName(userInboundDTO.getFirstName())
@@ -50,18 +51,17 @@ public class UserService{
 
 
         if (validateUser(user)) {
+            Optional<User> optionalUser = userRepository.findByEmail(user.getEmail());
+            if (optionalUser.isPresent()) {
+                throw new ApiException(HttpStatus.CONFLICT,"User with such email already exixsts");
+            }
             userRepository.save(user);
         }else{
-            throw new RuntimeException("Provided data for new user are not valid.");
+            throw new ApiException(HttpStatus.BAD_REQUEST,"Provided data for new user are not valid.");
         }
 
-        return new UserOutboundDTO(
-                user.getFirstName(),
-                user.getLastName(),
-                user.getEmail(),
-                user.isActive(),
-                user.getRoleName().toString()
-        );
+
+        return user;
     }
 
     private boolean validateUser(User user) {
@@ -74,13 +74,6 @@ public class UserService{
 
         if (!this.validateEmail(user.getEmail())) {
             throw new ApiException(HttpStatus.BAD_REQUEST,"Email has incorrect form.");
-        } else {
-
-            Optional<User> optionalUser = userRepository.findByEmail(user.getEmail());
-            if (optionalUser.isPresent()) {
-                throw new ApiException(HttpStatus.BAD_REQUEST,"User with such email already exixsts");
-            }
-
         }
         return true;
     }
@@ -101,9 +94,11 @@ public class UserService{
             user.setLastName(userUpdated.getLastName());
             user.setFirstName(userUpdated.getFirstName());
             user.setEmail(userUpdated.getEmail());
+
             return userRepository.save(user);
+
         } else {
-            throw new ApiException(HttpStatus.NOT_FOUND,"User not found with email: " + userUpdated.getEmail());
+            throw new ApiException(HttpStatus.NOT_FOUND,"User not found, email: " + userUpdated.getEmail());
         }
     }
 
@@ -125,16 +120,24 @@ public class UserService{
         return usersDto;
     }
 
-    // verifing a user against the database during the login
-    public String verify(UserLoginDTO userLogin) {
-        Authentication authentication =
-                authManager.authenticate(new UsernamePasswordAuthenticationToken(userLogin.getEmail(), userLogin.getPassword()));
-        
-        if (authentication.isAuthenticated()) {
-            return jwtService.generateToken(userLogin.getEmail());
-        }else{
-            throw new RuntimeException("Invalid username or password");
-        }
-    }
 
+
+    /**
+     * authenticating a user against the database during the login
+     * @param userLogin:  email and password
+     * @return JWT token
+     */
+    public String verify(UserLoginDTO userLogin) {
+
+        try {
+            Authentication authentication =
+                    authManager.authenticate(new UsernamePasswordAuthenticationToken(userLogin.getEmail(), userLogin.getPassword()));
+            if (authentication.isAuthenticated()) {
+                return jwtService.generateToken(userLogin.getEmail());
+            }
+        }catch (AuthenticationException e){
+            throw new ApiException(HttpStatus.FORBIDDEN,"Invalid username or password");
+        }
+        return null;
+    }
 }

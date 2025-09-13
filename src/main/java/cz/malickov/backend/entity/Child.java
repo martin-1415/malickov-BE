@@ -2,7 +2,6 @@ package cz.malickov.backend.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import cz.malickov.backend.enums.Department;
-import cz.malickov.backend.enums.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
@@ -22,7 +21,7 @@ public class Child {
     @JsonProperty("childId")
     @Column(name = "child_id",nullable = false,columnDefinition = "uniqueidentifier")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer childId;
+    private int childId;
 
     @Column(name = "first_name")
     @NotBlank(message = "Last name is required")
@@ -49,11 +48,13 @@ public class Child {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    @Column(name = "user_id")
-    private Integer userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    @Column(name = "identificator_id")
-    private Integer identificatorId;
+    @OneToOne
+    @PrimaryKeyJoinColumn(name = "identificator_id")
+    private Identificator identificator;
 
     @Column(name = "mon")
     private Boolean mon;

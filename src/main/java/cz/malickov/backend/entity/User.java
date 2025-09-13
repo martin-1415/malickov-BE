@@ -8,6 +8,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "user")
@@ -20,7 +22,7 @@ public class User {
     @JsonProperty("userId")
     @Column(name = "user_id",nullable = false,columnDefinition = "uniqueidentifier")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer userId;
+    private int userId;
 
     @JsonProperty("lastName")
     @Column(name = "last_name")
@@ -55,6 +57,9 @@ public class User {
     @Column(name = "role_name", nullable = false)
     @Enumerated(EnumType.STRING)
     private Role roleName;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Child> children = new ArrayList<>();
 
     public User(String lastName, String firstName, String email, boolean active, Role roleName){
         this.lastName = lastName;

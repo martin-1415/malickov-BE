@@ -9,7 +9,7 @@ import org.springframework.context.ApplicationContext;
 public class BackendApplication {
 
 	public static void main(String[] args) {
-		ApplicationContext app = SpringApplication.run(BackendApplication.class, args);
+		SpringApplication.run(BackendApplication.class, args);
 	}
 
 }
