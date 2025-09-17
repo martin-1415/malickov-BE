@@ -3,6 +3,7 @@ package cz.malickov.backend.dto;
 import cz.malickov.backend.entity.User;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,9 +22,9 @@ public class UserOutboundDTO {
     @Email
     @NotBlank
     private String email;
-    @NotBlank
+    @NotNull
     private boolean active;
-    @NotBlank
+    @NotNull
     private String roleName ;
 
 

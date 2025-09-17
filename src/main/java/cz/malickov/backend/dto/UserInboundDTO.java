@@ -2,6 +2,7 @@ package cz.malickov.backend.dto;
 import cz.malickov.backend.enums.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,8 +19,8 @@ public class UserInboundDTO {
     @NotBlank
     @Email(message = "Email is not valid")
     private String email;
-    @NotBlank
+    @NotNull
     private boolean active;
-    @NotBlank
+    @NotNull
     private Role roleName;
 }
