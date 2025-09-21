@@ -1,8 +1,8 @@
 spring:
   liquibase:
-    contexts: dev
+    contexts: prod
     change-log: classpath:db/changelog/app-changelog.xml
 
 security:
-  JwtValidityMillis: 28800000
-  randomSigningKey: false
+  JwtValidityMillis: 900000
+  randomSigningKey: true

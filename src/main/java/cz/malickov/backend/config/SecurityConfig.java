@@ -22,9 +22,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    private JwtFilter jwtFilter;
-    private UserDetailsLoginService userDetailsLoginService;
-    private int bCryptStrength;
+    private final JwtFilter jwtFilter;
+    private final UserDetailsLoginService userDetailsLoginService;
+    private final int bCryptStrength;
 
     public SecurityConfig(@Value("${security.bcrypt.strength}") int bCryptStrength, UserDetailsLoginService userDetailsLoginService, JwtFilter jwtFilter){
         this.bCryptStrength=bCryptStrength;
@@ -38,7 +38,8 @@ public class SecurityConfig {
         return http
                 .csrf( customizer -> customizer.disable())
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers("/login","/swagger-ui.html")
+                        .requestMatchers("/login", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**"
+                        )
                             .permitAll()
                         .anyRequest()
                             .authenticated())

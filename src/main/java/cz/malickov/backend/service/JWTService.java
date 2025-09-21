@@ -1,6 +1,7 @@
 package cz.malickov.backend.service;
 
-import cz.malickov.backend.enums.Role;
+
+import cz.malickov.backend.entity.User;
 import cz.malickov.backend.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -15,23 +16,31 @@ import javax.crypto.SecretKey;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.function.Function;
+import cz.malickov.backend.enums.Role;
 
 
 @Service
 public class JWTService {
 
-    @Value("${security.JwtValidityMillis}")
-    private int JwtValidityMillis;
+    private final int JwtValidityMillis;
 
-    private String secretKey;
-    private UserRepository userRepository;
+    private final String secretKey;
+    private final UserRepository userRepository;
 
-    // @TODO Create secretkey randomly do not hardcode it, it is hardcoded for convenience of testing
-    public JWTService(UserRepository userRepository) {
+    // @TODO if deployed to Kubernates with scaling, secret key must be obtained from some secret store and rotated regularly
+    public JWTService(UserRepository userRepository,
+                      @Value("${security.JwtValidityMillis:900000}") long jwtValidityMillis,
+                      @Value("${security.randomSigningKey:true}") boolean randomSigningKeyUsed
+    ) {
         this.userRepository = userRepository;
+        this.JwtValidityMillis = (int) jwtValidityMillis;
+
         try {
             KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
-            this.secretKey = "6/VrpJJUITHdOeWm8kykDJ3EzGmToaaRziM3af+JoAk=";//Base64.getEncoder().encodeToString(keyGenerator.generateKey().getEncoded());
+            // feature flag, I do not want to get a new login token on every restart of the application on DEV
+            this.secretKey = randomSigningKeyUsed?
+                    Base64.getEncoder().encodeToString(keyGenerator.generateKey().getEncoded()) :
+                    "6/VrpJJUITHdOeWm8kykDJ3EzGmToaaRziM3af+JoAk=";
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
@@ -42,8 +51,13 @@ public class JWTService {
     public String generateToken(String email) {
 
         Map<String,Object> claims = new HashMap<>();
-        List role = List.of(userRepository.findByEmail(email).get().getRoleName());
-        claims.put("roles", role);
+
+        Optional <User> user = userRepository.findByEmail(email);
+        List <Role> role = new ArrayList<>();
+        if(user.isPresent()){
+            role = List.of(user.get().getRoleName());
+        }
+        claims.put("role", role);
 
         return Jwts.builder()
                 .claims()

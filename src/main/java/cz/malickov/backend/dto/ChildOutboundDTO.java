@@ -1,33 +1,28 @@
-package cz.malickov.backend.entity;
+package cz.malickov.backend.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import cz.malickov.backend.entity.Identificator;
+import cz.malickov.backend.entity.User;
 import cz.malickov.backend.enums.Department;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.Date;
 
-@Entity
-@Table(name = "child")
-@Getter @Setter @ToString
+@Data
+@NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@NoArgsConstructor
-public class Child {
+public class ChildOutboundDTO {
 
-    @Id
-    @JsonProperty("childId")
-    @Column(name = "child_id",nullable = false,columnDefinition = "uniqueidentifier")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int childId;
-
-    @Column(name = "first_name")
     @NotBlank(message = "First name is required")
     private String firstName;
 
-    @Column(name = "last_name")
     @NotBlank(message = "Last name is required")
     private String lastName;
 
@@ -70,5 +65,4 @@ public class Child {
 
     @Column(name = "fri")
     private Boolean fri;
-
 }

@@ -7,7 +7,14 @@ This project was generated using
 To start a local development server, run:
 
 ```bash
- mvn spring-boot:run
+ docker pull docker4asinkan/malickov_sql:v01 
+```
+
+```bash
+docker run --name malickov-mysql -e MYSQL_ALLOW_EMPTY_PASSWORD=yes -p 3306:3306  -d docker4asinkan/malickov_sql:v01
+```
+```bash
+mvn spring-boot:run -Dspring-boot.run.arguments="--spring.profiles.active=dev"
 ```
 
 ## Building
@@ -27,3 +34,7 @@ To see open API
 
 or for json
 [json scheme](http://localhost:8080/v3/api-docs)
+
+## Prod server
+
+Not implemented yet. 
