@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 @Service
 public class UserService{
     private final UserRepository userRepository;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder; // will be used to reset password
     private final AuthenticationManager authManager;
     private final JWTService jwtService;
 
@@ -42,7 +42,7 @@ public class UserService{
                 .lastName(userInboundDTO.getLastName())
                 .firstName(userInboundDTO.getFirstName())
                 .email(userInboundDTO.getEmail())
-                //.password(bCryptPasswordEncoder.encode(userInboundDTO.getPassword())) zatim neposilam password bude to v aktivaci a zmene hesla
+                //.password(bCryptPasswordEncoder.encode(userInboundDTO.getPassword())) this is going to be set in ResetPassword method
                 .roleName(userInboundDTO.getRoleName())
                 .active(true)
                 .build();
@@ -105,7 +105,7 @@ public class UserService{
 
     public List<UserOutboundDTO> getAllUsers() {
         List<User> users = userRepository.findAll();
-        List<UserOutboundDTO> usersDto= users.stream()
+        return users.stream()
                 .map(u -> UserOutboundDTO.builder()
                         .firstName(u.getFirstName())
                         .lastName(u.getLastName())
@@ -116,8 +116,6 @@ public class UserService{
                 )
                 .sorted(Comparator.comparing(UserOutboundDTO::getLastName)) // :: method refrence, stejny jako u -> u.getFirstName()
                 .collect(Collectors.toList());
-
-        return usersDto;
     }
 
 

@@ -21,7 +21,7 @@ public class GlobalRestApiExceptionHandler {
         );
     }
 
-    // Exceptions for validation, only bad requests
+    // Exceptions for validation, only bad requests type
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<HashMap<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
         HashMap<String, String> errors = new HashMap<>();

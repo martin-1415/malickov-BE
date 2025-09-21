@@ -58,7 +58,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role roleName;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Child> children = new ArrayList<>();
 
     public User(String lastName, String firstName, String email, boolean active, Role roleName){

@@ -27,7 +27,7 @@ import cz.malickov.backend.enums.Role;
 public class UserController {
 
 
-    private  final UserService userService;
+    private final UserService userService;
 
     public UserController(UserService userService) {
         this.userService = userService;

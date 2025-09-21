@@ -52,7 +52,7 @@ CREATE TABLE child (
 );
 
 CREATE TABLE attendance (
-                       attendance_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                       attendance_id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
                        child_id INT NOT NULL,
                        date DATETIME(6) NOT NULL,
                        plan_arrival TIME NOT NULL,

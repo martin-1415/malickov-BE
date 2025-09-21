@@ -5,7 +5,9 @@ import cz.malickov.backend.service.UserDetailsLoginService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;import org.springframework.security.core.userdetails.UserDetails;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.NonNull;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -17,8 +19,8 @@ import java.io.IOException;
 @Component
 public class JwtFilter extends OncePerRequestFilter {
 
-    private JWTService jwtService;
-    private UserDetailsLoginService userDetailsLoginService;
+    private final JWTService jwtService;
+    private final UserDetailsLoginService userDetailsLoginService;
 
     public JwtFilter(JWTService jwtService, UserDetailsLoginService userDetailsLoginService){
         this.jwtService = jwtService;
@@ -26,7 +28,7 @@ public class JwtFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
         String authHeader = request.getHeader("Authorization");
         String token = null;
         String email = null;

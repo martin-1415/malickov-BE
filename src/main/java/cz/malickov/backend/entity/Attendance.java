@@ -20,12 +20,12 @@ public class Attendance {
     @JsonProperty("attendanceId")
     @Column(name = "attendance_id",nullable = false,columnDefinition = "uniqueidentifier")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int attendanceId;
+    private long attendanceId;
 
     @JsonProperty("childId")
     @ManyToOne
     @JoinColumn(name = "child_id", nullable = false)
-    private Child childId;
+    private Child child;
 
     @Column(name = "date", nullable = false)
     private Date date;

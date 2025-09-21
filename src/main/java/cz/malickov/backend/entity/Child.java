@@ -7,7 +7,9 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "child")
@@ -70,5 +72,8 @@ public class Child {
 
     @Column(name = "fri")
     private Boolean fri;
+
+    @OneToMany(mappedBy = "child", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Attendance> attendanceList = new ArrayList<>();
 
 }
