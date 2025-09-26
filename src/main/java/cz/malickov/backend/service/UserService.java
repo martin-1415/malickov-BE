@@ -1,17 +1,12 @@
 package cz.malickov.backend.service;
 
 import cz.malickov.backend.dto.UserInboundDTO;
-import cz.malickov.backend.dto.UserLoginDTO;
 import cz.malickov.backend.dto.UserOutboundDTO;
 import cz.malickov.backend.entity.User;
 import cz.malickov.backend.error.ApiException;
 import cz.malickov.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -27,14 +22,11 @@ import java.util.stream.Collectors;
 public class UserService{
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder; // will be used to reset password
-    private final AuthenticationManager authManager;
-    private final JWTService jwtService;
 
-    public UserService(UserRepository userRepository, @Value("${security.bcrypt.strength}") int bCryptStrength, AuthenticationManager authManager, JWTService jwtService ) {
+
+    public UserService(UserRepository userRepository, @Value("${security.bcrypt.strength}") int bCryptStrength ) {
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = new BCryptPasswordEncoder(bCryptStrength);
-        this.authManager = authManager;
-        this.jwtService = jwtService;
     }
 
     public User registerUser(UserInboundDTO userInboundDTO) {
@@ -72,7 +64,7 @@ public class UserService{
             throw new ApiException(HttpStatus.BAD_REQUEST,"First name is required");
         }
 
-        if (!this.validateEmail(user.getEmail())) {
+        if (validateEmail(user.getEmail())) {
             throw new ApiException(HttpStatus.BAD_REQUEST,"Email has incorrect form.");
         }
         return true;
@@ -116,26 +108,5 @@ public class UserService{
                 )
                 .sorted(Comparator.comparing(UserOutboundDTO::getLastName)) // :: method refrence, stejny jako u -> u.getFirstName()
                 .collect(Collectors.toList());
-    }
-
-
-
-    /**
-     * authenticating a user against the database during the login
-     * @param userLogin:  email and password
-     * @return JWT token
-     */
-    public String verify(UserLoginDTO userLogin) {
-
-        try {
-            Authentication authentication =
-                    authManager.authenticate(new UsernamePasswordAuthenticationToken(userLogin.getEmail(), userLogin.getPassword()));
-            if (authentication.isAuthenticated()) {
-                return jwtService.generateToken(userLogin.getEmail());
-            }
-        }catch (AuthenticationException e){
-            throw new ApiException(HttpStatus.FORBIDDEN,"Invalid username or password");
-        }
-        return null;
     }
 }

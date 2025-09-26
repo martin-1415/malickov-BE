@@ -20,7 +20,8 @@ target/
 *.iws
 
 # Logs
-*.log
+app.log.*
+app.log
 
 # Environment/Sensitive config
 #.env

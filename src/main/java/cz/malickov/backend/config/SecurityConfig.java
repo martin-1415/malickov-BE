@@ -38,12 +38,12 @@ public class SecurityConfig {
         return http
                 .csrf( customizer -> customizer.disable())
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers("/login", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**"
+                        .requestMatchers("/login", "/swagger-ui/**", "/v3/api-docs/**"
                         )
                             .permitAll()
                         .anyRequest()
                             .authenticated())
-                .httpBasic(Customizer.withDefaults())
+                .httpBasic(Customizer.withDefaults())  // basic user password, sends 401 if failed
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)

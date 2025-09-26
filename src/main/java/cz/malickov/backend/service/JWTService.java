@@ -18,7 +18,6 @@ import java.util.*;
 import java.util.function.Function;
 import cz.malickov.backend.enums.Role;
 
-
 @Service
 public class JWTService {
 
@@ -29,26 +28,20 @@ public class JWTService {
 
     // @TODO if deployed to Kubernates with scaling, secret key must be obtained from some secret store and rotated regularly
     public JWTService(UserRepository userRepository,
-                      @Value("${security.JwtValidityMillis:900000}") long jwtValidityMillis,
-                      @Value("${security.randomSigningKey:true}") boolean randomSigningKeyUsed
+                      @Value("${security.JwtValidityMillis:900000}") long jwtValidityMillis
     ) {
         this.userRepository = userRepository;
         this.JwtValidityMillis = (int) jwtValidityMillis;
 
         try {
             KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
-            // feature flag, I do not want to get a new login token on every restart of the application on DEV
-            this.secretKey = randomSigningKeyUsed?
-                    Base64.getEncoder().encodeToString(keyGenerator.generateKey().getEncoded()) :
-                    "6/VrpJJUITHdOeWm8kykDJ3EzGmToaaRziM3af+JoAk=";
-        } catch (NoSuchAlgorithmException e) {
+            this.secretKey = Base64.getEncoder().encodeToString(keyGenerator.generateKey().getEncoded());
+        }catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
-
     }
 
-
-    public String generateToken(String email) {
+    public String generateAuthToken(String email) {
 
         Map<String,Object> claims = new HashMap<>();
 
@@ -93,6 +86,7 @@ public class JWTService {
                 .getPayload();
     }
 
+    // validate against user
     public boolean validateToken(String token, UserDetails userDetails) {
         final String email = this.extractEmail(token);
         return (email.equals(userDetails.getUsername()) && !isTokenExpired(token));

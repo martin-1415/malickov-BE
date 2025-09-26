@@ -5,4 +5,3 @@ spring:
 
 security:
   JwtValidityMillis: 900000
-  randomSigningKey: true

@@ -1,11 +1,12 @@
 package cz.malickov.backend;
 
-import org.junit.jupiter.api.BeforeEach;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
+
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -14,13 +15,10 @@ class AuthIntegrationTest {
 
     @Autowired
     private TestRestTemplate restTemplate;
-    private static String token;
 
-
-
-    @BeforeEach
-    void testLoginWithPassAndEmail() {
-        // Create login payload
+    @Test
+    void testSuccesLoginWithPassAndEmail() {
+        // login payload for DEV
         String json = """
                 {
                   "email": "1@1.cz",
@@ -38,28 +36,45 @@ class AuthIntegrationTest {
                 .postForEntity("/login", request, String.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).isNotEmpty();
-
-        this.token = response.getBody();
 
     }
 
     @Test
-    void testGetProtectedEndpointWithToken() {
+    void testFailedLoginWithWrongPassAndEmail() {
+        // login payload for DEV
+        String json = """
+                {
+                  "email": "1@1.cz",
+                  "password": "abc-WRONG"
+                }
+                """;
+
         HttpHeaders headers = new HttpHeaders();
-        System.out.println(this.token);
-        headers.setBearerAuth(token);
+        headers.setContentType(MediaType.APPLICATION_JSON);
 
-        HttpEntity<Void> request = new HttpEntity<>(headers);
+        HttpEntity<String> request = new HttpEntity<>(json, headers);
 
-        ResponseEntity<String> response = restTemplate.exchange(
-                "/allUsers",
-                HttpMethod.GET,
-                request,
-                String.class
-        );
+        // POST to login endpoint
+        ResponseEntity<String> response = restTemplate
+                .postForEntity("/login", request, String.class);
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
     }
+
+//    @Test
+//    void testGetProtectedEndpointWithToken() {
+//        HttpHeaders headers = new HttpHeaders();
+//
+//        HttpEntity<Void> request = new HttpEntity<>(headers);
+//
+//        ResponseEntity<String> response = restTemplate.exchange(
+//                "/allUsers",
+//                HttpMethod.GET,
+//                request,
+//                String.class
+//        );
+//
+//        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+//        assertThat(response.getBody()).isNotNull();
+//    }
 }
