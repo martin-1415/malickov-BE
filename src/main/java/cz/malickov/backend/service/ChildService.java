@@ -14,7 +14,6 @@ public class ChildService {
 
     public ChildService(ChildRepository childRepository) {
         this.childRepository = childRepository;
-        log.debug("Child repository initialized");
     }
 
     public List<Child> getChildrenByParentId(long userId){

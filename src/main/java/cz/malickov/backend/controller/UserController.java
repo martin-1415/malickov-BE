@@ -44,9 +44,9 @@ public class UserController {
                 .map(GrantedAuthority::getAuthority)
                 .findFirst(); // only one role per person
 
-        // manager can create only parents, not employees, autentication adds ROLE_ prefix
+        // manager can create only parents, not employees, authentication adds ROLE_ prefix
         if ( (currentUserRole.isPresent() && currentUserRole.get().equals("ROLE_MANAGER")) && userInboundDTO.getRoleName() != Role.PARENT) {
-            throw new ApiException(HttpStatus.FORBIDDEN,"Your role cannot create employees of the kindergarten.");
+            throw new ApiException(HttpStatus.FORBIDDEN,"Your role cannot create employees of the kindergarten. Just clients.");
         }
         User savedUser = this.userService.registerUser(userInboundDTO);
 

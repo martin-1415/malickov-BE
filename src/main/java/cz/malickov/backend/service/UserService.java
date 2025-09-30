@@ -64,14 +64,14 @@ public class UserService{
             throw new ApiException(HttpStatus.BAD_REQUEST,"First name is required");
         }
 
-        if (validateEmail(user.getEmail())) {
+        if (!isEmailValid(user.getEmail())) {
             throw new ApiException(HttpStatus.BAD_REQUEST,"Email has incorrect form.");
         }
         return true;
     }
 
 
-    private static boolean validateEmail(String emailStr) {
+    private static boolean isEmailValid(String emailStr) {
         final Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
         Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(emailStr);
         return matcher.matches();

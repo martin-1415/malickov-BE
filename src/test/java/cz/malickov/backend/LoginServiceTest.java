@@ -11,7 +11,7 @@ import org.springframework.http.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class AuthIntegrationTest {
+class AuthorizationTest {
 
     @Autowired
     private TestRestTemplate restTemplate;
