@@ -39,8 +39,8 @@ public class JwtFilter extends OncePerRequestFilter {
 
         String uri = request.getRequestURI();
 
-        // I do not expect any token in login endpoint, skip next block, go to folter
-        if(!uri.contains("/login")) {
+        // I do not expect any token in login endpoint, skip next block, go to filter
+        if(!uri.contains("/login") ) {
             String token;
             String email;
 

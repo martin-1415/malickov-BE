@@ -23,9 +23,11 @@ public class LoginController {
         this.maxAgeMillis = maxAgeMillis;
     }
 
+    // @TODO set secure to true
     @PostMapping("/login")
     @ResponseStatus(HttpStatus.OK)
     public void login(@RequestBody UserLoginDTO userLogin, HttpServletResponse response) {
+
 
         String jwt = loginService.verify(userLogin); // returns the token
         ResponseCookie cookie = ResponseCookie.from("JWT", jwt)
@@ -33,7 +35,7 @@ public class LoginController {
                 .secure(true) // https
                 .path("/")
                 .maxAge(maxAgeMillis)
-                .sameSite("Lax") // can be strict, but than links from e.g. google should not work
+                .sameSite("Lax") // can be strict, but then links from e.g. google should not work
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }
