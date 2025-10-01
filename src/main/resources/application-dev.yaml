@@ -4,4 +4,4 @@ spring:
     change-log: classpath:db/changelog/app-changelog.xml
 
 security:
-  JwtValidityMillis: 15000 #28800000
+  JwtValidityMillis: 28800000

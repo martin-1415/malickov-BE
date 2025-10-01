@@ -41,8 +41,8 @@ public class JwtFilter extends OncePerRequestFilter {
 
         // I do not expect any token in login endpoint, skip next block, go to folter
         if(!uri.contains("/login")) {
-            String token = null;
-            String email = null;
+            String token;
+            String email;
 
             try {
                 token = Arrays.stream(request.getCookies())
@@ -53,11 +53,12 @@ public class JwtFilter extends OncePerRequestFilter {
 
                 email = jwtService.extractEmail(token);
             }catch (Exception e){ // no cookie, expired token,...
+                log.warn("Authorization failed:",e);
                 throw new ApiException(HttpStatus.FORBIDDEN,"Authorization failed.");
             }
 
 
-            // loads user detailssection
+            // loads user details section
             if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) { // == null   if I am authenticated (not null), I do not need to continue with authentification
                 UserDetails userDetails = userDetailsLoginService.loadUserByUsername(email);
                 if (jwtService.validateToken(token, userDetails)) {

@@ -23,7 +23,6 @@ public class LoginController {
         this.maxAgeMillis = maxAgeMillis;
     }
 
-    @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping("/login")
     @ResponseStatus(HttpStatus.OK)
     public void login(@RequestBody UserLoginDTO userLogin, HttpServletResponse response) {

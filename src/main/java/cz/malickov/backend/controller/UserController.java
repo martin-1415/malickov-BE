@@ -34,7 +34,6 @@ public class UserController {
     }
 
     @PreAuthorize("hasAnyRole('DIRECTOR','MANAGER')")
-    @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping("/newParent")
     @ResponseStatus(HttpStatus.OK)
     public UserOutboundDTO createUser(@RequestBody @Valid UserInboundDTO userInboundDTO) {
@@ -54,7 +53,7 @@ public class UserController {
 
     }
 
-    @CrossOrigin(origins = "http://localhost:4200")
+
     @PreAuthorize("hasRole('DIRECTOR')")
     @GetMapping("/allUsers")
     @ResponseStatus(HttpStatus.OK)
@@ -62,7 +61,7 @@ public class UserController {
         return userService.getAllUsers();
     }
 
-    @CrossOrigin(origins = "http://localhost:4200")
+
     @PostMapping("/updateUser")
     @ResponseStatus(HttpStatus.OK)
     public UserOutboundDTO addUser(@RequestBody @Valid UserInboundDTO userUpdated) {
