@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 public class LoginController {
 
     private final LoginService loginService;
-
     private final int maxAgeMillis;
 
     public LoginController(LoginService loginService,
@@ -23,7 +22,7 @@ public class LoginController {
         this.maxAgeMillis = maxAgeMillis;
     }
 
-    // @TODO set secure to true
+    // @TODO set secure to true and maxAge in seconds
     @PostMapping("/login")
     @ResponseStatus(HttpStatus.OK)
     public void login(@RequestBody UserLoginDTO userLogin, HttpServletResponse response) {
@@ -32,11 +31,11 @@ public class LoginController {
         String jwt = loginService.verify(userLogin); // returns the token
         ResponseCookie cookie = ResponseCookie.from("JWT", jwt)
                 .httpOnly(true) // no javascript access
-                .secure(true) // https
+                .secure(false) // https
                 .path("/")
-                .maxAge(maxAgeMillis)
-                .sameSite("Lax") // can be strict, but then links from e.g. google should not work
+                .maxAge(maxAgeMillis/1000) //  seconds, same period as JWT
+                .sameSite("None") // can be strict, but then links from e.g. google should not work
                 .build();
-        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }
 }

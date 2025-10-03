@@ -7,6 +7,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -32,34 +33,41 @@ public class JwtFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(@NonNull HttpServletRequest request,
+                                    @NonNull HttpServletResponse response,
+                                    @NonNull FilterChain filterChain) throws ServletException, IOException {
 
 
         String uri = request.getRequestURI();
 
-        // I do not expect any token in login endpoint, skip next block, go to filter
+        // Any token is not expected at login endpoint, skip next block and go to filter
         if(!uri.contains("/login") ) {
-            String token;
+            String token = null;
             String email;
 
-            try {
+
+            if (request.getCookies() != null) {
                 token = Arrays.stream(request.getCookies())
                         .filter(cookie -> "JWT".equals(cookie.getName()))
                         .findFirst()
-                        .orElse(null)
-                        .getValue();
-
-                email = jwtService.extractEmail(token);
-            }catch (Exception e){ // no cookie, expired token,...
-                log.warn("Authorization failed:",e);
-                throw new ApiException(HttpStatus.FORBIDDEN,"Authorization failed.");
+                        .map(cookie -> cookie.getValue())
+                        .orElse(null);
             }
 
+            if (token != null) {
+                try {
+                    email = jwtService.extractEmail(token);
+                } catch (Exception e) {
+                    log.warn("Failed to extract email from token: {}", e.getMessage());
+                    throw new ApiException(HttpStatus.FORBIDDEN, "Authorization failed.");
+                }
+            } else {
+                log.warn("No JWT cookie found in request");
+                throw new ApiException(HttpStatus.FORBIDDEN, "Authorization failed.");
+            }
 
             // loads user details section
-            if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) { // == null   if I am authenticated (not null), I do not need to continue with authentification
+            if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) { // == null  if I am authenticated (not null), I do not need to continue with authentification
                 UserDetails userDetails = userDetailsLoginService.loadUserByUsername(email);
                 if (jwtService.validateToken(token, userDetails)) {
                     UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
