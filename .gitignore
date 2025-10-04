@@ -32,3 +32,4 @@ app.log
 
 
 /qodana.yaml
+/src/main/resources/keystore.p12

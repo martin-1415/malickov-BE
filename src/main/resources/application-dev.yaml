@@ -5,3 +5,12 @@ spring:
 
 security:
   JwtValidityMillis: 28800000
+
+
+server:
+  port: 8080
+  ssl:
+    key-store-type: PKCS12
+    key-store: classpath:keystore.p12
+    key-store-password: password
+    key-alias: local-ssl

@@ -22,7 +22,7 @@ public class LoginController {
         this.maxAgeMillis = maxAgeMillis;
     }
 
-    // @TODO set secure to true and maxAge in seconds
+
     @PostMapping("/login")
     @ResponseStatus(HttpStatus.OK)
     public void login(@RequestBody UserLoginDTO userLogin, HttpServletResponse response) {
@@ -31,7 +31,7 @@ public class LoginController {
         String jwt = loginService.verify(userLogin); // returns the token
         ResponseCookie cookie = ResponseCookie.from("JWT", jwt)
                 .httpOnly(true) // no javascript access
-                .secure(false) // https
+                .secure(true) // https
                 .path("/")
                 .maxAge(maxAgeMillis/1000) //  seconds, same period as JWT
                 .sameSite("None") // can be strict, but then links from e.g. google should not work
