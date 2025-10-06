@@ -19,7 +19,7 @@ mvn spring-boot:run -Dspring-boot.run.arguments="--spring.profiles.active=dev"
 
 [//]: # (To see open API)
 
-[//]: # ([api schema]&#40;http://localhost:8080/swagger-ui.html&#41;)
+[//]: # ([api schema]&#40;http://localhost:8443/swagger-ui.html&#41;)
 
 [//]: # ()
 [//]: # (or for json)

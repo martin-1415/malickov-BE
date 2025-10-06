@@ -1,0 +1,12 @@
+spring:
+  liquibase:
+    contexts: dev
+    change-log: classpath:db/changelog/app-changelog.xml
+
+security:
+  JwtValidityMillis: 3600000
+
+server:
+  port: 0
+  ssl:
+    enabled: false # no fucking SSL for tests

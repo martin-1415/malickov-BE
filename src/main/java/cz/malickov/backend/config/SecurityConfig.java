@@ -33,14 +33,15 @@ public class SecurityConfig {
         this.jwtFilter = jwtFilter;
     }
 
-    // @TODO remove swagger-ui.html for security reasons
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf( customizer -> customizer.disable())
                 .cors(Customizer.withDefaults())  // will look for CorsConfigurationSource by default
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers("/login", "/swagger-ui/**", "/v3/api-docs/**"
+                        .requestMatchers("/login",
+                                         "/swagger-ui/**",
+                                         "/v3/api-docs/**"
                         )
                             .permitAll()
                         .anyRequest()
