@@ -12,6 +12,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserInboundDTO {
+
+    private Long id; // null for creation
     @NotBlank
     private String firstName;
     @NotBlank
@@ -23,4 +25,12 @@ public class UserInboundDTO {
     private boolean active;
     @NotNull
     private Role roleName;
+
+    public UserInboundDTO(String firstName, String lastName, String email, Boolean active, Role roleName){
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.active = active;
+        this.roleName = roleName;
+    }
 }

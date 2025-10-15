@@ -3,10 +3,12 @@ package cz.malickov.backend.service;
 import cz.malickov.backend.dto.UserInboundDTO;
 import cz.malickov.backend.dto.UserOutboundDTO;
 import cz.malickov.backend.entity.User;
+
 import cz.malickov.backend.error.ApiException;
 import cz.malickov.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -24,12 +26,16 @@ public class UserService{
     private final BCryptPasswordEncoder bCryptPasswordEncoder; // will be used to reset password
 
 
-    public UserService(UserRepository userRepository, @Value("${security.bcrypt.strength}") int bCryptStrength ) {
+    public UserService(UserRepository userRepository,
+                       @Value("${security.bcrypt.strength}") int bCryptStrength
+                       ) {
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = new BCryptPasswordEncoder(bCryptStrength);
     }
 
+    @PreAuthorize("hasRole('DIRECTOR') or (hasRole('MANAGER') and #dto.roleName.name() == 'PARENT')")
     public User registerUser(UserInboundDTO userInboundDTO) {
+
         User user = User.builder()
                 .lastName(userInboundDTO.getLastName())
                 .firstName(userInboundDTO.getFirstName())

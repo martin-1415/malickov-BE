@@ -12,6 +12,7 @@ CREATE TABLE user (
                       password VARCHAR(255),
                       active BOOLEAN DEFAULT TRUE,
                       role_name VARCHAR(55),
+                      credit DECIMAL(11,2) DEFAULT 0,
                       UNIQUE(email)
 );
 

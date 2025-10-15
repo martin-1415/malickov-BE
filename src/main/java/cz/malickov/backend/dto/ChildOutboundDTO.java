@@ -5,7 +5,6 @@ import cz.malickov.backend.entity.Identificator;
 import cz.malickov.backend.entity.User;
 import cz.malickov.backend.enums.Department;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,10 +19,11 @@ import java.util.Date;
 @Builder
 public class ChildOutboundDTO {
 
-    @NotBlank(message = "First name is required")
+
+    private Long id;
+
     private String firstName;
 
-    @NotBlank(message = "Last name is required")
     private String lastName;
 
     @JsonProperty("department")

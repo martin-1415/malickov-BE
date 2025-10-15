@@ -11,10 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import static org.mockito.ArgumentMatchers.any;
-import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -34,9 +31,6 @@ class UserServiceTest {
 
         Role role = Role.PARENT;
         UserInboundDTO mockUser = new UserInboundDTO("John","Doe","ffd@gggd.cz",true, role);
-
-        when(userRepository.findByEmail(mockUser.getEmail())).thenReturn(Optional.empty());
-        when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         // When
         User result = userService.registerUser(mockUser);

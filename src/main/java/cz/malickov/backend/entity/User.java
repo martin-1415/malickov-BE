@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -57,6 +58,10 @@ public class User {
     @Column(name = "role_name", nullable = false)
     @Enumerated(EnumType.STRING)
     private Role roleName;
+
+    @JsonProperty("credit")
+    @Column(name = "credit")
+    private BigDecimal credit;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Child> children = new ArrayList<>();
