@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserOutboundDTO {
 
+    private Long userId;
 
     private String lastName;
 
@@ -24,8 +25,9 @@ public class UserOutboundDTO {
     private String roleName ;
 
 
-    public static UserOutboundDTO UserOutboundDTOfromEntity(User user) {
+    public static UserOutboundDTO userOutboundDTOfromEntity(User user) {
         return new UserOutboundDTO(
+                user.getUserId(),
                 user.getLastName(),
                 user.getFirstName(),
                 user.getEmail(),

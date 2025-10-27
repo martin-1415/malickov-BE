@@ -1,8 +1,7 @@
 package cz.malickov.backend.service;
 
 import cz.malickov.backend.dto.UserLoginDTO;
-import cz.malickov.backend.error.ApiException;
-import org.springframework.http.HttpStatus;
+import cz.malickov.backend.error.LoginException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -30,12 +29,12 @@ public class LoginService {
 
         try {
             Authentication authentication =
-                    authManager.authenticate(new UsernamePasswordAuthenticationToken(userLogin.getEmail(), userLogin.getPassword()));
+                    authManager.authenticate(new UsernamePasswordAuthenticationToken(userLogin.email(), userLogin.password()));
             if (authentication.isAuthenticated()) {
-                return jwtService.generateAuthToken(userLogin.getEmail());
+                return jwtService.generateAuthToken(userLogin.email());
             }
         }catch (AuthenticationException e){
-            throw new ApiException(HttpStatus.UNAUTHORIZED,"Invalid username or password");
+            throw new LoginException();
         }
         return null;
     }

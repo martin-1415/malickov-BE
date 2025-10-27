@@ -36,7 +36,6 @@ class AuthorizationTest {
         // POST to login endpoint
         ResponseEntity<String> response = restTemplate
                 .postForEntity("/login", request, String.class);
-
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     }
@@ -62,21 +61,4 @@ class AuthorizationTest {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
     }
-
-//    @Test
-//    void testGetProtectedEndpointWithToken() {
-//        HttpHeaders headers = new HttpHeaders();
-//
-//        HttpEntity<Void> request = new HttpEntity<>(headers);
-//
-//        ResponseEntity<String> response = restTemplate.exchange(
-//                "/allUsers",
-//                HttpMethod.GET,
-//                request,
-//                String.class
-//        );
-//
-//        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-//        assertThat(response.getBody()).isNotNull();
-//    }
 }

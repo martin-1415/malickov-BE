@@ -1,15 +1,15 @@
 package cz.malickov.backend.config;
 
-import cz.malickov.backend.error.ApiException;
+import cz.malickov.backend.error.AuthorizationFailedException;
 import cz.malickov.backend.service.JWTService;
 import cz.malickov.backend.service.UserDetailsLoginService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -50,7 +50,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 token = Arrays.stream(request.getCookies())
                         .filter(cookie -> "JWT".equals(cookie.getName()))
                         .findFirst()
-                        .map(cookie -> cookie.getValue())
+                        .map(Cookie::getValue)
                         .orElse(null);
             }
 
@@ -59,11 +59,11 @@ public class JwtFilter extends OncePerRequestFilter {
                     email = jwtService.extractEmail(token);
                 } catch (Exception e) {
                     log.warn("Failed to extract email from token: {}", e.getMessage());
-                    throw new ApiException(HttpStatus.FORBIDDEN, "Authorization failed.");
+                    throw new AuthorizationFailedException();
                 }
             } else {
                 log.warn("No JWT cookie found in request");
-                throw new ApiException(HttpStatus.FORBIDDEN, "Authorization failed.");
+                throw new AuthorizationFailedException();
             }
 
             // loads user details section

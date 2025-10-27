@@ -4,10 +4,11 @@ import cz.malickov.backend.dto.UserInboundDTO;
 import cz.malickov.backend.dto.UserOutboundDTO;
 import cz.malickov.backend.entity.User;
 
-import cz.malickov.backend.error.ApiException;
+import cz.malickov.backend.error.UserAlreadyExistsException;
+import cz.malickov.backend.error.UserNotFoundException;
 import cz.malickov.backend.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -15,11 +16,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-
+@Slf4j
 @Service
 public class UserService{
     private final UserRepository userRepository;
@@ -33,86 +32,52 @@ public class UserService{
         this.bCryptPasswordEncoder = new BCryptPasswordEncoder(bCryptStrength);
     }
 
-    @PreAuthorize("hasRole('DIRECTOR') or (hasRole('MANAGER') and #dto.roleName.name() == 'PARENT')")
+    @PreAuthorize("hasAuthority('ROLE_DIRECTOR') or (hasAuthority('ROLE_MANAGER') and #userInboundDTO.roleName.name() == T(cz.malickov.backend.enums.Role).PARENT.name())")
     public User registerUser(UserInboundDTO userInboundDTO) {
 
+        String email = userInboundDTO.email();
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+        if (optionalUser.isPresent()) {
+            throw new UserAlreadyExistsException("User with email '" + email + "' already exixsts");
+        }
+        
         User user = User.builder()
-                .lastName(userInboundDTO.getLastName())
-                .firstName(userInboundDTO.getFirstName())
-                .email(userInboundDTO.getEmail())
+                .lastName(userInboundDTO.lastName())
+                .firstName(userInboundDTO.firstName())
+                .email(email)
                 //.password(bCryptPasswordEncoder.encode(userInboundDTO.getPassword())) this is going to be set in ResetPassword method
-                .roleName(userInboundDTO.getRoleName())
+                .roleName(userInboundDTO.roleName())
                 .active(true)
                 .build();
         user.setCreatedAt(LocalDateTime.now());
         user.setActive(true);
 
-
-        if (validateUser(user)) {
-            Optional<User> optionalUser = userRepository.findByEmail(user.getEmail());
-            if (optionalUser.isPresent()) {
-                throw new ApiException(HttpStatus.CONFLICT,"User with such email already exixsts");
-            }
-            userRepository.save(user);
-        }else{
-            throw new ApiException(HttpStatus.BAD_REQUEST,"Provided data for new user are not valid.");
-        }
-
+        userRepository.save(user);
+        log.info("User {} registered successfully", user.getEmail());
 
         return user;
     }
 
-    private boolean validateUser(User user) {
-        if (user.getLastName().isBlank()) {
-            throw new ApiException(HttpStatus.BAD_REQUEST,"Last name is required");
-        }
-        if (user.getFirstName().isBlank()) {
-            throw new ApiException(HttpStatus.BAD_REQUEST,"First name is required");
-        }
 
-        if (!isEmailValid(user.getEmail())) {
-            throw new ApiException(HttpStatus.BAD_REQUEST,"Email has incorrect form.");
-        }
-        return true;
-    }
+    @PreAuthorize("hasAuthority('ROLE_DIRECTOR') or (hasAuthority('ROLE_MANAGER') and #updatedUser.roleName.name() == T(cz.malickov.backend.enums.Role).PARENT.name())")
+    public User updateUser(UserInboundDTO updatedUser) {
+        String email = updatedUser.email();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User with email '" + email+ "' not found."));
 
+        user.setLastName(updatedUser.lastName());
+        user.setFirstName(updatedUser.firstName());
+        user.setEmail(email);
 
-    private static boolean isEmailValid(String emailStr) {
-        final Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
-        Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(emailStr);
-        return matcher.matches();
-    }
-
-
-    public User updateUser(UserInboundDTO userUpdated) {
-        Optional<User> optionalUser = userRepository.findByEmail(userUpdated.getEmail());
-
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
-            user.setLastName(userUpdated.getLastName());
-            user.setFirstName(userUpdated.getFirstName());
-            user.setEmail(userUpdated.getEmail());
-
-            return userRepository.save(user);
-
-        } else {
-            throw new ApiException(HttpStatus.NOT_FOUND,"User not found, email: " + userUpdated.getEmail());
-        }
+        return userRepository.save(user);
     }
 
 
     public List<UserOutboundDTO> getAllUsers() {
         List<User> users = userRepository.findAll();
         return users.stream()
-                .map(u -> UserOutboundDTO.builder()
-                        .firstName(u.getFirstName())
-                        .lastName(u.getLastName())
-                        .email(u.getEmail())
-                        .active(u.isActive())
-                        .roleName(u.getRoleName().toString())
-                        .build()
-                )
-                .sorted(Comparator.comparing(UserOutboundDTO::getLastName)) // :: method refrence, stejny jako u -> u.getFirstName()
+                .map( UserOutboundDTO::userOutboundDTOfromEntity)
+                .sorted(Comparator.comparing(UserOutboundDTO::getLastName))
                 .collect(Collectors.toList());
     }
 }

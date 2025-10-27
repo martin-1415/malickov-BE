@@ -23,7 +23,7 @@ public class User {
     @JsonProperty("userId")
     @Column(name = "user_id",nullable = false,columnDefinition = "uniqueidentifier")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int userId;
+    private long userId;
 
     @JsonProperty("lastName")
     @Column(name = "last_name")

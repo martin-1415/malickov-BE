@@ -4,7 +4,7 @@
 --changeset Martin_Fischer:1 context:dev,prod
 
 CREATE TABLE user (
-                      user_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                      user_id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
                       first_name VARCHAR(100) NOT NULL,
                       last_name VARCHAR(100) NOT NULL,
                       email VARCHAR(100) NOT NULL,
@@ -33,7 +33,7 @@ CREATE TABLE identificator (
                                identificator VARCHAR(50) NOT NULL);
 
 CREATE TABLE child (
-                    child_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                    child_id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
                     first_name VARCHAR(100) NOT NULL,
                     last_name VARCHAR(100) NOT NULL,
                     department VARCHAR(55) NOT NULL,
@@ -41,7 +41,7 @@ CREATE TABLE child (
                     active BOOLEAN DEFAULT TRUE,
                     notes VARCHAR(255),
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    user_id INT NOT NULL,
+                    user_id BIGINT NOT NULL,
                     identificator_id INT,
                     mon TINYINT(1) DEFAULT 0,
                     tue TINYINT(1) DEFAULT 0,
@@ -54,7 +54,7 @@ CREATE TABLE child (
 
 CREATE TABLE attendance (
                        attendance_id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-                       child_id INT NOT NULL,
+                       child_id BIGINT NOT NULL,
                        date DATETIME(6) NOT NULL,
                        plan_arrival TIME NOT NULL,
                        plan_leaving TIME NOT NULL,

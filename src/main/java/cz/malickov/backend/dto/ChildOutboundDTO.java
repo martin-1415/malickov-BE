@@ -20,7 +20,7 @@ import java.util.Date;
 public class ChildOutboundDTO {
 
 
-    private Long id;
+    private Long childId;
 
     private String firstName;
 

@@ -4,7 +4,7 @@ package cz.malickov.backend.controller;
 import cz.malickov.backend.dto.UserOutboundDTO;
 import cz.malickov.backend.dto.UserInboundDTO;
 import cz.malickov.backend.entity.User;
-import cz.malickov.backend.error.ApiException;
+import cz.malickov.backend.error.UserNotFoundException;
 import cz.malickov.backend.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -12,11 +12,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
-
-
-
-
 
 
 @RestController
@@ -35,14 +30,11 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     public UserOutboundDTO createUser(@RequestBody @Valid UserInboundDTO userInboundDTO) {
         User savedUser = this.userService.registerUser(userInboundDTO);
-
-        return UserOutboundDTO.UserOutboundDTOfromEntity( savedUser);
-
+        return UserOutboundDTO.userOutboundDTOfromEntity( savedUser);
     }
 
-
     @PreAuthorize("hasAnyRole('DIRECTOR')")
-    @GetMapping("/users")
+    @GetMapping("/getAllUsers")
     @ResponseStatus(HttpStatus.OK)
     public List<UserOutboundDTO> getAllUser() {
         return userService.getAllUsers();
@@ -53,11 +45,11 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     public UserOutboundDTO updateUser(@PathVariable Long id, @RequestBody @Valid UserInboundDTO userUpdated) {
 
-        if (userUpdated.getId() != null && !id.equals(userUpdated.getId())) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, "Path id and payload id mismatch.");
+        if (userUpdated.id() != null && !id.equals(userUpdated.id())) {
+            throw new UserNotFoundException("Path id ("+ id + ") and payload id ("+userUpdated.id()+") mismatch.");
         }
 
         User updatedUser = userService.updateUser(userUpdated);
-        return UserOutboundDTO.UserOutboundDTOfromEntity(updatedUser);
+        return UserOutboundDTO.userOutboundDTOfromEntity(updatedUser);
     }
 }
