@@ -38,14 +38,14 @@ public class UserService{
         String email = userInboundDTO.email();
         Optional<User> optionalUser = userRepository.findByEmail(email);
         if (optionalUser.isPresent()) {
-            throw new UserAlreadyExistsException("User with email '" + email + "' already exixsts");
+            throw new UserAlreadyExistsException("User with email '" + email + "' already exists");
         }
         
         User user = User.builder()
                 .lastName(userInboundDTO.lastName())
                 .firstName(userInboundDTO.firstName())
                 .email(email)
-                //.password(bCryptPasswordEncoder.encode(userInboundDTO.getPassword())) this is going to be set in ResetPassword method
+                //.password(bCryptPasswordEncoder.encode(userInboundDTO.getPassword())) this is going to be set in the ResetPassword method
                 .roleName(userInboundDTO.roleName())
                 .active(true)
                 .build();
@@ -53,7 +53,7 @@ public class UserService{
         user.setActive(true);
 
         userRepository.save(user);
-        log.info("User {} registered successfully", user.getEmail());
+        log.info("User {} registered successfully", email);
 
         return user;
     }
@@ -69,7 +69,10 @@ public class UserService{
         user.setFirstName(updatedUser.firstName());
         user.setEmail(email);
 
-        return userRepository.save(user);
+        userRepository.save(user);
+        log.info("User {} updated successfully", email);
+
+        return user;
     }
 
 

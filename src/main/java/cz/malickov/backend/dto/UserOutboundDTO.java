@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Builder
 @Data
 @NoArgsConstructor
@@ -13,16 +15,13 @@ import lombok.NoArgsConstructor;
 public class UserOutboundDTO {
 
     private Long userId;
-
     private String lastName;
-
     private String firstName;
-
     private String email;
-
     private boolean active;
-
     private String roleName ;
+    private BigDecimal credit;
+
 
 
     public static UserOutboundDTO userOutboundDTOfromEntity(User user) {
@@ -32,7 +31,8 @@ public class UserOutboundDTO {
                 user.getFirstName(),
                 user.getEmail(),
                 user.isActive(),
-                user.getRoleName().name()
+                user.getRoleName().name(),
+                user.getCredit()
                 );
     }
 }

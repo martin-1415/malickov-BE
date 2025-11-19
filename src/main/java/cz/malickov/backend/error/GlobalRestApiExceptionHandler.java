@@ -15,7 +15,7 @@ import java.util.Map;
 public class GlobalRestApiExceptionHandler {
 
 
-    @ExceptionHandler(LoginException.class)
+    @ExceptionHandler(LoginFailedException.class)
     public ResponseEntity<Map<String, String>> loginFailedException() {
         log.error("Wrong email or password.");
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
