@@ -79,8 +79,15 @@ public class UserService{
     public List<UserOutboundDTO> getAllUsers() {
         List<User> users = userRepository.findAll();
         return users.stream()
-                .map( UserOutboundDTO::userOutboundDTOfromEntity)
-                .sorted(Comparator.comparing(UserOutboundDTO::getLastName))
+                .sorted(Comparator.comparing(User::getLastName))
+                .map(user -> new UserOutboundDTO(
+                        user.getUserId(),
+                        user.getFirstName(),
+                        user.getLastName(),
+                        user.getEmail(),
+                        user.isActive(),
+                        user.getRoleName(),
+                        user.getCredit() ))
                 .collect(Collectors.toList());
     }
 }

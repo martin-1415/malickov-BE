@@ -1,6 +1,7 @@
 package cz.malickov.backend;
 
 
+import cz.malickov.backend.dto.UserOutboundDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -34,9 +35,12 @@ class AuthorizationTest {
         HttpEntity<String> request = new HttpEntity<>(json, headers);
 
         // POST to login endpoint
-        ResponseEntity<String> response = restTemplate
-                .postForEntity("/login", request, String.class);
+        ResponseEntity<UserOutboundDTO> response = restTemplate
+                .postForEntity("/login", request, UserOutboundDTO.class);
+
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat((response.getBody().email())).isEqualTo("1@1.cz");
+        assertThat((response.getBody().firstName())).isEqualTo("Martin");
 
     }
 

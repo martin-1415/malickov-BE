@@ -10,7 +10,6 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 
@@ -30,7 +29,14 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     public UserOutboundDTO createUser(@RequestBody @Valid UserInboundDTO userInboundDTO) {
         User savedUser = this.userService.registerUser(userInboundDTO);
-        return UserOutboundDTO.userOutboundDTOfromEntity( savedUser);
+        return new UserOutboundDTO(savedUser.getUserId(),
+                savedUser.getFirstName(),
+                savedUser.getLastName(),
+                savedUser.getEmail(),
+                savedUser.isActive(),
+                savedUser.getRoleName(),
+                savedUser.getCredit());
+
     }
 
     @PreAuthorize("hasAnyRole('DIRECTOR')")
@@ -50,6 +56,12 @@ public class UserController {
         }
 
         User updatedUser = userService.updateUser(userUpdated);
-        return UserOutboundDTO.userOutboundDTOfromEntity(updatedUser);
+        return new UserOutboundDTO(updatedUser.getUserId(),
+                updatedUser.getFirstName(),
+                updatedUser.getLastName(),
+                updatedUser.getEmail(),
+                updatedUser.isActive(),
+                updatedUser.getRoleName(),
+                updatedUser.getCredit());
     }
 }
