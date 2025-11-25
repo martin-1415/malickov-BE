@@ -32,7 +32,7 @@ public class UserService{
         this.bCryptPasswordEncoder = new BCryptPasswordEncoder(bCryptStrength);
     }
 
-    @PreAuthorize("hasAuthority('ROLE_DIRECTOR') or (hasAuthority('ROLE_MANAGER') and #userInboundDTO.roleName.name() == T(cz.malickov.backend.enums.Role).PARENT.name())")
+    @PreAuthorize("hasAuthority('ROLE_DIRECTOR') or (hasAuthority('ROLE_MANAGER') and #userInboundDTO.role.name() == T(cz.malickov.backend.enums.Role).PARENT.name())")
     public User registerUser(UserInboundDTO userInboundDTO) {
 
         String email = userInboundDTO.email();
@@ -46,7 +46,7 @@ public class UserService{
                 .firstName(userInboundDTO.firstName())
                 .email(email)
                 //.password(bCryptPasswordEncoder.encode(userInboundDTO.getPassword())) this is going to be set in the ResetPassword method
-                .roleName(userInboundDTO.roleName())
+                .roleName(userInboundDTO.role())
                 .active(true)
                 .build();
         user.setCreatedAt(LocalDateTime.now());
@@ -59,7 +59,7 @@ public class UserService{
     }
 
 
-    @PreAuthorize("hasAuthority('ROLE_DIRECTOR') or (hasAuthority('ROLE_MANAGER') and #updatedUser.roleName.name() == T(cz.malickov.backend.enums.Role).PARENT.name())")
+    @PreAuthorize("hasAuthority('ROLE_DIRECTOR') or (hasAuthority('ROLE_MANAGER') and #updatedUser.role.name() == T(cz.malickov.backend.enums.Role).PARENT.name())")
     public User updateUser(UserInboundDTO updatedUser) {
         String email = updatedUser.email();
         User user = userRepository.findByEmail(email)

@@ -16,4 +16,4 @@ public record UserInboundDTO (
     @NotNull
     boolean active,
     @NotNull
-    Role roleName){}
+    Role role){}

@@ -35,20 +35,12 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
         return http
-                .csrf( customizer -> customizer.disable())
+                .csrf( customizer -> customizer.disable()) // I am not using csrf tokens
                 .cors(Customizer.withDefaults())  // will look for CorsConfigurationSource by default
-                .authorizeHttpRequests(requests -> requests
-                        .requestMatchers("/login",
-                                         "/swagger-ui/**",
-                                         "/v3/api-docs/**"
-                        )
-                            .permitAll()
-                        .anyRequest()
-                            .authenticated())
-                .httpBasic(Customizer.withDefaults())  // basic user password, sends 401 if failed
                 .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Spring will NOT create an HTTP session; No security context stored in server memory; Every request must provide authentication (your JWT)
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }

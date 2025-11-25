@@ -40,45 +40,55 @@ public class JwtFilter extends OncePerRequestFilter {
 
         String uri = request.getRequestURI();
 
+        // Skip JWT filter for Swagger and login endpoints
+        if (uri.startsWith("/swagger-ui")
+                || uri.startsWith("/v3/api-docs")
+                || uri.startsWith("/swagger-resources")
+                || uri.startsWith("/webjars")
+                || uri.equals("/login")) {
+
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         // Any token is not expected at login endpoint, skip next block and go to filter
-        if(!uri.contains("/login") ) {
-            String token = null;
-            String email;
+        String token = null;
+        String email;
 
 
-            if (request.getCookies() != null) {
-                token = Arrays.stream(request.getCookies())
-                        .filter(cookie -> "JWT".equals(cookie.getName()))
-                        .findFirst()
-                        .map(Cookie::getValue)
-                        .orElse(null);
-            }
+        if (request.getCookies() != null) {
+            token = Arrays.stream(request.getCookies())
+                    .filter(cookie -> "JWT".equals(cookie.getName()))
+                    .findFirst()
+                    .map(Cookie::getValue)
+                    .orElse(null);
+        }
 
-            if (token != null) {
-                try {
-                    email = jwtService.extractEmail(token);
-                } catch (Exception e) {
-                    log.warn("Failed to extract email from token: {}", e.getMessage());
-                    throw new AuthorizationFailedException();
-                }
-            } else {
-                log.warn("No JWT cookie found in request");
+        if (token != null) {
+            try {
+                email = jwtService.extractEmail(token);
+            } catch (Exception e) {
+                log.warn("Failed to extract email from token: {}", e.getMessage());
                 throw new AuthorizationFailedException();
             }
+        } else {
+            log.warn("No JWT cookie found in request");
+            throw new AuthorizationFailedException();
+        }
 
-            // loads user details section
-            if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) { // == null  if I am authenticated (not null), I do not need to continue with authentification
-                UserDetails userDetails = userDetailsLoginService.loadUserByUsername(email);
-                if (jwtService.validateToken(token, userDetails)) {
-                    UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-                            new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        // loads user details section
+        if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) { // == null  if I am authenticated (not null), I do not need to continue with authentification
+            UserDetails userDetails = userDetailsLoginService.loadUserByUsername(email);
+            if (jwtService.validateToken(token, userDetails)) {
+                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
+                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
-                    usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                    // put user into security context for this session
-                    SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-                }
+                usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                // put user into security context for this session
+                SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
             }
         }
+
         filterChain.doFilter(request, response);
     }
 }

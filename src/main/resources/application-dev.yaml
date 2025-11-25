@@ -14,3 +14,9 @@ server:
     key-store: classpath:keystore-dev.p12
     key-store-password: veryStrongAndHiddenPassword
     key-alias: local-ssl
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true

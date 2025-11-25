@@ -5,3 +5,9 @@ spring:
 
 security:
   JwtValidityMillis: 900000
+
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
