@@ -90,4 +90,21 @@ public class UserService{
                         user.getCredit() ))
                 .collect(Collectors.toList());
     }
+
+    public UserOutboundDTO getOutboundUserDtoBasedOnEmail(String email){
+
+        Optional<User> optinalUser = this.userRepository.findByEmail(email);
+        if (optinalUser.isPresent()) {
+            User user = optinalUser.get();
+
+            return new UserOutboundDTO(user.getUserId(),
+                    user.getFirstName(),
+                    user.getLastName(),
+                    user.getEmail(),
+                    user.isActive(),
+                    user.getRoleName(),
+                    user.getCredit());
+        }
+        return null;
+    }
 }

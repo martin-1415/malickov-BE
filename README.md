@@ -16,15 +16,18 @@ docker run --name malickov-mysql -e MYSQL_ALLOW_EMPTY_PASSWORD=yes -p 3306:3306 
 ```bash
 mvn spring-boot:run -Dspring-boot.run.arguments="--spring.profiles.active=dev"
 ```
+## Open API
 
-[//]: # (To see open API)
+To see open API
 
-[//]: # ([api schema]&#40;http://localhost:8443/swagger-ui.html&#41;)
+[api schema](https://localhost:8443/swagger-ui/index.html)
 
-[//]: # ()
-[//]: # (or for json)
 
-[//]: # ([json scheme]&#40;http://localhost:8080/v3/api-docs&#41;)
+or for json
+
+[json scheme](https://localhost:8443/v3/api-docs)
+
+
 ## SQL Container
 To enter running SQL server
 

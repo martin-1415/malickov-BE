@@ -36,7 +36,7 @@ class AuthorizationTest {
 
         // POST to login endpoint
         ResponseEntity<UserOutboundDTO> response = restTemplate
-                .postForEntity("/login", request, UserOutboundDTO.class);
+                .postForEntity("/api/auth/login", request, UserOutboundDTO.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat((response.getBody().email())).isEqualTo("1@1.cz");
@@ -61,7 +61,7 @@ class AuthorizationTest {
 
         // POST to login endpoint
         ResponseEntity<String> response = restTemplate
-                .postForEntity("/login", request, String.class);
+                .postForEntity("/api/auth/login", request, String.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
     }

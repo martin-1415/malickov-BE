@@ -40,7 +40,7 @@ public class SecurityConfig {
                 .csrf( customizer -> customizer.disable()) // I am not using csrf tokens
                 .cors(Customizer.withDefaults())  // will look for CorsConfigurationSource by default
                 .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Spring will NOT create an HTTP session; No security context stored in server memory; Every request must provide authentication (your JWT)
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Spring will NOT create an HTTP session; No security context stored in server memory; Every request must provide authentication (JWT)
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }

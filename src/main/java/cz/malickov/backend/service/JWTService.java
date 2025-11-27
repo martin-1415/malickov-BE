@@ -7,6 +7,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -73,12 +74,12 @@ public class JWTService {
         return this.extractClaim(token, Claims::getSubject); // subject is email
     }
 
-    private <T> T extractClaim(String token, Function<Claims, T> claimResolver) {
+    private <T> T extractClaim(String token, Function<Claims, T> claimResolver) throws SignatureException {
         final Claims claims = extractAllClaims(token);
         return claimResolver.apply(claims);
     }
 
-    private Claims extractAllClaims(String token) {
+    private Claims extractAllClaims(String token) throws SignatureException{
         return Jwts.parser()
                 .verifyWith(getKey())
                 .build()
@@ -93,11 +94,11 @@ public class JWTService {
 
     }
 
-    private boolean isTokenExpired(String token) {
+    public boolean isTokenExpired(String token) throws SignatureException {
         return extractExpiration(token).before(new Date());
     }
 
-    private Date extractExpiration(String token) {
+    private Date extractExpiration(String token) throws SignatureException {
         return extractClaim(token, Claims::getExpiration);
     }
 
