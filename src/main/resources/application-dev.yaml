@@ -1,8 +1,13 @@
 spring:
+  application:
+    name: backend
   liquibase:
     contexts: dev
     change-log: classpath:db/changelog/app-changelog.xml
-
+  datasource:
+    url: jdbc:postgresql://localhost:5432/malickov
+    username: BEuser
+    password: mypassword
 security:
   JwtValidityMillis: 28800000
 
