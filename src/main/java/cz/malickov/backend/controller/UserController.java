@@ -29,7 +29,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     public UserOutboundDTO createUser(@RequestBody @Valid UserInboundDTO userInboundDTO) {
         User savedUser = this.userService.registerUser(userInboundDTO);
-        return new UserOutboundDTO(savedUser.getUserId(),
+        return new UserOutboundDTO(savedUser.getUserUuid(),
                 savedUser.getFirstName(),
                 savedUser.getLastName(),
                 savedUser.getEmail(),
@@ -56,7 +56,7 @@ public class UserController {
         }
 
         User updatedUser = userService.updateUser(userUpdated);
-        return new UserOutboundDTO(updatedUser.getUserId(),
+        return new UserOutboundDTO(updatedUser.getUserUuid(),
                 updatedUser.getFirstName(),
                 updatedUser.getLastName(),
                 updatedUser.getEmail(),

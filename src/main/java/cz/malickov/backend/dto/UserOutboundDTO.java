@@ -3,9 +3,10 @@ package cz.malickov.backend.dto;
 import cz.malickov.backend.enums.Role;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 public record UserOutboundDTO(
-        Long userId,
+        UUID userUuid,
         String firstName,
         String lastName,
         String email,

@@ -8,9 +8,9 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "`user`")
@@ -20,10 +20,10 @@ import java.util.List;
 public class User {
 
     @Id
-    @JsonProperty("userId")
-    @Column(name = "user_id",nullable = false,columnDefinition = "uniqueidentifier")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long userId;
+    @JsonProperty("userUuid")
+    @Column(name = "user_uuid",nullable = false,columnDefinition = "uniqueidentifier")
+    @GeneratedValue
+    private UUID userUuid;
 
     @JsonProperty("lastName")
     @Column(name = "last_name")
@@ -39,10 +39,6 @@ public class User {
     @NotBlank(message = "Email is required")
     @Column(name = "email",nullable = false,unique = true)
     private String email;
-
-    @JsonProperty("createdAt")
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
 
     @JsonProperty("password")
     @Column(name = "password")

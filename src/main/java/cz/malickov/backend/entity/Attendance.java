@@ -8,6 +8,7 @@ import lombok.*;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Date;
+import java.util.UUID;
 
 @Entity
 @Table(name = "attendance")
@@ -17,14 +18,14 @@ import java.util.Date;
 public class Attendance {
 
     @Id
-    @JsonProperty("attendanceId")
-    @Column(name = "attendance_id",nullable = false,columnDefinition = "uniqueidentifier")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long attendanceId;
+    @JsonProperty("attendanceUuid")
+    @Column(name = "attendance_uuid",nullable = false,columnDefinition = "uniqueidentifier")
+    @GeneratedValue
+    private UUID attendanceUuid;
 
-    @JsonProperty("childId")
+    @JsonProperty("childUuid")
     @ManyToOne
-    @JoinColumn(name = "child_id", nullable = false)
+    @JoinColumn(name = "child_uuid", nullable = false)
     private Child child;
 
     @Column(name = "date", nullable = false)
@@ -54,8 +55,6 @@ public class Attendance {
     @Column(name = "late_excuse", nullable = true)
     private String lateExcuse;
 
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
 
     @Column(name = "modified_at")
     private LocalDateTime modifiedAt;

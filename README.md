@@ -11,7 +11,7 @@ To start a local development server, run:
 ```
 
 ```bash
-docker run -e POSTGRES_PASSWORD=password --name malickovdb -p 5432:5432 -d docker4asinkan/malickovdb:v01
+sudo docker run --name malickov-db -e POSTGRES_PASSWORD=mypassword -e POSTGRES_USER=BEuser -p 5432:5432 -d docker4asinkan/malickovdb:v01
 ```
 ```bash
 mvn spring-boot:run -Dspring-boot.run.arguments="--spring.profiles.active=dev"

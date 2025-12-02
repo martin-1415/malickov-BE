@@ -42,6 +42,5 @@ class UserServiceTest {
         assertEquals("ffd@gggd.cz", result.getEmail());
         assertEquals(role, result.getRoleName());
         assertTrue(result.isActive());
-        assertNotNull(result.getCreatedAt());
     }
 }

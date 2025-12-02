@@ -12,7 +12,6 @@ import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -86,19 +85,12 @@ public class LoginController {
     public ResponseEntity<Map<String,Object>> isAuthenticated(
             @CookieValue(value="JWT", required=false) String token
     ) {
-        boolean tokenExpired;
         try{
-            tokenExpired = jwtService.isTokenExpired(token);
-        } catch (SignatureException e) {
+            jwtService.isTokenExpired(token);
+        } catch (SignatureException | IllegalArgumentException e) { // this contains also null token and expired token which throws IllegalArgumentException
             return ResponseEntity.ok().body(Map.of(
                     "authenticated", false));
         }
-
-        if (token == null || tokenExpired) {
-            return ResponseEntity.ok().body(Map.of(
-                    "authenticated", false));
-        }
-
         return ResponseEntity.ok().body(Map.of(
                 "authenticated", true));
     }
@@ -108,8 +100,8 @@ public class LoginController {
 Function  returns user info based on JWT
  */
     // @TODO send back new refresh and auth tokens in cookies
-    @GetMapping("/returnOutboundUserBasedOnJWT")
-    public ResponseEntity<Map<String,Object>> returnUserBasedOnJWT(
+    @GetMapping("/loggedUserInfo")
+    public ResponseEntity<UserOutboundDTO> returnUserBasedOnJWT(
             @CookieValue(value="JWT", required=false) String token
     ) {
         if (token == null || jwtService.isTokenExpired(token)) {
@@ -118,8 +110,7 @@ Function  returns user info based on JWT
         }
 
         String email = jwtService.extractEmail(token);
-        return ResponseEntity.ok().body(Map.of(
-                "user",userService.getOutboundUserDtoBasedOnEmail(email)));
+        return ResponseEntity.ok().body(userService.getOutboundUserDtoBasedOnEmail(email));
     }
 
 }

@@ -9,12 +9,13 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.UUID;
 
 
 @Repository
-public interface ChildRepository  extends JpaRepository<Child, Integer> { // <T, ID>
+public interface ChildRepository  extends JpaRepository<Child, UUID> { // <T, ID>
 
-    @Query("SELECT c FROM Child c WHERE c.user.userId = :parentId")
+    @Query("SELECT c FROM Child c WHERE c.user.userUuid = :parentId")
     List<Child> findChildrenByParentId(@Param("parentId") Long parentId);
 
     Long user(User user);

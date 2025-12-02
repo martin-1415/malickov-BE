@@ -6,10 +6,11 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
-import java.time.LocalDateTime;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "child")
@@ -20,10 +21,10 @@ import java.util.List;
 public class Child {
 
     @Id
-    @JsonProperty("childId")
-    @Column(name = "child_id",nullable = false,columnDefinition = "uniqueidentifier")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int childId;
+    @JsonProperty("childUuid")
+    @Column(name = "child_uuid",nullable = false,columnDefinition = "uniqueidentifier")
+    @GeneratedValue
+    private UUID childId;
 
     @Column(name = "first_name")
     @NotBlank(message = "First name is required")
@@ -47,11 +48,8 @@ public class Child {
     @Column(name = "notes")
     private String notes;
 
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
-
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_uuid")
     private User user;
 
     @OneToOne

@@ -13,8 +13,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -49,7 +47,6 @@ public class UserService{
                 .roleName(userInboundDTO.role())
                 .active(true)
                 .build();
-        user.setCreatedAt(LocalDateTime.now());
         user.setActive(true);
 
         userRepository.save(user);
@@ -81,7 +78,7 @@ public class UserService{
         return users.stream()
                 .sorted(Comparator.comparing(User::getLastName))
                 .map(user -> new UserOutboundDTO(
-                        user.getUserId(),
+                        user.getUserUuid(),
                         user.getFirstName(),
                         user.getLastName(),
                         user.getEmail(),
@@ -97,7 +94,7 @@ public class UserService{
         if (optinalUser.isPresent()) {
             User user = optinalUser.get();
 
-            return new UserOutboundDTO(user.getUserId(),
+            return new UserOutboundDTO(user.getUserUuid(),
                     user.getFirstName(),
                     user.getLastName(),
                     user.getEmail(),
