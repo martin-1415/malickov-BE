@@ -12,7 +12,7 @@ import java.util.Map;
 
 @Slf4j
 @RestControllerAdvice
-public class GlobalRestApiExceptionHandler {
+public class GlobalAuthExceptionHandler {
 
 
     @ExceptionHandler(LoginFailedException.class)
@@ -26,12 +26,12 @@ public class GlobalRestApiExceptionHandler {
     }
 
 
-    @ExceptionHandler(AuthorizationFailedException.class)
+    @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<Map<String, String>> authorizationFailedException() {
-        log.error("Authorization failed.");
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
+        log.error("Authentication failed.");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
                 Map.of(
-                        "message", "Authorization failed."
+                        "message", "Authentication failed."
                 )
         );
     }

@@ -16,6 +16,8 @@ sudo docker run --name malickov-db -e POSTGRES_PASSWORD=mypassword -e POSTGRES_U
 ```bash
 mvn spring-boot:run -Dspring-boot.run.arguments="--spring.profiles.active=dev"
 ```
+The default password for users predefined in dev databases is "abc"
+
 ## Open API
 
 To see open API

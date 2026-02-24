@@ -1,6 +1,6 @@
 package cz.malickov.backend.config;
 
-import cz.malickov.backend.error.AuthorizationFailedException;
+import cz.malickov.backend.error.AuthenticationException;
 import cz.malickov.backend.service.JWTService;
 import cz.malickov.backend.service.UserDetailsLoginService;
 import jakarta.servlet.FilterChain;
@@ -46,13 +46,14 @@ public class JwtFilter extends OncePerRequestFilter {
                 || uri.startsWith("/swagger-resources")
                 || uri.startsWith("/webjars")
                 || uri.equals("/api/auth/login")
-                || uri.equals("/api/auth/isAuthenticated")) {
+                || uri.equals("/api/auth/authentication")
+                || uri.equals("/api/auth/logout")) {
 
             filterChain.doFilter(request, response);
             return;
         }
 
-        // Any token is not expected at login endpoint, skip next block and go to filter
+        // Token is not expected at login endpoint, skip next block and go to filter
         String token = null;
         String email;
 
@@ -70,11 +71,11 @@ public class JwtFilter extends OncePerRequestFilter {
                 email = jwtService.extractEmail(token);
             } catch (Exception e) {
                 log.warn("Failed to extract email from token: {}", e.getMessage());
-                throw new AuthorizationFailedException();
+                throw new AuthenticationException("Failed to extract email from token",e);
             }
         } else {
             log.warn("No JWT cookie found in request");
-            throw new AuthorizationFailedException();
+            throw new AuthenticationException("No JWT cookie found in request");
         }
 
         // loads user details section
