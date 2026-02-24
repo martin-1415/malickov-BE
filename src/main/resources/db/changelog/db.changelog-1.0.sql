@@ -14,7 +14,7 @@ CREATE TABLE "user" (
                         UNIQUE(email)
 );
 
---changeset Martin_Fischer:2 context:dev
+--changeset Martin_Fischer:2 context:dev, password is abc
 INSERT INTO "user" (first_name, last_name, email, active, role_name, password)
 VALUES
     ('Martin', 'Fischer', '1@1.cz', TRUE, 'DIRECTOR', '$2a$12$KeVi5xNQGqtFqALo355CMudCpNEiwDbv5O/75ML7wnqu4cdcpHzf.'),

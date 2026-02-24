@@ -12,6 +12,7 @@ import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -56,7 +57,7 @@ public class LoginController {
                 ResponseCookie cookie = ResponseCookie.from("JWT", jwt)
                         .httpOnly(true) // no javascript access
                         .secure(true) // https
-                        .path("/")
+                        .path("/")    // prefix of the path where cookies will be sent
                         .maxAge(maxAgeMillis / 1000) //  seconds, same period as JWT
                         .sameSite("None") // can be strict, but then links from e.g. google should not work
                         .build();
@@ -78,9 +79,11 @@ public class LoginController {
     }
 
     /*
-    Function validates JWT token
+     * Function validating JWT token
+     *
      */
     // @TODO send back new refresh and auth tokens in cookies
+    @Deprecated
     @GetMapping("/isAuthenticated")
     public ResponseEntity<Map<String,Object>> isAuthenticated(
             @CookieValue(value="JWT", required=false) String token
@@ -95,22 +98,41 @@ public class LoginController {
                 "authenticated", true));
     }
 
-
     /*
-Function  returns user info based on JWT
- */
+    * Function used to get user info based on JWT, it also validates
+    */
     // @TODO send back new refresh and auth tokens in cookies
-    @GetMapping("/loggedUserInfo")
-    public ResponseEntity<UserOutboundDTO> returnUserBasedOnJWT(
+    @GetMapping("/authentication")
+    public ResponseEntity<?> returnUserBasedOnJWT(
             @CookieValue(value="JWT", required=false) String token
     ) {
         if (token == null || jwtService.isTokenExpired(token)) {
             log.info("Token expired or not valid");
-            throw new LoginFailedException();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
+                    "authenticated", false,
+                    "reason", "Token expired or not valid"
+            ));
         }
 
         String email = jwtService.extractEmail(token);
         return ResponseEntity.ok().body(userService.getOutboundUserDtoBasedOnEmail(email));
+    }
+
+    /*
+     * Logoutfunction sends back empty cookies
+     */
+    @GetMapping("/logout")
+    public ResponseEntity<Map<String,String>> clearCookies() {
+        ResponseCookie cookie = ResponseCookie.from("JWT", "")
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(0)  // deletes cookie
+                .build();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .body(Map.of("message", "Logged out successfully"));
     }
 
 }
