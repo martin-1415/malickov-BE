@@ -6,6 +6,7 @@ import cz.malickov.backend.entity.User;
 
 import cz.malickov.backend.error.UserAlreadyExistsException;
 import cz.malickov.backend.error.UserNotFoundException;
+import cz.malickov.backend.mapper.UserMapper;
 import cz.malickov.backend.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,13 +22,15 @@ import java.util.stream.Collectors;
 public class UserService{
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder; // will be used to reset password
+    private final UserMapper userMapper;
 
 
     public UserService(UserRepository userRepository,
-                       @Value("${security.bcrypt.strength}") int bCryptStrength
-                       ) {
+                       @Value("${security.bcrypt.strength}") int bCryptStrength,
+                       UserMapper userMapper) {
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = new BCryptPasswordEncoder(bCryptStrength);
+        this.userMapper = userMapper;
     }
 
     @PreAuthorize("hasAuthority('ROLE_DIRECTOR') or (hasAuthority('ROLE_MANAGER') and #userInboundDTO.role.name() == T(cz.malickov.backend.enums.Role).PARENT.name())")
@@ -39,20 +42,14 @@ public class UserService{
             throw new UserAlreadyExistsException("User with email '" + email + "' already exists");
         }
         
-        User user = User.builder()
-                .lastName(userInboundDTO.lastName())
-                .firstName(userInboundDTO.firstName())
-                .email(email)
-                //.password(bCryptPasswordEncoder.encode(userInboundDTO.getPassword())) this is going to be set in the ResetPassword method
-                .roleName(userInboundDTO.role())
-                .active(true)
-                .build();
+        User user = userMapper.toEntity(userInboundDTO);
         user.setActive(true);
 
         userRepository.save(user);
         log.info("User {} registered successfully", email);
 
-        return user;
+        return userRepository.findByEmail(email)
+                .orElseThrow();
     }
 
 
@@ -94,13 +91,14 @@ public class UserService{
         if (optinalUser.isPresent()) {
             User user = optinalUser.get();
 
-            return new UserOutboundDTO(user.getUserUuid(),
-                    user.getFirstName(),
-                    user.getLastName(),
-                    user.getEmail(),
-                    user.isActive(),
-                    user.getRoleName(),
-                    user.getCredit());
+            return userMapper.toOutboundDTO(user);
+//            return new UserOutboundDTO(user.getUserUuid(),
+//                    user.getFirstName(),
+//                    user.getLastName(),
+//                    user.getEmail(),
+//                    user.isActive(),
+//                    user.getRoleName(),
+//                    user.getCredit());
         }
         return null;
     }
