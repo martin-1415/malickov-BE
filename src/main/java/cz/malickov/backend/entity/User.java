@@ -57,7 +57,7 @@ public class User {
 
     @JsonProperty("credit")
     @Column(name = "credit")
-    private BigDecimal credit;
+    private BigDecimal credit = BigDecimal.ONE; // default value, JPA set null which overwrites DEFAULT 0 in liquibase
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Child> children = new ArrayList<>();

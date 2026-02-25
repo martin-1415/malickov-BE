@@ -29,17 +29,13 @@ public class JWTService {
 
     // @TODO if deployed to Kubernates with scaling, secret key must be obtained from some secret store and rotated regularly
     public JWTService(UserRepository userRepository,
-                      @Value("${security.JwtValidityMillis:900000}") long jwtValidityMillis
+                      @Value("${security.JwtValidityMillis:900000}") long jwtValidityMillis,
+                      @Value("${security.secretKey}") String secretKey
     ) {
         this.userRepository = userRepository;
         this.JwtValidityMillis = (int) jwtValidityMillis;
+        this.secretKey = secretKey;
 
-        try {
-            KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
-            this.secretKey = Base64.getEncoder().encodeToString(keyGenerator.generateKey().getEncoded());
-        }catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     public String generateAuthToken(String email) {
@@ -100,6 +96,19 @@ public class JWTService {
 
     private Date extractExpiration(String token) throws SignatureException {
         return extractClaim(token, Claims::getExpiration);
+    }
+
+    /*
+     *  Just a helper to generate a random secret key for tokens
+     *  used by admin when deployed to production
+     */
+    private void generateSecretKey(){
+        try {
+            KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
+            System.out.print( Base64.getEncoder().encodeToString(keyGenerator.generateKey().getEncoded()));
+        }catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

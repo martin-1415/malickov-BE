@@ -34,11 +34,11 @@ or for json
 To enter running SQL server
 
 ```bash
-docker exec -it malickov-mysql /bin/sh
+docker exec -it malickov-db /bin/sh
 ```
-and 
+or connect directly to the psql with password mypassword
 ```bash
-mysql
+psql -U BEuser -h localhost -p 5432 malickov
 ```
 
 ## Building
@@ -53,6 +53,13 @@ To skipp tests
 mvn clean package -DskipTests
 ```
 
+## Test
+
+To run tests:
+
+```bash
+mvn test 
+```
 
 
 ## Prod server

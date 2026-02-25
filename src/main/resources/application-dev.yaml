@@ -10,6 +10,7 @@ spring:
     password: mypassword
 security:
   JwtValidityMillis: 28800000
+  secretKey: vkAnPL4ZXtMP3D/Hxu6Em3PygtJzKWOSf2BngH3Ynm0=
 
 
 server:

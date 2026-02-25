@@ -20,9 +20,9 @@ public interface UserMapper {
      */
     @Mapping(target = "userUuid", ignore = true)
     @Mapping(target = "password", ignore = true)
-    @Mapping(target = "credit", ignore = true)
     @Mapping(target = "children", ignore = true)
     @Mapping(source = "role", target = "roleName")
+    @Mapping(target = "credit", constant = "0") //default value
     User toEntity(UserInboundDTO dto);
 
     /**
@@ -43,6 +43,7 @@ public interface UserMapper {
 
 
     @Mapping(source = "roleName", target = "role")
+    @Mapping(target = "credit", source="credit", defaultValue = "0")
     UserOutboundDTO toOutboundDTO(User user);
 
 }

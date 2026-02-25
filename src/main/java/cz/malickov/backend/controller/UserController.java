@@ -34,14 +34,6 @@ public class UserController {
         User savedUser = this.userService.registerUser(userInboundDTO);
 
         return ResponseEntity.ok(userMapper.toOutboundDTO(savedUser));
-//        return new UserOutboundDTO(savedUser.getUserUuid(),
-//                savedUser.getFirstName(),
-//                savedUser.getLastName(),
-//                savedUser.getEmail(),
-//                savedUser.isActive(),
-//                savedUser.getRoleName(),
-//                savedUser.getCredit());
-
     }
 
     @PreAuthorize("hasAnyRole('DIRECTOR')")
