@@ -2,9 +2,14 @@ spring:
   liquibase:
     contexts: dev
     change-log: classpath:db/changelog/app-changelog.xml
+  datasource:
+    url: jdbc:postgresql://localhost:5432/malickov
+    username: BEuser
+    password: mypassword
 
 security:
-  JwtValidityMillis: 3600000
+  JwtValidityMillis: 28800000
+  secretKey: vkAnPL4ZXtMP3D/Hxu6Em3PygtJzKWOSf2BngH3Ynm0=
 
 server:
   port: 0

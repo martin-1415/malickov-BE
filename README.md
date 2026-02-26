@@ -58,7 +58,7 @@ mvn clean package -DskipTests
 To run tests:
 
 ```bash
-mvn test 
+mvn test -Dtest=UserControlerTest
 ```
 
 

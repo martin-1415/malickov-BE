@@ -21,7 +21,7 @@ server:
     key-store-password: veryStrongAndHiddenPassword
     key-alias: local-ssl
 
-springdoc:
+springdoc: # swagger
   api-docs:
     enabled: true
   swagger-ui:
