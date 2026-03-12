@@ -79,10 +79,9 @@ public class LoginController {
     }
 
     /*
-     * Function validating JWT token
+     * Function validating JWT token, will be used to refresh token
      *
      */
-    // @TODO send back new refresh and auth tokens in cookies
     @Deprecated
     @GetMapping("/isAuthenticated")
     public ResponseEntity<Map<String,Object>> isAuthenticated(

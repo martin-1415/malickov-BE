@@ -39,14 +39,24 @@ public class UserService{
         String email = userInboundDTO.email();
         Optional<User> optionalUser = userRepository.findByEmail(email);
         if (optionalUser.isPresent()) {
+            log.info("User with email {} already exists", email);
             throw new UserAlreadyExistsException("User with email '" + email + "' already exists");
         }
-        
+
+
         User user = userMapper.toEntity(userInboundDTO);
         user.setActive(true);
 
+        // 4 chars hash for identifier
+        String s = userInboundDTO.firstName().concat(user.getEmail()).concat(userInboundDTO.lastName());
+        int hash = 0;
+        for (int i = 0; i < s.length(); i++) {
+            hash = 31 * hash + s.charAt(i);
+        }
+        user.setIdentifier(userInboundDTO.firstName().concat("_").concat(userInboundDTO.lastName())
+                          .concat("_").concat(Integer.toUnsignedString(hash, 36).substring(0, 4)));
         userRepository.save(user);
-        log.info("User {} registered successfully", email);
+        log.debug("User {} registered successfully", email);
 
         return userRepository.findByEmail(email)
                 .orElseThrow();
@@ -59,12 +69,10 @@ public class UserService{
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("User with email '" + email+ "' not found."));
 
-        user.setLastName(updatedUser.lastName());
-        user.setFirstName(updatedUser.firstName());
-        user.setEmail(email);
-
+        // only names, email and role can be updated here
+        userMapper.updateEntity(updatedUser,user);
         userRepository.save(user);
-        log.info("User {} updated successfully", email);
+        log.debug("User {} updated successfully", email);
 
         return user;
     }
@@ -74,17 +82,13 @@ public class UserService{
         List<User> users = userRepository.findAll();
         return users.stream()
                 .sorted(Comparator.comparing(User::getLastName))
-                .map(user -> new UserOutboundDTO(
-                        user.getUserUuid(),
-                        user.getFirstName(),
-                        user.getLastName(),
-                        user.getEmail(),
-                        user.isActive(),
-                        user.getRoleName(),
-                        user.getCredit() ))
+                .map(userMapper::toOutboundDTO)
                 .collect(Collectors.toList());
     }
 
+    /*
+      Used in login to get user based on his email
+     */
     public UserOutboundDTO getOutboundUserDtoBasedOnEmail(String email){
 
         Optional<User> optinalUser = this.userRepository.findByEmail(email);
@@ -92,13 +96,6 @@ public class UserService{
             User user = optinalUser.get();
 
             return userMapper.toOutboundDTO(user);
-//            return new UserOutboundDTO(user.getUserUuid(),
-//                    user.getFirstName(),
-//                    user.getLastName(),
-//                    user.getEmail(),
-//                    user.isActive(),
-//                    user.getRoleName(),
-//                    user.getCredit());
         }
         return null;
     }

@@ -20,14 +20,13 @@ public interface UserMapper {
      */
     @Mapping(target = "userUuid", ignore = true)
     @Mapping(target = "password", ignore = true)
-    @Mapping(target = "children", ignore = true)
     @Mapping(source = "role", target = "roleName")
     @Mapping(target = "credit", constant = "0") //default value
     User toEntity(UserInboundDTO dto);
 
     /**
      * Update an existing User entity in-place from inbound DTO.
-     * - Keeps existing userUuid, password, credit, and children intact.
+     * - Keeps existing userUuid, password, credit, and identifier intact.
      * - DTO.role -> entity.roleName
      * - Because the DTO fields are all required (except id), we use IGNORE for nulls to be safe;
      *   if you later make some DTO fields nullable, they won't overwrite non-null entity fields with null.
@@ -36,9 +35,8 @@ public interface UserMapper {
     @Mapping(target = "userUuid", ignore = true)
     @Mapping(target = "password", ignore = true)
     @Mapping(target = "credit", ignore = true)
-    @Mapping(target = "children", ignore = true)
     @Mapping(source = "role", target = "roleName")
-    void updateEntity(UserInboundDTO dto, @MappingTarget User user);
+    void updateEntity(UserInboundDTO dto, @MappingTarget User user); // only 4 fields can be updated
 
 
 

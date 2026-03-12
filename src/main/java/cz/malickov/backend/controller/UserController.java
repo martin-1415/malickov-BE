@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.UUID;
 
 
 @RestController
@@ -44,21 +45,15 @@ public class UserController {
     }
 
     @PreAuthorize("hasAnyRole('DIRECTOR','MANAGER')")
-    @PutMapping("/updateUser/{id}")
+    @PutMapping("/updateUser/{uuid}")
     @ResponseStatus(HttpStatus.OK)
-    public UserOutboundDTO updateUser(@PathVariable Long id, @RequestBody @Valid UserInboundDTO userUpdated) {
+    public UserOutboundDTO updateUser(@PathVariable UUID uuid, @RequestBody @Valid UserInboundDTO user2update) {
 
-        if (userUpdated.id() != null && !id.equals(userUpdated.id())) {
-            throw new UserNotFoundException("Path id ("+ id + ") and payload id ("+userUpdated.id()+") mismatch.");
+        if (user2update.uuid() != null && !uuid.equals(user2update.uuid())) {
+            throw new UserNotFoundException("Path id ("+ uuid + ") and payload id ("+ user2update.uuid()+") mismatch.");
         }
 
-        User updatedUser = userService.updateUser(userUpdated);
-        return new UserOutboundDTO(updatedUser.getUserUuid(),
-                updatedUser.getFirstName(),
-                updatedUser.getLastName(),
-                updatedUser.getEmail(),
-                updatedUser.isActive(),
-                updatedUser.getRoleName(),
-                updatedUser.getCredit());
+        User updatedUser = userService.updateUser(user2update);
+        return userMapper.toOutboundDTO(updatedUser);
     }
 }

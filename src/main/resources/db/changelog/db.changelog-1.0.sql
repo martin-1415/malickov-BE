@@ -9,20 +9,21 @@ CREATE TABLE "user" (
                         email VARCHAR(100) NOT NULL,
                         password VARCHAR(255),
                         active BOOLEAN DEFAULT TRUE,
+                        identifier VARCHAR(100) NOT NULL,
                         role_name VARCHAR(55),
                         credit NUMERIC(11,2) DEFAULT 0,
                         UNIQUE(email)
 );
 
 --changeset Martin_Fischer:2 context:dev, password is abc
-INSERT INTO "user" (first_name, last_name, email, active, role_name, password)
+INSERT INTO "user" (first_name, last_name, email, active, role_name, password,identifier)
 VALUES
-    ('Martin', 'Fischer', '1@1.cz', TRUE, 'DIRECTOR', '$2a$12$KeVi5xNQGqtFqALo355CMudCpNEiwDbv5O/75ML7wnqu4cdcpHzf.'),
-    ('Sarka', 'Fischer','2@2.cz', TRUE, 'MANAGER', '$2a$12$KeVi5xNQGqtFqALo355CMudCpNEiwDbv5O/75ML7wnqu4cdcpHzf.'),
-    ('Charlie', 'Brown','3@3.cz', TRUE, 'TEACHER', '$2a$12$KeVi5xNQGqtFqALo355CMudCpNEiwDbv5O/75ML7wnqu4cdcpHzf.'),
-    ('Sam', 'Quited','4@4.cz', FALSE, 'PARENT', '$2a$12$KeVi5xNQGqtFqALo355CMudCpNEiwDbv5O/75ML7wnqu4cdcpHzf.'),
-    ('Tom', 'Skala','5@5.cz', TRUE, 'PARENT', '$2a$12$KeVi5xNQGqtFqALo355CMudCpNEiwDbv5O/75ML7wnqu4cdcpHzf.'),
-    ('Jack', 'Montana','6@6.cz', TRUE, 'PARENT', '$2a$12$KeVi5xNQGqtFqALo355CMudCpNEiwDbv5O/75ML7wnqu4cdcpHzf.');
+    ('Martin', 'Fischer', '1@1.cz', TRUE, 'DIRECTOR', '$2a$12$KeVi5xNQGqtFqALo355CMudCpNEiwDbv5O/75ML7wnqu4cdcpHzf.', '1111'),
+    ('Sarka', 'Fischer','2@2.cz', TRUE, 'MANAGER', '$2a$12$KeVi5xNQGqtFqALo355CMudCpNEiwDbv5O/75ML7wnqu4cdcpHzf.', '2222'),
+    ('Charlie', 'Brown','3@3.cz', TRUE, 'TEACHER', '$2a$12$KeVi5xNQGqtFqALo355CMudCpNEiwDbv5O/75ML7wnqu4cdcpHzf.','3333'),
+    ('Sam', 'Quited','4@4.cz', FALSE, 'PARENT', '$2a$12$KeVi5xNQGqtFqALo355CMudCpNEiwDbv5O/75ML7wnqu4cdcpHzf.','4444'),
+    ('Tom', 'Skala','5@5.cz', TRUE, 'PARENT', '$2a$12$KeVi5xNQGqtFqALo355CMudCpNEiwDbv5O/75ML7wnqu4cdcpHzf.','5555'),
+    ('Jack', 'Montana','6@6.cz', TRUE, 'PARENT', '$2a$12$KeVi5xNQGqtFqALo355CMudCpNEiwDbv5O/75ML7wnqu4cdcpHzf.','6666');
 
 --changeset Martin_Fischer:3 context:dev,prod
 
@@ -80,3 +81,5 @@ VALUES
      (SELECT user_uuid FROM "user" WHERE email='6@6.cz')),
     ('Tereza', 'Montana', 'NURSERY2', '2022-07-01', 3,
      (SELECT user_uuid FROM "user" WHERE email='6@6.cz'));
+
+

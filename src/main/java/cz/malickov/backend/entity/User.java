@@ -50,6 +50,11 @@ public class User {
     @NotNull(message = "Active must be set.")
     private boolean active;
 
+    @JsonProperty("identifier")
+    @Column(name = "identifier")
+    @NotNull(message = "identifier must be set.")
+    private String identifier;
+
     @JsonProperty("roleName")
     @Column(name = "role_name", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -62,11 +67,12 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Child> children = new ArrayList<>();
 
-    public User(String lastName, String firstName, String email, boolean active, Role roleName){
+    public User(String lastName, String firstName, String email, boolean active, String identifier, Role roleName){
         this.lastName = lastName;
         this.firstName = firstName;
         this.email = email;
         this.active = active;
+        this.identifier = identifier;
         this.roleName = roleName;
     }
 
