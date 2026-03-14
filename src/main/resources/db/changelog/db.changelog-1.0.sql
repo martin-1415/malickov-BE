@@ -12,6 +12,7 @@ CREATE TABLE "user" (
                         identifier VARCHAR(100) NOT NULL,
                         role_name VARCHAR(55),
                         credit NUMERIC(11,2) DEFAULT 0,
+                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                         UNIQUE(email)
 );
 

@@ -48,13 +48,14 @@ public class UserService{
         user.setActive(true);
 
         // 4 chars hash for identifier
-        String s = userInboundDTO.firstName().concat(user.getEmail()).concat(userInboundDTO.lastName());
+        String s = userInboundDTO.firstName().concat(user.getEmail()).concat(userInboundDTO.lastName()).concat(new Date().toString());
         int hash = 0;
         for (int i = 0; i < s.length(); i++) {
             hash = 31 * hash + s.charAt(i);
         }
         user.setIdentifier(userInboundDTO.firstName().concat("_").concat(userInboundDTO.lastName())
-                          .concat("_").concat(Integer.toUnsignedString(hash, 36).substring(0, 4)));
+                          .concat("_").concat(Integer.toUnsignedString(hash, 36).substring(0, 5)));
+
         userRepository.save(user);
         log.debug("User {} registered successfully", email);
 

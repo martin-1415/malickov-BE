@@ -3,6 +3,7 @@ package cz.malickov.backend.dto;
 import cz.malickov.backend.enums.Role;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public record UserOutboundDTO(
@@ -12,4 +13,6 @@ public record UserOutboundDTO(
         String email,
         boolean active,
         Role role,
-        BigDecimal credit) {}
+        BigDecimal credit,
+        String identifier,
+        LocalDateTime createdAt) {}

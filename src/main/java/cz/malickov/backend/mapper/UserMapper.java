@@ -20,8 +20,9 @@ public interface UserMapper {
      */
     @Mapping(target = "userUuid", ignore = true)
     @Mapping(target = "password", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
     @Mapping(source = "role", target = "roleName")
-    @Mapping(target = "credit", constant = "0") //default value
+    @Mapping(target = "credit", ignore = true)
     User toEntity(UserInboundDTO dto);
 
     /**

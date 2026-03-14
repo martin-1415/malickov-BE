@@ -14,7 +14,9 @@ import org.mapstruct.factory.Mappers;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import static org.mockito.Mockito.when;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -75,15 +77,26 @@ class UserServiceTest {
 
         Role role = Role.PARENT;
         UserInboundDTO mockUser = new UserInboundDTO( null,"John","Doe",
-                "ffd@gggd.cz",true, role);
+                "abc@gggd.cz",true, role);
+
 
         // When
+        User savedUser = userMapper.toEntity(mockUser);
+        savedUser.setActive(true);
+        savedUser.setIdentifier("John_Doe_abcd");
+
+        when(userRepository.findByEmail("abc@gggd.cz"))
+                .thenReturn(Optional.empty())
+                .thenReturn(Optional.of(savedUser));
+
+        // test
         User result = userService.registerUser(mockUser);
-        // Then
+
+
         assertNotNull(result);
         assertEquals("John", result.getFirstName());
         assertEquals("Doe", result.getLastName());
-        assertEquals("ffd@gggd.cz", result.getEmail());
+        assertEquals("abc@gggd.cz", result.getEmail());
         assertEquals(role, result.getRoleName());
         assertTrue(result.isActive());
     }

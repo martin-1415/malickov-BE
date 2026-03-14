@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -63,6 +64,9 @@ public class User {
     @JsonProperty("credit")
     @Column(name = "credit")
     private BigDecimal credit = BigDecimal.ONE; // default value, JPA set null which overwrites DEFAULT 0 in liquibase
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Child> children = new ArrayList<>();
