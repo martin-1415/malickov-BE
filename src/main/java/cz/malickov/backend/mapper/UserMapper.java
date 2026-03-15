@@ -36,6 +36,9 @@ public interface UserMapper {
     @Mapping(target = "userUuid", ignore = true)
     @Mapping(target = "password", ignore = true)
     @Mapping(target = "credit", ignore = true)
+    @Mapping(target = "identifier", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "children", ignore = true)
     @Mapping(source = "role", target = "roleName")
     void updateEntity(UserInboundDTO dto, @MappingTarget User user); // only 4 fields can be updated
 

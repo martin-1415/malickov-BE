@@ -64,18 +64,27 @@ public class UserService{
     }
 
 
-    @PreAuthorize("hasAuthority('ROLE_DIRECTOR') or (hasAuthority('ROLE_MANAGER') and #updatedUser.role.name() == T(cz.malickov.backend.enums.Role).PARENT.name())")
-    public User updateUser(UserInboundDTO updatedUser) {
-        String email = updatedUser.email();
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException("User with email '" + email+ "' not found."));
+    @PreAuthorize("hasAuthority('ROLE_DIRECTOR') or (hasAuthority('ROLE_MANAGER') and #updatedUserDTO.role.name() == T(cz.malickov.backend.enums.Role).PARENT.name())")
+    public User updateUser(UserInboundDTO updatedUserDTO) {
+        String email = updatedUserDTO.email();
+        UUID uuid = updatedUserDTO.uuid();
 
-        // only names, email and role can be updated here
-        userMapper.updateEntity(updatedUser,user);
-        userRepository.save(user);
+        User userToUpdate = userRepository.findByUserUuid(uuid)
+                .orElseThrow(() -> new UserNotFoundException("User with uuid '" + uuid+ "' not found."));
+
+        Optional<User> anotherExistingUserWithTheSameEmail = userRepository.findByEmail(email);
+        if(anotherExistingUserWithTheSameEmail.isPresent()){
+           throw new UserAlreadyExistsException("Another user has the same email: " + email);
+        }
+
+
+
+        // only names, email, active and role can be updated here
+        userMapper.updateEntity(updatedUserDTO,userToUpdate);
+        userRepository.save(userToUpdate);
         log.debug("User {} updated successfully", email);
 
-        return user;
+        return userToUpdate;
     }
 
 

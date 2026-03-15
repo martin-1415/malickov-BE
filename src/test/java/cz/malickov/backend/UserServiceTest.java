@@ -89,6 +89,7 @@ class UserServiceTest {
                 .thenReturn(Optional.empty())
                 .thenReturn(Optional.of(savedUser));
 
+        when(userRepository.save(savedUser)).thenReturn(savedUser);
         // test
         User result = userService.registerUser(mockUser);
 
@@ -105,16 +106,24 @@ class UserServiceTest {
     void shouldUpdateUserSuccessfully() {
 
         Role role = Role.PARENT;
-        UserInboundDTO mockUser = new UserInboundDTO( null,"John","Doe",
-                "ffd@gggd.cz",true,role);
+        UUID uuid = UUID.randomUUID();
+        UserInboundDTO oldMockUser = new UserInboundDTO( uuid,"John","Doe",
+                "aaa@bbb.cz",true,role);
 
+        UserInboundDTO newMockUser = new UserInboundDTO( uuid,"John2","Doe2",
+                "aaa@bbb.cz2",true,role);
+
+        User oldUser = userMapper.toEntity(oldMockUser);
         // When
-        User result = userService.registerUser(mockUser);
+        when(userRepository.findByUserUuid(uuid))
+                .thenReturn(Optional.of(oldUser));
         // Then
+        User result = userService.updateUser(newMockUser);
+
         assertNotNull(result);
-        assertEquals("John", result.getFirstName());
-        assertEquals("Doe", result.getLastName());
-        assertEquals("ffd@gggd.cz", result.getEmail());
+        assertEquals("John2", result.getFirstName());
+        assertEquals("Doe2", result.getLastName());
+        assertEquals("aaa@bbb.cz2", result.getEmail());
         assertEquals(role, result.getRoleName());
         assertTrue(result.isActive());
     }
