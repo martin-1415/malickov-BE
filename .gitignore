@@ -20,6 +20,7 @@ target/
 *.iws
 
 # Logs
+/logs/
 app.log.*
 app.log
 
@@ -33,3 +34,4 @@ app.log
 
 /qodana.yaml
 /src/main/resources/keystore.p12
+

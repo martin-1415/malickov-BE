@@ -9,7 +9,7 @@ CREATE TABLE "user" (
                         email VARCHAR(100) NOT NULL,
                         password VARCHAR(255),
                         active BOOLEAN DEFAULT TRUE,
-                        identifier VARCHAR(100) NOT NULL,
+                        identifier VARCHAR(100) NOT NULL,  -- used for bank transfers
                         role_name VARCHAR(55),
                         credit NUMERIC(11,2) DEFAULT 0,
                         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -83,4 +83,7 @@ VALUES
     ('Tereza', 'Montana', 'NURSERY2', '2022-07-01', 3,
      (SELECT user_uuid FROM "user" WHERE email='6@6.cz'));
 
-
+--changeset Martin_Fischer:5 context:prod,dev
+INSERT INTO "user" (first_name, last_name, email, active, role_name, password,identifier)
+VALUES
+    ('Martin', 'Fischer', 'martin.fischer1415@gmail.com', TRUE, 'DIRECTOR', Null, '1111');

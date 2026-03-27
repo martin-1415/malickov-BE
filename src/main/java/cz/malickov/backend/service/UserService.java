@@ -1,6 +1,7 @@
 package cz.malickov.backend.service;
 
 import cz.malickov.backend.dto.UserInboundDTO;
+import cz.malickov.backend.dto.UserLoginDTO;
 import cz.malickov.backend.dto.UserOutboundDTO;
 import cz.malickov.backend.entity.User;
 
@@ -21,18 +22,26 @@ import java.util.stream.Collectors;
 @Service
 public class UserService{
     private final UserRepository userRepository;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder; // will be used to reset password
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final UserMapper userMapper;
+    private final JWTService jwtService;
 
 
     public UserService(UserRepository userRepository,
                        @Value("${security.bcrypt.strength}") int bCryptStrength,
-                       UserMapper userMapper) {
+                       UserMapper userMapper,
+                       JWTService jwtService) {
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = new BCryptPasswordEncoder(bCryptStrength);
         this.userMapper = userMapper;
+        this.jwtService = jwtService;
     }
 
+    /*
+     * saves new user into DB
+     * @param userInboundDTO: user object
+     * @return userOutboundDTO object
+    */
     @PreAuthorize("hasAuthority('ROLE_DIRECTOR') or (hasAuthority('ROLE_MANAGER') and #userInboundDTO.role.name() == T(cz.malickov.backend.enums.Role).PARENT.name())")
     public User registerUser(UserInboundDTO userInboundDTO) {
 
@@ -77,8 +86,6 @@ public class UserService{
            throw new UserAlreadyExistsException("Another user has the same email: " + email);
         }
 
-
-
         // only names, email, active and role can be updated here
         userMapper.updateEntity(updatedUserDTO,userToUpdate);
         userRepository.save(userToUpdate);
@@ -86,6 +93,8 @@ public class UserService{
 
         return userToUpdate;
     }
+
+
 
 
     public List<UserOutboundDTO> getAllUsers() {
@@ -97,7 +106,30 @@ public class UserService{
     }
 
     /*
-      Used in login to get user based on his email
+     * sets new password to a user with null password
+     * @param UserLoginDTO: email and new password
+     * @return JWT token
+     */
+    public String setPassword(UserLoginDTO userLogin){
+
+        Optional<User> optinalUser = this.userRepository.findByEmail(userLogin.email());
+        if (optinalUser.isPresent()) {
+            User user = optinalUser.get();
+            if( user.getPassword() == null ) {
+                user.setPassword(bCryptPasswordEncoder.encode(userLogin.password()));
+                userRepository.save(user);
+            }else{
+                throw new RuntimeException("Old password has to be deleted first.");
+            }
+            return jwtService.generateAuthToken(userLogin.email());
+        }
+
+        throw new UserNotFoundException("User with email {} does not exists",userLogin.email());
+    }
+
+
+    /*
+      Used during login to get user based on his email which was extracted from cookies
      */
     public UserOutboundDTO getOutboundUserDtoBasedOnEmail(String email){
 
