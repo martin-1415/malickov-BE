@@ -100,7 +100,7 @@ public class JWTService {
 
     /*
      *  Just a helper to generate a random secret key for tokens
-     *  used by admin when deployed to production
+     *  used by admin when deployed to production or acc
      */
     private void generateSecretKey(){
         try {
@@ -110,5 +110,4 @@ public class JWTService {
             throw new RuntimeException(e);
         }
     }
-
 }
