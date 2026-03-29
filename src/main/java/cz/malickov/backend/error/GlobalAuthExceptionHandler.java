@@ -31,7 +31,7 @@ public class GlobalAuthExceptionHandler {
         log.info("Unauthorized action attempted by user {}.",email);
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
                 Map.of(
-                        "message", "Good one Mr./Mrs. "+email+", but you do not have permission to perform this action."
+                        "message", "Good morning Mr./Mrs. "+email+", but you do not have permission to perform this action."
                 )
         );
     }
@@ -46,6 +46,16 @@ public class GlobalAuthExceptionHandler {
         );
     }
 
+    @ExceptionHandler(GeneralException.class)
+    public ResponseEntity<Map<String, String>> GeneralException(GeneralException ex) {
+        String message = ex.getMessage();
+        log.info(message);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                Map.of(
+                        "message", message
+                )
+        );
+    }
 
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<Map<String, String>> authorizationFailedException() {

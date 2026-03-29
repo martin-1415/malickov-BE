@@ -48,12 +48,12 @@ public class Child {
     @Column(name = "notes")
     private String notes;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_uuid")
     private User user;
 
-    @OneToOne
-    @PrimaryKeyJoinColumn(name = "identificator_id")
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "identificator_id")
     private Identificator identificator;
 
     @Column(name = "mon")
@@ -73,5 +73,4 @@ public class Child {
 
     @OneToMany(mappedBy = "child", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Attendance> attendanceList = new ArrayList<>();
-
 }

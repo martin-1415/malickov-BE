@@ -24,6 +24,7 @@ public class User {
     @JsonProperty("userUuid")
     @Column(name = "user_uuid",nullable = false,columnDefinition = "uniqueidentifier")
     @GeneratedValue
+    @org.hibernate.annotations.UuidGenerator
     private UUID userUuid;
 
     @JsonProperty("lastName")

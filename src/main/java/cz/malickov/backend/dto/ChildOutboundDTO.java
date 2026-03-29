@@ -48,7 +48,7 @@ public class ChildOutboundDTO {
     private User user;
 
     @OneToOne
-    @PrimaryKeyJoinColumn(name = "identificator_id")
+    @JoinColumn(name = "identificator_id")
     private Identificator identificator;
 
     @Column(name = "mon")

@@ -15,6 +15,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -43,6 +44,40 @@ public class LoginController {
         this.userService = userService;
     }
 
+    /*
+     * sets password to be null
+     * @param String: user UUID
+     * @return ok status
+     */
+    @PreAuthorize("hasAuthority('ROLE_DIRECTOR') and #uuid != null and #uuid != ''")
+    @PutMapping("/deletePassword/{uuid}")
+    public ResponseEntity<UserOutboundDTO> deletePassword(@PathVariable String uuid) {
+        userService.deletePassword(uuid);
+        return ResponseEntity.ok().build();
+    }
+
+    /*
+     * sets new password to a user with null password
+     * @param UserLoginDTO: email and new password
+     * @return userOutbound and JWT token in cookies
+     */
+    @PostMapping("/setPassword")
+    public ResponseEntity<UserOutboundDTO> setPassword(@RequestBody UserLoginDTO userLogin) {
+
+        UserOutboundDTO outboundUser = userService.setPassword(userLogin);
+        String jwt = jwtService.generateAuthToken(userLogin.email());
+        ResponseCookie cookie = ResponseCookie.from("JWT", jwt)
+                .httpOnly(true) // no javascript access
+                .secure(true) // https
+                .path("/")    // prefix of the path where cookies will be sent
+                .maxAge(maxAgeMillis / 1000) //  seconds, same period as JWT
+                .sameSite("None") // can be strict, but then links from e.g. google should not work
+                .build();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .body( outboundUser );
+    }
 
     @PostMapping("/login")
     public ResponseEntity<UserOutboundDTO> login(@RequestBody UserLoginDTO userLogin) {

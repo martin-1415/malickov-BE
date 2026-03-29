@@ -5,6 +5,7 @@ import cz.malickov.backend.dto.UserLoginDTO;
 import cz.malickov.backend.dto.UserOutboundDTO;
 import cz.malickov.backend.entity.User;
 
+import cz.malickov.backend.error.GeneralException;
 import cz.malickov.backend.error.UserAlreadyExistsException;
 import cz.malickov.backend.error.UserNotFoundException;
 import cz.malickov.backend.mapper.UserMapper;
@@ -24,17 +25,14 @@ public class UserService{
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final UserMapper userMapper;
-    private final JWTService jwtService;
 
 
     public UserService(UserRepository userRepository,
                        @Value("${security.bcrypt.strength}") int bCryptStrength,
-                       UserMapper userMapper,
-                       JWTService jwtService) {
+                       UserMapper userMapper) {
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = new BCryptPasswordEncoder(bCryptStrength);
         this.userMapper = userMapper;
-        this.jwtService = jwtService;
     }
 
     /*
@@ -108,9 +106,9 @@ public class UserService{
     /*
      * sets new password to a user with null password
      * @param UserLoginDTO: email and new password
-     * @return JWT token
+     * @return userOutboundDTO
      */
-    public String setPassword(UserLoginDTO userLogin){
+    public UserOutboundDTO setPassword(UserLoginDTO userLogin){
 
         Optional<User> optinalUser = this.userRepository.findByEmail(userLogin.email());
         if (optinalUser.isPresent()) {
@@ -119,12 +117,12 @@ public class UserService{
                 user.setPassword(bCryptPasswordEncoder.encode(userLogin.password()));
                 userRepository.save(user);
             }else{
-                throw new RuntimeException("Old password has to be deleted first.");
+                throw new GeneralException("Old password has to be deleted first.");
             }
-            return jwtService.generateAuthToken(userLogin.email());
+            return userMapper.toOutboundDTO(user);
         }
-
-        throw new UserNotFoundException("User with email {} does not exists",userLogin.email());
+        log.warn("User with email {} does not exists", userLogin.email());
+        throw new UserNotFoundException("User with email "+ userLogin.email() + " does not exists");
     }
 
 
@@ -140,5 +138,23 @@ public class UserService{
             return userMapper.toOutboundDTO(user);
         }
         return null;
+    }
+
+    /*
+     * deletes password
+     * @param String: user_uuid
+     * @return void
+     */
+    public void deletePassword(String uuid) {
+        Optional<User> optinalUser = this.userRepository.findByUserUuid(UUID.fromString(uuid));
+        if (optinalUser.isPresent()) {
+            User user = optinalUser.get();
+            user.setPassword(null);
+            userRepository.save(user);
+        }else{
+            log.warn("User with uuid {} does not exists", uuid);
+            throw new UserNotFoundException("User with uuid "+ uuid + " does not exists");
+        }
+
     }
 }

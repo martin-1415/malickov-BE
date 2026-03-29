@@ -6,7 +6,6 @@ import cz.malickov.backend.entity.User;
 import cz.malickov.backend.enums.Role;
 import cz.malickov.backend.mapper.UserMapper;
 import cz.malickov.backend.repository.UserRepository;
-import cz.malickov.backend.service.JWTService;
 import cz.malickov.backend.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,14 +30,12 @@ class UserServiceTest {
 
     private UserService userService;
 
-    private JWTService jwtService;
-
     @Spy
     private UserMapper userMapper = Mappers.getMapper(UserMapper.class);
 
     @BeforeEach
     void setUp() {
-        userService = new UserService(userRepository, 10, userMapper, jwtService);
+        userService = new UserService(userRepository, 10, userMapper);
     }
 
     @Test

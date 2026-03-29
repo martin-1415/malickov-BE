@@ -30,11 +30,11 @@ or for json
 [json scheme](https://localhost:8443/v3/api-docs)
 
 
-## SQL Container
+### DEV SQL Container
 To enter running SQL server
 
 ```bash
-docker exec -it malickov-db /bin/sh
+sudo docker exec -it malickov-db /bin/sh
 ```
 or connect directly to the psql with password mypassword
 ```bash
