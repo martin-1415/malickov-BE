@@ -37,11 +37,18 @@ public class UserController {
         return ResponseEntity.ok(userMapper.toOutboundDTO(savedUser));
     }
 
-    @PreAuthorize("hasAnyRole('DIRECTOR')")
-    @GetMapping("/getAllUsers")
+    @PreAuthorize("hasAnyRole('DIRECTOR','MANAGER')")
+    @GetMapping("/getActiveUsers")
     @ResponseStatus(HttpStatus.OK)
-    public List<UserOutboundDTO> getAllUser() {
-        return userService.getAllUsers();
+    public List<UserOutboundDTO> getActiveUsers() {
+        return userService.getActiveUsers();
+    }
+
+    @PreAuthorize("hasAnyRole('DIRECTOR','MANAGER')")
+    @GetMapping("/getNonactiveUsers")
+    @ResponseStatus(HttpStatus.OK)
+    public List<UserOutboundDTO> getNonActiveUser() {
+        return userService.getNonActiveUsers();
     }
 
     @PreAuthorize("hasAnyRole('DIRECTOR','MANAGER')")

@@ -51,7 +51,7 @@ public class LoginController {
      */
     @PreAuthorize("hasAuthority('ROLE_DIRECTOR') and #uuid != null and #uuid != ''")
     @PutMapping("/deletePassword/{uuid}")
-    public ResponseEntity<UserOutboundDTO> deletePassword(@PathVariable String uuid) {
+    public ResponseEntity<Void> deletePassword(@PathVariable String uuid) {
         userService.deletePassword(uuid);
         return ResponseEntity.ok().build();
     }
@@ -133,7 +133,7 @@ public class LoginController {
     }
 
     /*
-    * Function used to get user info based on JWT, it also validates
+    * Function used to get user info based on JWT, it also validates JWT token
     */
     // @TODO send back new refresh and auth tokens in cookies
     @GetMapping("/authentication")

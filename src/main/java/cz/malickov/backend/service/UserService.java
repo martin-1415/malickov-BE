@@ -54,7 +54,7 @@ public class UserService{
         User user = userMapper.toEntity(userInboundDTO);
         user.setActive(true);
 
-        // 4 chars hash for identifier
+        // 5 chars hash for identifier
         String s = userInboundDTO.firstName().concat(user.getEmail()).concat(userInboundDTO.lastName()).concat(new Date().toString());
         int hash = 0;
         for (int i = 0; i < s.length(); i++) {
@@ -92,11 +92,24 @@ public class UserService{
         return userToUpdate;
     }
 
+    /*
+     * get all active users
+     * @return List<userOutboundDTO>
+     */
+    public List<UserOutboundDTO> getActiveUsers() {
+        List<User> users = userRepository.findByActiveTrue();
+        return users.stream()
+                .sorted(Comparator.comparing(User::getLastName))
+                .map(userMapper::toOutboundDTO)
+                .collect(Collectors.toList());
+    }
 
-
-
-    public List<UserOutboundDTO> getAllUsers() {
-        List<User> users = userRepository.findAll();
+    /*
+     * get all non active users
+     * @return List<userOutboundDTO>
+     */
+    public List<UserOutboundDTO> getNonActiveUsers() {
+        List<User> users = userRepository.findByActiveFalse();
         return users.stream()
                 .sorted(Comparator.comparing(User::getLastName))
                 .map(userMapper::toOutboundDTO)

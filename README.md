@@ -40,6 +40,7 @@ or connect directly to the psql with password mypassword
 ```bash
 psql -U BEuser -h localhost -p 5432 malickov
 ```
+to cancel sql command press 'q'
 
 ## Building
 
