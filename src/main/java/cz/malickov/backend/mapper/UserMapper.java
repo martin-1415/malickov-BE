@@ -26,11 +26,11 @@ public interface UserMapper {
     User toEntity(UserInboundDTO dto);
 
     /**
-     * Update an existing User entity in-place from inbound DTO.
+     * Update an existing User entity  from inbound DTO.
      * - Keeps existing userUuid, password, credit, and identifier intact.
      * - DTO.role -> entity.roleName
-     * - Because the DTO fields are all required (except id), we use IGNORE for nulls to be safe;
-     *   if you later make some DTO fields nullable, they won't overwrite non-null entity fields with null.
+     *   IGNORE is used for nulls to be safe;
+     *   if later some DTO fields are made nullable, they won't overwrite non-null entity fields with null.
      */
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "userUuid", ignore = true)

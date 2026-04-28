@@ -41,13 +41,15 @@ class UserServiceTest {
     @Test
     void shouldCreateUser() {
         Role roleName = Role.PARENT;
-        User user = new User("lastName", "firstName", "email", true,
+        User user = new User("lastName", "firstName", "email","123 456 789", true,
                 "identifier", roleName);
 
         assertNotNull(user);
         assertEquals("lastName", user.getLastName());
         assertEquals("firstName", user.getFirstName());
         assertEquals("email", user.getEmail());
+        assertEquals("email", user.getTelephone());
+        assertEquals("123 456 789", user.getTelephone());
         assertTrue(user.isActive());
         assertEquals("identifier", user.getIdentifier());
         assertEquals(roleName, user.getRoleName());
@@ -56,17 +58,18 @@ class UserServiceTest {
     @Test
     void shouldUpdateUser() {
         Role roleName = Role.PARENT;
-        User user = new User("lastName", "firstName", "email", true,
+        User user = new User("lastName", "firstName", "email","123 456 789", true,
                 "identifier", roleName);
         Role roleManager = Role.MANAGER;
         UserInboundDTO mockUser = new UserInboundDTO( UUID.randomUUID(),"John","Doe",
-                "ffd@gggd.cz",false, roleManager);
+                "ffd@gggd.cz","123 456 789",false, roleManager);
         userMapper.updateEntity(mockUser, user);
 
         assertNull(user.getUserUuid()); // test whether UUID is not changed
         assertEquals("Doe", user.getLastName());
         assertEquals("John", user.getFirstName());
         assertEquals("ffd@gggd.cz", user.getEmail());
+        assertEquals("123 456 789", user.getTelephone());
         assertFalse(user.isActive());
         assertEquals("identifier", user.getIdentifier());
         assertEquals(roleManager, user.getRoleName());
@@ -77,7 +80,7 @@ class UserServiceTest {
 
         Role role = Role.PARENT;
         UserInboundDTO mockUser = new UserInboundDTO( null,"John","Doe",
-                "abc@gggd.cz",true, role);
+                "abc@gggd.cz","123 456 789",true, role);
 
 
         // When
@@ -98,6 +101,7 @@ class UserServiceTest {
         assertEquals("John", result.getFirstName());
         assertEquals("Doe", result.getLastName());
         assertEquals("abc@gggd.cz", result.getEmail());
+        assertEquals("123 456 789", result.getTelephone());
         assertEquals(role, result.getRoleName());
         assertTrue(result.isActive());
     }
@@ -108,10 +112,10 @@ class UserServiceTest {
         Role role = Role.PARENT;
         UUID uuid = UUID.randomUUID();
         UserInboundDTO oldMockUser = new UserInboundDTO( uuid,"John","Doe",
-                "aaa@bbb.cz",true,role);
+                "aaa@bbb.cz","123 456 789",true,role);
 
         UserInboundDTO newMockUser = new UserInboundDTO( uuid,"John2","Doe2",
-                "aaa@bbb.cz2",true,role);
+                "aaa@bbb.cz2","123 456 789",true,role);
 
         User oldUser = userMapper.toEntity(oldMockUser);
         // When
@@ -124,6 +128,7 @@ class UserServiceTest {
         assertEquals("John2", result.getFirstName());
         assertEquals("Doe2", result.getLastName());
         assertEquals("aaa@bbb.cz2", result.getEmail());
+        assertEquals("123 456 789", result.getTelephone());
         assertEquals(role, result.getRoleName());
         assertTrue(result.isActive());
     }
@@ -132,7 +137,7 @@ class UserServiceTest {
     void userMapStructTest() {
         Role role = Role.PARENT;
         UserInboundDTO mockUser = new UserInboundDTO( null,"John",
-                "Doe","ffd@gggd.cz",true, role);
+                "Doe","ffd@gggd.cz","123 456 789",true, role);
 
         //when
         User user =  this.userMapper.toEntity(mockUser);
@@ -141,6 +146,7 @@ class UserServiceTest {
         assertEquals("John", user.getFirstName());
         assertEquals("Doe", user.getLastName());
         assertEquals("ffd@gggd.cz", user.getEmail());
+        assertEquals("123 456 789", user.getTelephone());
         assertEquals(role, user.getRoleName());
 
         assertTrue(user.isActive());

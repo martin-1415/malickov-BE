@@ -45,10 +45,10 @@ public class UserController {
     }
 
     @PreAuthorize("hasAnyRole('DIRECTOR','MANAGER')")
-    @GetMapping("/getNonactiveUsers")
+    @GetMapping("/getInactiveUsers")
     @ResponseStatus(HttpStatus.OK)
     public List<UserOutboundDTO> getNonActiveUser() {
-        return userService.getNonActiveUsers();
+        return userService.getInactiveUsers();
     }
 
     @PreAuthorize("hasAnyRole('DIRECTOR','MANAGER')")

@@ -79,12 +79,7 @@ public class UserService{
         User userToUpdate = userRepository.findByUserUuid(uuid)
                 .orElseThrow(() -> new UserNotFoundException("User with uuid '" + uuid+ "' not found."));
 
-        Optional<User> anotherExistingUserWithTheSameEmail = userRepository.findByEmail(email);
-        if(anotherExistingUserWithTheSameEmail.isPresent()){
-           throw new UserAlreadyExistsException("Another user has the same email: " + email);
-        }
-
-        // only names, email, active and role can be updated here
+        // only names, email, tgelephone, active and role can be updated here
         userMapper.updateEntity(updatedUserDTO,userToUpdate);
         userRepository.save(userToUpdate);
         log.debug("User {} updated successfully", email);
@@ -108,7 +103,7 @@ public class UserService{
      * get all non active users
      * @return List<userOutboundDTO>
      */
-    public List<UserOutboundDTO> getNonActiveUsers() {
+    public List<UserOutboundDTO> getInactiveUsers() {
         List<User> users = userRepository.findByActiveFalse();
         return users.stream()
                 .sorted(Comparator.comparing(User::getLastName))

@@ -7,6 +7,7 @@ CREATE TABLE "user" (
                         first_name VARCHAR(100) NOT NULL,
                         last_name VARCHAR(100) NOT NULL,
                         email VARCHAR(100) NOT NULL,
+                        telephone VARCHAR(100) NOT NULL,
                         password VARCHAR(255),
                         active BOOLEAN DEFAULT TRUE,
                         identifier VARCHAR(100) NOT NULL,  -- used for bank transfers
@@ -17,14 +18,14 @@ CREATE TABLE "user" (
 );
 
 --changeset Martin_Fischer:2 context:dev, password is abc
-INSERT INTO "user" (first_name, last_name, email, active, role_name, password,identifier)
+INSERT INTO "user" (first_name, last_name, email,telephone, active, role_name, password,identifier)
 VALUES
-    ('Martin', 'Fischer', '1@1.cz', TRUE, 'DIRECTOR', '$2a$12$KeVi5xNQGqtFqALo355CMudCpNEiwDbv5O/75ML7wnqu4cdcpHzf.', '1111'),
-    ('Sarka', 'Fischer','2@2.cz', TRUE, 'MANAGER', '$2a$12$KeVi5xNQGqtFqALo355CMudCpNEiwDbv5O/75ML7wnqu4cdcpHzf.', '2222'),
-    ('Charlie', 'Brown','3@3.cz', TRUE, 'TEACHER', '$2a$12$KeVi5xNQGqtFqALo355CMudCpNEiwDbv5O/75ML7wnqu4cdcpHzf.','3333'),
-    ('Sam', 'Quited','4@4.cz', FALSE, 'PARENT', '$2a$12$KeVi5xNQGqtFqALo355CMudCpNEiwDbv5O/75ML7wnqu4cdcpHzf.','4444'),
-    ('Tom', 'Skala','5@5.cz', TRUE, 'PARENT', '$2a$12$KeVi5xNQGqtFqALo355CMudCpNEiwDbv5O/75ML7wnqu4cdcpHzf.','5555'),
-    ('Jack', 'Montana','6@6.cz', TRUE, 'PARENT', '$2a$12$KeVi5xNQGqtFqALo355CMudCpNEiwDbv5O/75ML7wnqu4cdcpHzf.','6666');
+    ('Martin', 'Fischer', '1@1.cz','123 456 347' ,TRUE, 'DIRECTOR', '$2a$12$KeVi5xNQGqtFqALo355CMudCpNEiwDbv5O/75ML7wnqu4cdcpHzf.', '1111'),
+    ('Sarka', 'Fischer','2@2.cz','+420 777 282 591', TRUE, 'MANAGER', '$2a$12$KeVi5xNQGqtFqALo355CMudCpNEiwDbv5O/75ML7wnqu4cdcpHzf.', '2222'),
+    ('Charlie', 'Brown','3@3.cz', '123456789',TRUE, 'TEACHER', '$2a$12$KeVi5xNQGqtFqALo355CMudCpNEiwDbv5O/75ML7wnqu4cdcpHzf.','3333'),
+    ('Sam', 'Quited','4@4.cz', '123456789',FALSE, 'PARENT', '$2a$12$KeVi5xNQGqtFqALo355CMudCpNEiwDbv5O/75ML7wnqu4cdcpHzf.','4444'),
+    ('Tom', 'Skala','5@5.cz', '123456789',TRUE, 'PARENT', '$2a$12$KeVi5xNQGqtFqALo355CMudCpNEiwDbv5O/75ML7wnqu4cdcpHzf.','5555'),
+    ('Jack', 'Montana','6@6.cz', '123456789',TRUE, 'PARENT', '$2a$12$KeVi5xNQGqtFqALo355CMudCpNEiwDbv5O/75ML7wnqu4cdcpHzf.','6666');
 
 --changeset Martin_Fischer:3 context:dev,prod
 
@@ -84,6 +85,6 @@ VALUES
      (SELECT user_uuid FROM "user" WHERE email='6@6.cz'));
 
 --changeset Martin_Fischer:5 context:prod,dev
-INSERT INTO "user" (first_name, last_name, email, active, role_name, password,identifier)
+INSERT INTO "user" (first_name, last_name, email,telephone, active, role_name, password,identifier)
 VALUES
-    ('Martin', 'Fischer', 'martin.fischer1415@gmail.com', TRUE, 'DIRECTOR', Null, '1111');
+    ('Martin', 'Fischer', 'martin.fischer1415@gmail.com', '+420 777 574 823',TRUE, 'DIRECTOR', Null, '1111');

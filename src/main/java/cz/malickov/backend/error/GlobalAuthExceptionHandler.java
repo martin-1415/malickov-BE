@@ -18,7 +18,7 @@ import java.util.Map;
 public class GlobalAuthExceptionHandler {
 
     @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<Map<String, Object>> handleAccessDenied(AccessDeniedException ex) {
+    public ResponseEntity<Map<String, Object>> handleAccessDenied() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         String email = "anonymous";
@@ -38,10 +38,10 @@ public class GlobalAuthExceptionHandler {
 
     @ExceptionHandler(LoginFailedException.class)
     public ResponseEntity<Map<String, String>> loginFailedException() {
-        log.error("Wrong email or password.");
+        log.info("Wrong email or password or user inactive.");
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
                 Map.of(
-                        "message", "Wrong email or password."
+                        "message", "Wrong email or password or user inactive."
                 )
         );
     }
@@ -81,7 +81,7 @@ public class GlobalAuthExceptionHandler {
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<Map<String, String>> userNotFoundException(UserNotFoundException ex) {
         String message = ex.getMessage();
-        log.error("User not found:" + message);
+        log.info("User not found:" + message);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                 Map.of(
                         "message", message

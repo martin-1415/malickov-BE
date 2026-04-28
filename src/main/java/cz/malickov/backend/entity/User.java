@@ -42,6 +42,11 @@ public class User {
     @Column(name = "email",nullable = false,unique = true)
     private String email;
 
+    @JsonProperty("telephone")
+    @NotBlank(message = "Email is required")
+    @Column(name = "telephone",nullable = false,unique = true)
+    private String telephone;
+
     @JsonProperty("password")
     @Column(name = "password")
     @ToString.Exclude
@@ -72,10 +77,11 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Child> children = new ArrayList<>();
 
-    public User(String lastName, String firstName, String email, boolean active, String identifier, Role roleName){
+    public User(String lastName, String firstName, String email, String telephone, boolean active, String identifier, Role roleName){
         this.lastName = lastName;
         this.firstName = firstName;
         this.email = email;
+        this.telephone = telephone;
         this.active = active;
         this.identifier = identifier;
         this.roleName = roleName;

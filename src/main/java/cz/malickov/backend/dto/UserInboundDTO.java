@@ -14,6 +14,7 @@ public record UserInboundDTO (
     @NotBlank
     @Email(message = "Email is not valid")
     String email,
+    String telephone,
     @NotNull
     boolean active,
     @NotNull

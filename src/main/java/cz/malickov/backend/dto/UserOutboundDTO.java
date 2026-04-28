@@ -11,6 +11,7 @@ public record UserOutboundDTO(
         String firstName,
         String lastName,
         String email,
+        String telephone,
         boolean active,
         Role role,
         BigDecimal credit,
