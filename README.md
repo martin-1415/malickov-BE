@@ -64,5 +64,11 @@ mvn test -Dtest=UserControlerTest
 
 
 ## Prod server
+```bash
 
-Not implemented yet.
+java -jar malickov-be.jar \
+  --spring.profiles.active=prod \
+  --spring.datasource.username=BEuser \
+  --spring.datasource.password=STRONG_PASSWORD \
+  --security.secretKey=VERY_SECRET_KEY
+```

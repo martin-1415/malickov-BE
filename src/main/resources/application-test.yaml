@@ -1,7 +1,6 @@
 spring:
   liquibase:
     contexts: dev
-    change-log: classpath:db/changelog/app-changelog.xml
   datasource:
     url: jdbc:postgresql://localhost:5432/malickov
     username: BEuser
@@ -14,4 +13,4 @@ security:
 server:
   port: 0
   ssl:
-    enabled: false # no fucking SSL for tests
+    enabled: false # no fucking SSL for unit tests

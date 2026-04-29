@@ -1,10 +1,10 @@
 spring:
   liquibase:
     contexts: prod
-    change-log: classpath:db/changelog/app-changelog.xml
+
 
 security:
-  JwtValidityMillis: 900000
+  JwtValidityMillis: 90000000
   corsSite: https://nejlepsi-skolky.cz , https://www.nejlepsi-skolky.cz
 
 springdoc:

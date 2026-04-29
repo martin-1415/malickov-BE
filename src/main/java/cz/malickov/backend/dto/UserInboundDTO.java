@@ -18,4 +18,7 @@ public record UserInboundDTO (
     @NotNull
     boolean active,
     @NotNull
-    Role role){}
+    String identifier,
+    @NotNull
+    Role role
+    ){}
