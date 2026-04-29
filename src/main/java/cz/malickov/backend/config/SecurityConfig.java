@@ -27,10 +27,15 @@ public class SecurityConfig {
 
     private final JwtFilter jwtFilter;
     private final int bCryptStrength;
+    private final String [] corsSite;
 
-    public SecurityConfig(@Value("${security.bcrypt.strength}") int bCryptStrength, JwtFilter jwtFilter){
+    public SecurityConfig(@Value("${security.bcrypt.strength}") int bCryptStrength,
+                          JwtFilter jwtFilter,
+                          @Value("${security.corsSite}") String[] corsSite){
         this.bCryptStrength=bCryptStrength;
         this.jwtFilter = jwtFilter;
+        this.corsSite = corsSite;
+
     }
 
     @Bean
@@ -58,7 +63,7 @@ public class SecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("https://localhost:4200"));
+        configuration.setAllowedOrigins(List.of(corsSite));
         configuration.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization","Content-Type", "X-Requested-With", "Accept", "Origin", "Access-Control-Request-Method", "Access-Control-Request-Headers"));
         configuration.setAllowCredentials(true);

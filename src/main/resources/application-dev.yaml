@@ -11,6 +11,7 @@ spring:
 security:
   JwtValidityMillis: 28800000
   secretKey: vkAnPL4ZXtMP3D/Hxu6Em3PygtJzKWOSf2BngH3Ynm0=
+  corsSite: https://localhost:4200 , http://localhost:4200
 
 
 server:

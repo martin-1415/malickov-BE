@@ -13,6 +13,7 @@ public record UserOutboundDTO(
         String email,
         String telephone,
         boolean active,
+        boolean passwordSet,
         Role role,
         BigDecimal credit,
         String identifier,

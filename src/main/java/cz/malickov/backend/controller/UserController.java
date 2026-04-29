@@ -27,6 +27,18 @@ public class UserController {
         this.userService = userService;
         this.userMapper = userMapper;
     }
+    /*
+     * sets password to be null
+     * @param String: user UUID
+     * @return ok status
+     */
+    @PreAuthorize("hasAnyRole('DIRECTOR','MANAGER') and #uuid != null and #uuid != ''")
+    @DeleteMapping("/deletePassword/{uuid}")
+    public ResponseEntity<UserOutboundDTO> deletePassword(@PathVariable String uuid) {
+        UserOutboundDTO userOutboundDTO= userService.deletePassword(uuid);
+        return ResponseEntity.ok().body(userOutboundDTO);
+    }
+
 
     @PreAuthorize("hasAnyRole('DIRECTOR','MANAGER')")
     @PostMapping("/newUser")

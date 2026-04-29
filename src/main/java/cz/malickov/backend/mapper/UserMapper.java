@@ -40,12 +40,11 @@ public interface UserMapper {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "children", ignore = true)
     @Mapping(source = "role", target = "roleName")
-    void updateEntity(UserInboundDTO dto, @MappingTarget User user); // only 4 fields can be updated
-
-
+    void updateEntity(UserInboundDTO dto, @MappingTarget User user); // only 5 fields can be updated
 
     @Mapping(source = "roleName", target = "role")
     @Mapping(target = "credit", source="credit", defaultValue = "0")
+    @Mapping(target = "passwordSet", expression = "java(user.getPassword() != null)")
     UserOutboundDTO toOutboundDTO(User user);
 
 }

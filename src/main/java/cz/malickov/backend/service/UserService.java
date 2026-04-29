@@ -153,10 +153,11 @@ public class UserService{
      * @param String: user_uuid
      * @return void
      */
-    public void deletePassword(String uuid) {
+    public UserOutboundDTO deletePassword(String uuid) {
         Optional<User> optinalUser = this.userRepository.findByUserUuid(UUID.fromString(uuid));
+        User user;
         if (optinalUser.isPresent()) {
-            User user = optinalUser.get();
+            user = optinalUser.get();
             user.setPassword(null);
             userRepository.save(user);
         }else{
@@ -164,5 +165,6 @@ public class UserService{
             throw new UserNotFoundException("User with uuid "+ uuid + " does not exists");
         }
 
+        return userMapper.toOutboundDTO(user);
     }
 }

@@ -44,17 +44,7 @@ public class LoginController {
         this.userService = userService;
     }
 
-    /*
-     * sets password to be null
-     * @param String: user UUID
-     * @return ok status
-     */
-    @PreAuthorize("hasAuthority('ROLE_DIRECTOR') and #uuid != null and #uuid != ''")
-    @PutMapping("/deletePassword/{uuid}")
-    public ResponseEntity<Void> deletePassword(@PathVariable String uuid) {
-        userService.deletePassword(uuid);
-        return ResponseEntity.ok().build();
-    }
+
 
     /*
      * sets new password to a user with null password
