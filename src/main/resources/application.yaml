@@ -2,7 +2,9 @@ spring:
   application:
     name: malickov-be
   datasource:
-    url: jdbc:postgresql://localhost:5432/malickov
+    url: jdbc:postgresql://75.119.145.30:5432/malickov
+    username: beuser
+    password: mypassword
   liquibase:
     enabled: true
     change-log: classpath:db/changelog/app-changelog.xml
@@ -20,6 +22,7 @@ spring:
 security:
   bcrypt:
     strength: 12
+    secretKey: vkAnPL4ZXtMP3D/Hxu6Em3PygtJzKWOSf2BngH3Ynm0=
 
 logging:
   level:

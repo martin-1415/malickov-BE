@@ -75,4 +75,11 @@ public class UserController {
         User updatedUser = userService.updateUser(user2update);
         return userMapper.toOutboundDTO(updatedUser);
     }
+
+    @GetMapping("/hello")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<String> getNonActiveUser()
+    {
+        return "Hello world";
+    }
 }

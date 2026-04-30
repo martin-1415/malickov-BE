@@ -2,7 +2,7 @@ spring:
   liquibase:
     contexts: dev
   datasource:
-#    url: jdbc:postgresql://localhost:5432/malickov
+    url: jdbc:postgresql://localhost:5432/malickov
     username: BEuser
     password: mypassword
 security:
