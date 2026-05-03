@@ -136,6 +136,7 @@
 	</dependencies>
 
 	<build>
+		<finalName>malickov-be</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

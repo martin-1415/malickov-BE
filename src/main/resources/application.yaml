@@ -22,7 +22,7 @@ spring:
 security:
   bcrypt:
     strength: 12
-    secretKey: vkAnPL4ZXtMP3D/Hxu6Em3PygtJzKWOSf2BngH3Ynm0=
+  secretKey: vkAnPL4ZXtMP3D/Hxu6Em3PygtJzKWOSf2BngH3Ynm0=
 
 logging:
   level:

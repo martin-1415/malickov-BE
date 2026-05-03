@@ -7,6 +7,6 @@ RUN mvn clean package -DskipTests
 # PROD stage
 FROM eclipse-temurin:21-jre
 WORKDIR /app
-COPY --from=builder /app/target/process.jar process.jar
+COPY --from=builder /app/target/malickov-be.jar malickov-be.jar
 EXPOSE 8080
-ENTRYPOINT ["java","-jar","process.jar"]
+ENTRYPOINT ["java","-jar","malickov-be.jar"]
