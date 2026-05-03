@@ -78,8 +78,8 @@ public class UserController {
 
     @GetMapping("/hello")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<String> getNonActiveUser()
+    public ResponseEntity<String> hello()
     {
-        return "Hello world";
+        return new ResponseEntity<>("Hello world", HttpStatus.OK);
     }
 }
