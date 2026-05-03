@@ -35,3 +35,4 @@ app.log
 /qodana.yaml
 /src/main/resources/keystore.p12
 
+/malickov-be.log
