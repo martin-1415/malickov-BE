@@ -1,0 +1,103 @@
+name: Build and Deploy to Kubernetes (with rollback)
+
+#------------------
+# Deploy only when changes in yaml are made
+# for example change in image version
+# -----------------
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "infrastructure/malickov_be_k8s.yaml"
+
+env:
+  K8S_FILE: infrastructure/malickov_be_k8s.yaml
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # -----------------------------
+      # 1) Checkout source code
+      # -----------------------------
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # ---------------------------------------------------------
+      # 2) Extract Docker repo + tag from the k8s deployment yaml
+      # ---------------------------------------------------------
+      - name: Extract image and tag from YAML
+        id: extract
+        run: |
+          IMAGE=$(grep "image:" $K8S_FILE | awk '{print $2}')
+          REPO=$(echo "$IMAGE" | cut -d':' -f1)
+          TAG=$(echo "$IMAGE" | cut -d':' -f2)
+
+          echo "Repository: $REPO"
+          echo "Tag: $TAG"
+
+          echo "repo=$REPO" >> $GITHUB_OUTPUT
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+
+      # -----------------------------
+      # 3) Build Docker image
+      # -----------------------------
+      - name: Build Docker image
+        run: |
+          docker build -t "${{ steps.extract.outputs.repo }}:${{ steps.extract.outputs.tag }}" .
+
+      # -----------------------------
+      # 4) Login to Docker Hub
+      # -----------------------------
+      - name: DockerHub login
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USER }}
+          password: ${{ secrets.DOCKERHUB_PASS }}
+
+
+      # -----------------------------
+      # 5) Push Docker image
+      # -----------------------------
+      - name: Push Docker image
+        run: |
+          docker push "${{ steps.extract.outputs.repo }}:${{ steps.extract.outputs.tag }}"
+
+
+      # ---------------------------------------------------------
+      # 6) Copy k8s manifest to VPS
+      # ---------------------------------------------------------
+      - name: Upload k8s manifest to VPS
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_IP }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASS }}
+          source: "infrastructure/malickov_be_k8s.yaml"
+          target: "~/GIT/"
+          strip_components: 1
+
+      # ---------------------------------------------------------
+      # 7) Login to VPS using SSH and apply k8s manifest
+      # ---------------------------------------------------------
+      - name: Deploy to VPS (with rollback)
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_IP }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASS }}
+          port: 22
+          script: |
+
+            echo "Applying manifest..."
+            kubectl apply -f ~/GIT/malickov_be_k8s.yaml
+
+            echo "Waiting for rollout..."
+            if ! kubectl rollout status deployment/malickov-be --timeout=400s; then
+              echo "Rollout failed — rolling back..."
+              kubectl rollout undo deployment/malickov-be
+              exit 1
+            fi
+
+            echo "Deployment successful!"
