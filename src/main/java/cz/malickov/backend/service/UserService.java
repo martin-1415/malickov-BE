@@ -41,7 +41,7 @@ public class UserService{
      * @return userOutboundDTO object
     */
     @PreAuthorize("hasAuthority('ROLE_DIRECTOR') or (hasAuthority('ROLE_MANAGER') and #userInboundDTO.role.name() == T(cz.malickov.backend.enums.Role).PARENT.name())")
-    public User registerUser(UserInboundDTO userInboundDTO) {
+    public UserOutboundDTO registerUser(UserInboundDTO userInboundDTO) {
 
         String email = userInboundDTO.email();
         Optional<User> optionalUser = userRepository.findByEmail(email);
@@ -63,28 +63,27 @@ public class UserService{
         user.setIdentifier(userInboundDTO.firstName().concat("_").concat(userInboundDTO.lastName())
                           .concat("_").concat(Integer.toUnsignedString(hash, 36).substring(0, 5)));
 
-        userRepository.save(user);
+        User savedUser = userRepository.save(user);
         log.debug("User {} registered successfully", email);
 
-        return userRepository.findByEmail(email)
-                .orElseThrow();
+        return userMapper.toOutboundDTO(savedUser);
     }
 
 
     @PreAuthorize("hasAuthority('ROLE_DIRECTOR') or (hasAuthority('ROLE_MANAGER') and #updatedUserDTO.role.name() == T(cz.malickov.backend.enums.Role).PARENT.name())")
-    public User updateUser(UserInboundDTO updatedUserDTO) {
+    public UserOutboundDTO updateUser(UserInboundDTO updatedUserDTO) {
         String email = updatedUserDTO.email();
         UUID uuid = updatedUserDTO.uuid();
 
         User userToUpdate = userRepository.findByUserUuid(uuid)
                 .orElseThrow(() -> new UserNotFoundException("User with uuid '" + uuid+ "' not found."));
 
-        // only names, email, tgelephone, active and role can be updated here
+        // only names, email, telephone, active and role can be updated here
         userMapper.updateEntity(updatedUserDTO,userToUpdate);
-        userRepository.save(userToUpdate);
+        User updatedUser = userRepository.save(userToUpdate);
         log.debug("User {} updated successfully", email);
 
-        return userToUpdate;
+        return userMapper.toOutboundDTO(updatedUser);
     }
 
     /*
@@ -119,15 +118,16 @@ public class UserService{
     public UserOutboundDTO setPassword(UserLoginDTO userLogin){
 
         Optional<User> optinalUser = this.userRepository.findByEmail(userLogin.email());
+        User savedUser;
         if (optinalUser.isPresent()) {
             User user = optinalUser.get();
             if( user.getPassword() == null ) {
                 user.setPassword(bCryptPasswordEncoder.encode(userLogin.password()));
-                userRepository.save(user);
+                savedUser = userRepository.save(user);
             }else{
                 throw new GeneralException("Old password has to be deleted first.");
             }
-            return userMapper.toOutboundDTO(user);
+            return userMapper.toOutboundDTO(savedUser);
         }
         log.warn("User with email {} does not exists", userLogin.email());
         throw new UserNotFoundException("User with email "+ userLogin.email() + " does not exists");
@@ -137,7 +137,7 @@ public class UserService{
     /*
       Used during login to get user based on his email which was extracted from cookies
      */
-    public UserOutboundDTO getOutboundUserDtoBasedOnEmail(String email){
+    public UserOutboundDTO getUserOutboundDtoByUserEmail(String email){
 
         Optional<User> optinalUser = this.userRepository.findByEmail(email);
         if (optinalUser.isPresent()) {
@@ -156,15 +156,16 @@ public class UserService{
     public UserOutboundDTO deletePassword(String uuid) {
         Optional<User> optinalUser = this.userRepository.findByUserUuid(UUID.fromString(uuid));
         User user;
+        User savedUser;
+
         if (optinalUser.isPresent()) {
             user = optinalUser.get();
             user.setPassword(null);
-            userRepository.save(user);
+            savedUser = userRepository.save(user);
         }else{
             log.warn("User with uuid {} does not exists", uuid);
             throw new UserNotFoundException("User with uuid "+ uuid + " does not exists");
         }
-
-        return userMapper.toOutboundDTO(user);
+        return userMapper.toOutboundDTO(savedUser);
     }
 }

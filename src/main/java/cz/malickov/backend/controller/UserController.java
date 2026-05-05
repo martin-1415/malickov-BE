@@ -3,9 +3,7 @@ package cz.malickov.backend.controller;
 
 import cz.malickov.backend.dto.UserOutboundDTO;
 import cz.malickov.backend.dto.UserInboundDTO;
-import cz.malickov.backend.entity.User;
 import cz.malickov.backend.error.UserNotFoundException;
-import cz.malickov.backend.mapper.UserMapper;
 import cz.malickov.backend.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -20,12 +18,10 @@ import java.util.UUID;
 @RequestMapping("/api/user")
 public class UserController {
 
-    private final UserMapper userMapper;
     private final UserService userService;
 
-    public UserController(UserService userService, UserMapper userMapper) {
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.userMapper = userMapper;
     }
     /*
      * sets password to be null
@@ -42,11 +38,12 @@ public class UserController {
 
     @PreAuthorize("hasAnyRole('DIRECTOR','MANAGER')")
     @PostMapping("/newUser")
-    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<UserOutboundDTO> createUser(@RequestBody @Valid UserInboundDTO userInboundDTO) {
-        User savedUser = this.userService.registerUser(userInboundDTO);
+        UserOutboundDTO savedUser = this.userService.registerUser(userInboundDTO);
 
-        return ResponseEntity.ok(userMapper.toOutboundDTO(savedUser));
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(savedUser);
     }
 
     @PreAuthorize("hasAnyRole('DIRECTOR','MANAGER')")
@@ -72,8 +69,8 @@ public class UserController {
             throw new UserNotFoundException("Path id ("+ uuid + ") and payload id ("+ user2update.uuid()+") mismatch.");
         }
 
-        User updatedUser = userService.updateUser(user2update);
-        return userMapper.toOutboundDTO(updatedUser);
+        UserOutboundDTO updatedUser = userService.updateUser(user2update);
+        return updatedUser;
     }
 
     @GetMapping("/hello")

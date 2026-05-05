@@ -72,3 +72,26 @@ java -jar malickov-be.jar \
   --spring.datasource.password=STRONG_PASSWORD \
   --security.secretKey=VERY_SECRET_KEY
 ```
+### Database
+Creata user and database
+```bash
+CREATE USER secretApplicationUser WITH PASSWORD;
+```
+Add user to database malickov
+
+```bash
+ALTER DATABASE malickov OWNER TO secretApplicationUser;
+
+GRANT ALL PRIVILEGES ON DATABASE malickov TO secretApplicationUser;
+```
+
+To login to the database on the server use
+```bash
+psql -U secretApplicationUser -h publicIP -d malickov
+```
+
+To log as super user 
+```bash
+ sudo -u postgres psql
+```
+

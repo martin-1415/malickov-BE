@@ -2,6 +2,7 @@
 package cz.malickov.backend;
 
 import cz.malickov.backend.dto.UserInboundDTO;
+import cz.malickov.backend.dto.UserOutboundDTO;
 import cz.malickov.backend.entity.User;
 import cz.malickov.backend.enums.Role;
 import cz.malickov.backend.mapper.UserMapper;
@@ -15,7 +16,7 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import static org.mockito.Mockito.when;
-
+import static org.mockito.ArgumentMatchers.any;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -48,7 +49,6 @@ class UserServiceTest {
         assertEquals("lastName", user.getLastName());
         assertEquals("firstName", user.getFirstName());
         assertEquals("email", user.getEmail());
-        assertEquals("email", user.getTelephone());
         assertEquals("123 456 789", user.getTelephone());
         assertTrue(user.isActive());
         assertEquals("identifier", user.getIdentifier());
@@ -92,18 +92,19 @@ class UserServiceTest {
                 .thenReturn(Optional.empty())
                 .thenReturn(Optional.of(savedUser));
 
-        when(userRepository.save(savedUser)).thenReturn(savedUser);
+        when(userRepository.save(any(User.class))).thenReturn(savedUser);
         // test
-        User result = userService.registerUser(mockUser);
+        UserOutboundDTO result = userService.registerUser(mockUser);
 
 
         assertNotNull(result);
-        assertEquals("John", result.getFirstName());
-        assertEquals("Doe", result.getLastName());
-        assertEquals("abc@gggd.cz", result.getEmail());
-        assertEquals("123 456 789", result.getTelephone());
-        assertEquals(role, result.getRoleName());
-        assertTrue(result.isActive());
+        assertEquals("John", result.firstName());
+        assertEquals("Doe", result.lastName());
+        assertEquals("abc@gggd.cz", result.email());
+        assertEquals("123 456 789", result.telephone());
+        assertEquals(role, result.role());
+        assertFalse(result.passwordSet());
+        assertTrue(result.active());
     }
 
     @Test
@@ -122,15 +123,15 @@ class UserServiceTest {
         when(userRepository.findByUserUuid(uuid))
                 .thenReturn(Optional.of(oldUser));
         // Then
-        User result = userService.updateUser(newMockUser);
+        UserOutboundDTO result = userService.updateUser(newMockUser);
 
         assertNotNull(result);
-        assertEquals("John2", result.getFirstName());
-        assertEquals("Doe2", result.getLastName());
-        assertEquals("aaa@bbb.cz2", result.getEmail());
-        assertEquals("123 456 789", result.getTelephone());
-        assertEquals(role, result.getRoleName());
-        assertTrue(result.isActive());
+        assertEquals("John2", result.firstName());
+        assertEquals("Doe2", result.lastName());
+        assertEquals("aaa@bbb.cz2", result.email());
+        assertEquals("123 456 789", result.telephone());
+        assertEquals(role, result.role());
+        assertTrue(result.active());
     }
 
     @Test

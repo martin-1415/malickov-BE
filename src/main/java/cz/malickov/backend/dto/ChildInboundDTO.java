@@ -3,24 +3,27 @@ package cz.malickov.backend.dto;
 import cz.malickov.backend.entity.Identificator;
 import cz.malickov.backend.enums.Department;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
+
 import java.util.Date;
 import java.util.UUID;
 
 
-public record ChildOutboundDTO (
-    @NotNull
-    UUID childUuid,
+public record ChildInboundDTO (
+
+    UUID childId,// can be null for creation
     @NotNull
     String firstName,
     @NotNull
     String lastName,
     @NotNull
     Department department,
+    @Past
     Date birthDay,
     @NotNull
     Boolean active,
-    @NotNull
     String notes,
+    @NotNull
     UUID userUuid,
     Identificator identificator,
     Boolean mon,

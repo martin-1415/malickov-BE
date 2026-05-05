@@ -42,6 +42,10 @@ public interface UserMapper {
     @Mapping(source = "role", target = "roleName")
     void updateEntity(UserInboundDTO dto, @MappingTarget User user); // only 5 fields can be updated
 
+    /**
+     * Create a new outbound Record based on User entity
+     * password is mapped to True or False if set
+     */
     @Mapping(source = "roleName", target = "role")
     @Mapping(target = "credit", source="credit", defaultValue = "0")
     @Mapping(target = "passwordSet", expression = "java(user.getPassword() != null)")

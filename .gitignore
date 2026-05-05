@@ -21,8 +21,8 @@ target/
 
 # Logs
 /logs/
-app.log.*
-app.log
+malickov-be.log*
+
 
 # Environment/Sensitive config
 #.env

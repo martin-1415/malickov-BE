@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "`user`")
+@Table(name = "`user`") // user is reserved keyword in postgres, thus apostrophes
 @Getter @Setter @ToString
 @AllArgsConstructor
 @Builder
@@ -43,8 +43,7 @@ public class User {
     private String email;
 
     @JsonProperty("telephone")
-    @NotBlank(message = "Email is required")
-    @Column(name = "telephone",nullable = false,unique = true)
+    @Column(name = "telephone",nullable = true,unique = false)
     private String telephone;
 
     @JsonProperty("password")
@@ -71,7 +70,8 @@ public class User {
     @Column(name = "credit")
     private BigDecimal credit = BigDecimal.ONE; // default value, JPA set null which overwrites DEFAULT 0 in liquibase
 
-    @Column(name = "created_at")
+    @Column(name = "created_at",insertable = false, updatable = false) // let PSQL to insert this and not to save null
+    @org.hibernate.annotations.Generated(org.hibernate.annotations.GenerationTime.INSERT) // force hibernate to use extra SELECT to populate this field when user is created
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)

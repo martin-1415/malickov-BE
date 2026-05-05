@@ -15,7 +15,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -89,7 +88,7 @@ public class LoginController {
 
                 return ResponseEntity.ok()
                         .header(HttpHeaders.SET_COOKIE, cookie.toString())
-                        .body( userService.getOutboundUserDtoBasedOnEmail(loggedUser.getEmail()) );
+                        .body( userService.getUserOutboundDtoByUserEmail(loggedUser.getEmail()) );
             }
             else{
                 log.info("User with email {} not found.", userLogin.email());
@@ -139,7 +138,7 @@ public class LoginController {
         }
 
         String email = jwtService.extractEmail(token);
-        return ResponseEntity.ok().body(userService.getOutboundUserDtoBasedOnEmail(email));
+        return ResponseEntity.ok().body(userService.getUserOutboundDtoByUserEmail(email));
     }
 
     /*

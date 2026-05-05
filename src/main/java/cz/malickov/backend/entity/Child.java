@@ -24,7 +24,7 @@ public class Child {
     @JsonProperty("childUuid")
     @Column(name = "child_uuid",nullable = false,columnDefinition = "uniqueidentifier")
     @GeneratedValue
-    private UUID childId;
+    private UUID childUuid;
 
     @Column(name = "first_name")
     @NotBlank(message = "First name is required")

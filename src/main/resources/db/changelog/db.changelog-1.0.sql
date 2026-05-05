@@ -7,7 +7,7 @@ CREATE TABLE "user" (
                         first_name VARCHAR(100) NOT NULL,
                         last_name VARCHAR(100) NOT NULL,
                         email VARCHAR(100) NOT NULL,
-                        telephone VARCHAR(100) NOT NULL,
+                        telephone VARCHAR(100),
                         password VARCHAR(255),
                         active BOOLEAN DEFAULT TRUE,
                         identifier VARCHAR(100) NOT NULL,  -- used for bank transfers
