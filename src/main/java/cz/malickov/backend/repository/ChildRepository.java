@@ -2,7 +2,6 @@ package cz.malickov.backend.repository;
 
 
 import cz.malickov.backend.entity.Child;
-import cz.malickov.backend.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
