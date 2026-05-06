@@ -11,7 +11,7 @@ import java.util.UUID;
 
 public record ChildInboundDTO (
 
-    UUID childId,// can be null for creation
+    UUID childUuid,// can be null for creation
     @NotNull
     String firstName,
     @NotNull

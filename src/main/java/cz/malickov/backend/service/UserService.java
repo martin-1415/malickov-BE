@@ -71,16 +71,14 @@ public class UserService{
 
     @PreAuthorize("hasAuthority('ROLE_DIRECTOR') or (hasAuthority('ROLE_MANAGER') and #updatedUserDTO.role.name() == T(cz.malickov.backend.enums.Role).PARENT.name())")
     public UserOutboundDTO updateUser(UserInboundDTO updatedUserDTO) {
-        String email = updatedUserDTO.email();
-        UUID uuid = updatedUserDTO.uuid();
 
+        UUID uuid = updatedUserDTO.uuid();
         User userToUpdate = userRepository.findByUserUuid(uuid)
                 .orElseThrow(() -> new UserNotFoundException("User with uuid '" + uuid+ "' not found."));
 
         // only names, email, telephone, active and role can be updated here
         userMapper.updateEntity(updatedUserDTO,userToUpdate);
         User updatedUser = userRepository.save(userToUpdate);
-        log.debug("User {} updated successfully", email);
 
         return userMapper.toOutboundDTO(updatedUser);
     }
@@ -115,20 +113,16 @@ public class UserService{
      * @return userOutboundDTO
      */
     public UserOutboundDTO setPassword(UserLoginDTO userLogin){
+        User user = this.userRepository.findByEmail(userLogin.email())
+                .orElseThrow(() -> new UserNotFoundException("User with email "+ userLogin.email() + " does not exists"));
 
-        Optional<User> optinalUser = this.userRepository.findByEmail(userLogin.email());
-        User savedUser;
-        if (optinalUser.isPresent()) {
-            User user = optinalUser.get();
-            if( user.getPassword() == null ) {
-                user.setPassword(bCryptPasswordEncoder.encode(userLogin.password()));
-                savedUser = userRepository.save(user);
-            }else{
-                throw new GeneralException("Old password has to be deleted first.");
-            }
-            return userMapper.toOutboundDTO(savedUser);
+        if( user.getPassword() == null ) {
+            user.setPassword(bCryptPasswordEncoder.encode(userLogin.password()));
+            userRepository.save(user);
+            return userMapper.toOutboundDTO(user);
+        }else{
+            throw new GeneralException("Old password has to be deleted first.");
         }
-        throw new UserNotFoundException("User with email "+ userLogin.email() + " does not exists");
     }
 
 

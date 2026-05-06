@@ -23,7 +23,7 @@ public interface ChildMapper {
      */
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "childUuid", ignore = true)
-    void updateEntity(ChildInboundDTO dto, @MappingTarget Child child); // only 5 fields can be updated
+    void updateEntity(ChildInboundDTO dto, @MappingTarget Child child);
 
     /**
      * Create a new outbound Record from Child entity

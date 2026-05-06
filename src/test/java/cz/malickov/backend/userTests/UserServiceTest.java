@@ -1,5 +1,5 @@
 
-package cz.malickov.backend;
+package cz.malickov.backend.userTests;
 
 import cz.malickov.backend.dto.UserInboundDTO;
 import cz.malickov.backend.dto.UserOutboundDTO;

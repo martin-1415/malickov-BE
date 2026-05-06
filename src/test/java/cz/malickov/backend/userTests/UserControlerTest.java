@@ -1,4 +1,4 @@
-package cz.malickov.backend;
+package cz.malickov.backend.userTests;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

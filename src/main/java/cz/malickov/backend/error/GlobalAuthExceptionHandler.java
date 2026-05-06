@@ -32,7 +32,7 @@ public class GlobalAuthExceptionHandler {
             email = authentication.getName();
         }
 
-        log.warn("Unauthorized action attempted by user {}: {}", email, ex.getCause().toString());
+        log.warn("Unauthorized action attempted by user {}: {}", email, ex.getMessage());
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
                 Map.of(
                         "message", "You do not have permissions to perform this action."

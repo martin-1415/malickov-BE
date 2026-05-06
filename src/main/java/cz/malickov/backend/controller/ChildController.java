@@ -2,12 +2,15 @@ package cz.malickov.backend.controller;
 
 import cz.malickov.backend.dto.ChildInboundDTO;
 import cz.malickov.backend.dto.ChildOutboundDTO;
+import cz.malickov.backend.error.childExceptions.ChildNotFoundException;
 import cz.malickov.backend.service.ChildService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/child")
@@ -26,6 +29,21 @@ public class ChildController {
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
+                .body(savedChild);
+    }
+
+    @PreAuthorize("hasAnyRole('DIRECTOR','MANAGER')")
+    @PutMapping("/editChild/{childUuid}")
+    public ResponseEntity<ChildOutboundDTO> editChild(@PathVariable UUID childUuid, @RequestBody @Valid ChildInboundDTO childInboundDTO) {
+
+        if (childInboundDTO.childUuid() != null && !childUuid.equals(childInboundDTO.childUuid())) {
+            throw new ChildNotFoundException("Path id ("+ childUuid + ") and payload id ("+ childInboundDTO.childUuid()+") mismatch.");
+        }
+
+        ChildOutboundDTO savedChild = this.childService.editChild(childInboundDTO);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
                 .body(savedChild);
     }
 
