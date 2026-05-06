@@ -1,6 +1,5 @@
 package cz.malickov.backend.config;
 
-import cz.malickov.backend.error.AuthenticationException;
 import cz.malickov.backend.service.JWTService;
 import cz.malickov.backend.service.UserDetailsLoginService;
 import jakarta.servlet.FilterChain;
@@ -10,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -73,12 +73,14 @@ public class JwtFilter extends OncePerRequestFilter {
             try {
                 email = jwtService.extractEmail(token);
             } catch (Exception e) {
-                log.warn("Failed to extract email from token: {}", e.getMessage());
-                throw new AuthenticationException("Failed to extract email from token",e);
-            }
+                log.info("Failed to extract email from token: {}", e.getMessage());
+                writeUnauthorized(response);
+                return;
+           }
         } else {
-            log.warn("No JWT cookie found in request");
-            throw new AuthenticationException("No JWT cookie found in request");
+            log.info("No JWT cookie found in the request");
+            writeUnauthorized(response);
+            return;
         }
 
         // loads user details section
@@ -95,5 +97,20 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    /*
+     * My custom Exceptions raised here are thrown from inside JwtFilter, which extends OncePerRequestFilter.
+     * Exceptions thrown from a servlet filter bypass DispatcherServlet and bubble up to the servlet container, which typically returns a generic 500
+     * So I cannot use here custom exceptions. Thus this method just not to get 500 on FE.
+     * @param HttpServletResponse: response object
+     * @param String: message
+     * @return void
+     */
+    private void writeUnauthorized(HttpServletResponse response) throws IOException {
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write("Authorization failed.");
     }
 }

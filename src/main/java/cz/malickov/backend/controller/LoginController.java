@@ -3,7 +3,7 @@ package cz.malickov.backend.controller;
 import cz.malickov.backend.dto.UserLoginDTO;
 import cz.malickov.backend.dto.UserOutboundDTO;
 import cz.malickov.backend.entity.User;
-import cz.malickov.backend.error.LoginFailedException;
+import cz.malickov.backend.error.authExceptions.LoginFailedException;
 import cz.malickov.backend.repository.UserRepository;
 import cz.malickov.backend.service.JWTService;
 import cz.malickov.backend.service.LoginService;
@@ -97,7 +97,7 @@ public class LoginController {
         } catch (LoginFailedException e) {
             throw e;
         }catch(Exception e){
-            log.error("Error during verifying login for email: {}", userLogin.email(), e);
+            log.info("Verifying login for email: {} failed", userLogin.email(), e);
             throw new LoginFailedException();
         }
     }

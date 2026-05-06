@@ -3,7 +3,7 @@ package cz.malickov.backend.controller;
 
 import cz.malickov.backend.dto.UserOutboundDTO;
 import cz.malickov.backend.dto.UserInboundDTO;
-import cz.malickov.backend.error.UserNotFoundException;
+import cz.malickov.backend.error.userExceptions.UserNotFoundException;
 import cz.malickov.backend.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -69,8 +69,7 @@ public class UserController {
             throw new UserNotFoundException("Path id ("+ uuid + ") and payload id ("+ user2update.uuid()+") mismatch.");
         }
 
-        UserOutboundDTO updatedUser = userService.updateUser(user2update);
-        return updatedUser;
+        return userService.updateUser(user2update);
     }
 
     @GetMapping("/hello")

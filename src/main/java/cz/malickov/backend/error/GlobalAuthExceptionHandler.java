@@ -1,5 +1,6 @@
 package cz.malickov.backend.error;
 
+import cz.malickov.backend.error.authExceptions.LoginFailedException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,10 +18,13 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalAuthExceptionHandler {
 
+    /*
+     * Find out and log who tried to access forbidden resource
+     */
     @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<Map<String, Object>> handleAccessDenied() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    public ResponseEntity<Map<String, Object>> handleAccessDenied(AccessDeniedException ex) {
 
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = "anonymous";
         if (authentication != null
                 && authentication.isAuthenticated()
@@ -28,28 +32,18 @@ public class GlobalAuthExceptionHandler {
             email = authentication.getName();
         }
 
-        log.info("Unauthorized action attempted by user {}.",email);
+        log.warn("Unauthorized action attempted by user {}: {}", email, ex.getCause().toString());
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
                 Map.of(
-                        "message", "Good morning Mr./Mrs. "+email+", but you do not have permission to perform this action."
+                        "message", "You do not have permissions to perform this action."
                 )
         );
     }
 
     @ExceptionHandler(LoginFailedException.class)
-    public ResponseEntity<Map<String, String>> loginFailedException() {
-        log.info("Wrong email or password or user inactive.");
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
-                Map.of(
-                        "message", "Wrong email or password or user inactive."
-                )
-        );
-    }
-
-    @ExceptionHandler(GeneralException.class)
-    public ResponseEntity<Map<String, String>> GeneralException(GeneralException ex) {
+    public ResponseEntity<Map<String, String>> handleLoginFailedException(LoginFailedException ex) {
         String message = ex.getMessage();
-        log.info(message);
+        // no logs as logs are already in the services, email not found, etc.
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
                 Map.of(
                         "message", message
@@ -57,37 +51,7 @@ public class GlobalAuthExceptionHandler {
         );
     }
 
-    @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity<Map<String, String>> authorizationFailedException() {
-        log.error("Authentication failed.");
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
-                Map.of(
-                        "message", "Authentication failed."
-                )
-        );
-    }
 
-    @ExceptionHandler(UserAlreadyExistsException.class)
-    public ResponseEntity<Map<String, String>> userExistsException(UserAlreadyExistsException ex) {
-        String message = ex.getMessage();
-        log.error(message);
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(
-                Map.of(
-                        "message", message
-                )
-        );
-    }
-
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<Map<String, String>> userNotFoundException(UserNotFoundException ex) {
-        String message = ex.getMessage();
-        log.info("User not found:" + message);
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                Map.of(
-                        "message", message
-                )
-        );
-    }
 
     // Exceptions for argument validation, only bad requests type
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -97,8 +61,7 @@ public class GlobalAuthExceptionHandler {
                 errors.put(error.getField(), error.getDefaultMessage())
         );
 
-        log.error("Validation error: " + errors);
-
-        return ResponseEntity.badRequest().body( errors);
+        log.info("Validation error: " + errors);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body( errors);
     }
 }

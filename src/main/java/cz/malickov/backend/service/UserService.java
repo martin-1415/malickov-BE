@@ -6,8 +6,8 @@ import cz.malickov.backend.dto.UserOutboundDTO;
 import cz.malickov.backend.entity.User;
 
 import cz.malickov.backend.error.GeneralException;
-import cz.malickov.backend.error.UserAlreadyExistsException;
-import cz.malickov.backend.error.UserNotFoundException;
+import cz.malickov.backend.error.userExceptions.UserAlreadyExistsException;
+import cz.malickov.backend.error.userExceptions.UserNotFoundException;
 import cz.malickov.backend.mapper.UserMapper;
 import cz.malickov.backend.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -46,8 +46,7 @@ public class UserService{
         String email = userInboundDTO.email();
         Optional<User> optionalUser = userRepository.findByEmail(email);
         if (optionalUser.isPresent()) {
-            log.info("User with email {} already exists", email);
-            throw new UserAlreadyExistsException("User with email '" + email + "' already exists");
+            throw new UserAlreadyExistsException(email);
         }
 
 
@@ -129,7 +128,6 @@ public class UserService{
             }
             return userMapper.toOutboundDTO(savedUser);
         }
-        log.warn("User with email {} does not exists", userLogin.email());
         throw new UserNotFoundException("User with email "+ userLogin.email() + " does not exists");
     }
 
