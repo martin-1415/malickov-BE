@@ -15,6 +15,7 @@ import cz.malickov.backend.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+
 @Slf4j
 @Service
 public class ChildService {
@@ -45,10 +46,13 @@ public class ChildService {
                 .orElseThrow(() -> new ParentNotFoundException(childDto.userUuid().toString() ));
         child.setUser(user);
 
-        Integer identificatorId=childDto.identificator().getIdentificatorId();
-        Identificator identificator=this.identificatorRepository.findById(identificatorId)
-                .orElseThrow(() -> new GeneralException("Identificator with ID "+ identificatorId + " not found"));
-        child.setIdentificator(identificator);
+        if( childDto.identificator() != null){
+            Integer identificatorId= childDto.identificator().getIdentificatorId();
+            Identificator identificator=this.identificatorRepository.findById(identificatorId)
+                    .orElseThrow(() -> new GeneralException("Identificator with ID "+ identificatorId + " not found"));
+            child.setIdentificator(identificator);
+        }
+
 
         this.childRepository.save(child);
         return this.childMapper.toOutboundDTO(child);

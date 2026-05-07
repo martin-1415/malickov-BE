@@ -5,7 +5,7 @@ spring:
 
 security:
   JwtValidityMillis: 90000000
-  corsSite: https://nejlepsi-skolky.cz , https://www.nejlepsi-skolky.cz
+  corsSite: https://nejlepsi-skolky.cz , https://www.nejlepsi-skolky.cz, http://localhost:4200
 
 springdoc:
   api-docs:
