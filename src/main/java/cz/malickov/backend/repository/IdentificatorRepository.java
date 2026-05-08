@@ -1,12 +1,10 @@
 package cz.malickov.backend.repository;
 
-import cz.malickov.backend.entity.Child;
 import cz.malickov.backend.entity.Identificator;
 import org.springframework.data.jpa.repository.JpaRepository;
-
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-
+import java.util.List;
 import java.util.Optional;
 
 
@@ -15,8 +13,15 @@ public interface IdentificatorRepository  extends JpaRepository<Identificator, I
 
     Optional<Identificator> findById(Integer identificatorId);
 
-    @Query("SELECT i.* FROM identificator i WHERE NOT EXISTS(" +
-                "SELECT 1 FROM child c WHERE c.identificator_id = i.identificator_id AND c.active = TRUE" +
-            ");")
+    @Query("""
+    SELECT i
+    FROM Identificator i
+    WHERE NOT EXISTS (
+        SELECT c
+        FROM Child c
+        WHERE c.identificator = i
+          AND c.active = true
+    )
+        """)
     List<Identificator> getFreeIdentificators();
 }

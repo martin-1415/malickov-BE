@@ -19,8 +19,8 @@ public class Identificator {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int identificatorId;
 
-    @JsonProperty("identificator")
-    @Column(name = "identificator")
+    @JsonProperty("identificatorName")
+    @Column(name = "identificatorName")
     @NotBlank(message = "Identificator description is required")
-    private String identificator;
+    private String identificatorName;
 }
