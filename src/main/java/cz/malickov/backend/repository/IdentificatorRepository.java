@@ -22,6 +22,6 @@ public interface IdentificatorRepository  extends JpaRepository<Identificator, I
         WHERE c.identificator = i
           AND c.active = true
     )
-        """)
+    """)
     List<Identificator> getFreeIdentificators();
 }

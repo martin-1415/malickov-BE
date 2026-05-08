@@ -20,7 +20,7 @@ public class Identificator {
     private int identificatorId;
 
     @JsonProperty("identificatorName")
-    @Column(name = "identificatorName")
+    @Column(name = "identificator_name")
     @NotBlank(message = "Identificator description is required")
     private String identificatorName;
 }
