@@ -74,4 +74,17 @@ public class ChildService {
         return this.childMapper.toOutboundDTO(child);
     }
 
+    public List<ChildOutboundDTO> getActiveChildren() {
+        List<child> activeChildren = this.childRepository.findByActiveTrueOrderByLastNameAsc();
+        return activeChildren.stream()
+                .map(childMapper::toOutboundDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<ChildOutboundDTO> getNonActiveChildren() {
+        List<child> activeChildren = this.childRepository.findByActiveFalseOrderByLastNameAsc();
+        return activeChildren.stream()
+                .map(childMapper::toOutboundDTO)
+                .collect(Collectors.toList());
+    }
 }

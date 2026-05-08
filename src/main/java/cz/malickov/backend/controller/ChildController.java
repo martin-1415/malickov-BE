@@ -5,12 +5,14 @@ import cz.malickov.backend.dto.ChildOutboundDTO;
 import cz.malickov.backend.error.childExceptions.ChildNotFoundException;
 import cz.malickov.backend.service.ChildService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/child")
@@ -21,6 +23,25 @@ public class ChildController {
         this.childService = childService;
     }
 
+    @PreAuthorize("hasAnyRole('DIRECTOR','MANAGER')")
+    @GetMapping("/getActiveChildren")
+    public ResponseEntity<List<ChildOutboundDTO>> getActiveChildren()
+    {
+        List<ChildOutboundDTO> activeChildren =
+                this.childService.getActiveChildren();
+        return ResponseEntity.ok()
+                .body( activeChildren );
+    }
+
+    @PreAuthorize("hasAnyRole('DIRECTOR','MANAGER')")
+    @GetMapping("/getNonActiveChildren")
+    public ResponseEntity<List<ChildOutboundDTO>> getNonActiveChildren()
+    {
+        List<ChildOutboundDTO> nonActiveChildren =
+                this.childService.getNonActiveChildren();
+        return ResponseEntity.ok()
+                .body( nonActiveChildren );
+    }
 
     @PreAuthorize("hasAnyRole('DIRECTOR','MANAGER')")
     @PostMapping("/newChild")
