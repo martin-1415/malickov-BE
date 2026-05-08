@@ -2,6 +2,7 @@ package cz.malickov.backend.repository;
 
 
 import cz.malickov.backend.entity.Child;
+import cz.malickov.backend.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,4 +20,8 @@ public interface ChildRepository  extends JpaRepository<Child, UUID> { // <T, ID
     List<Child> findChildrenByParentUuid(@Param("parentUuid") UUID parentId);
 
     Optional<Child> findByChildUuid(UUID childUuid);
+
+    List<User> findByActiveTrueOrderByLastNameAsc();
+
+    List<User> findByActiveFalseOrderByLastNameAsc();
 }
