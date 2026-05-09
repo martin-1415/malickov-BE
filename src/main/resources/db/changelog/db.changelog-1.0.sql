@@ -146,7 +146,7 @@ INSERT INTO identificator (identificator_name) VALUES
                                                   ('Hruška'),
                                                   ('Rajče'),
                                                   ('Ptáček');
-
+--changeset Martin_Fischer:5 context:dev
 INSERT INTO child (first_name, last_name, department, birthday, identificator_id, user_uuid)
 VALUES
     ('Laura', 'Skala', 'KINDERGARTEN', '2020-01-17', 1,
@@ -158,7 +158,7 @@ VALUES
     ('Tereza', 'Montana', 'NURSERY2', '2022-07-01', 3,
      (SELECT user_uuid FROM "user" WHERE email='6@6.cz'));
 
---changeset Martin_Fischer:5 context:prod,dev
+--changeset Martin_Fischer:6 context:prod,dev
 INSERT INTO "user" (first_name, last_name, email,telephone, active, role_name, password,identifier)
 VALUES
     ('Martin', 'Fischer', 'martin.fischer1415@gmail.com', '+420 777 574 823',TRUE, 'DIRECTOR', Null, '1111');
