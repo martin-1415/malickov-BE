@@ -21,6 +21,7 @@ public record ChildOutboundDTO (
     Boolean active,
     @NotNull
     String notes,
+    @NotNull
     UUID userUuid,
     Identificator identificator,
     Boolean mon,

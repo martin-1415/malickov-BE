@@ -84,7 +84,7 @@ public class ChildService {
                 .collect(Collectors.toList());
     }
 
-    public List<ChildOutboundDTO> getNonActiveChildren() {
+    public List<ChildOutboundDTO> getInactiveChildren() {
         List<Child> activeChildren = this.childRepository.findByActiveFalseOrderByLastNameAsc();
         return activeChildren.stream()
                 .map(childMapper::toOutboundDTO)
