@@ -15,6 +15,9 @@ import cz.malickov.backend.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 
 @Slf4j
 @Service
@@ -75,14 +78,14 @@ public class ChildService {
     }
 
     public List<ChildOutboundDTO> getActiveChildren() {
-        List<child> activeChildren = this.childRepository.findByActiveTrueOrderByLastNameAsc();
+        List<Child> activeChildren = this.childRepository.findByActiveTrueOrderByLastNameAsc();
         return activeChildren.stream()
                 .map(childMapper::toOutboundDTO)
                 .collect(Collectors.toList());
     }
 
     public List<ChildOutboundDTO> getNonActiveChildren() {
-        List<child> activeChildren = this.childRepository.findByActiveFalseOrderByLastNameAsc();
+        List<Child> activeChildren = this.childRepository.findByActiveFalseOrderByLastNameAsc();
         return activeChildren.stream()
                 .map(childMapper::toOutboundDTO)
                 .collect(Collectors.toList());
