@@ -28,6 +28,7 @@ public interface ChildMapper {
     /**
      * Create a new outbound Record from Child entity
      */
+    @Mapping(source = "user.userUuid", target = "userUuid")
     ChildOutboundDTO toOutboundDTO(Child child);
 
 }

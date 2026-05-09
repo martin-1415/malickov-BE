@@ -5,7 +5,6 @@ import cz.malickov.backend.dto.ChildOutboundDTO;
 import cz.malickov.backend.error.childExceptions.ChildNotFoundException;
 import cz.malickov.backend.service.ChildService;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -34,13 +33,13 @@ public class ChildController {
     }
 
     @PreAuthorize("hasAnyRole('DIRECTOR','MANAGER')")
-    @GetMapping("/getNonActiveChildren")
-    public ResponseEntity<List<ChildOutboundDTO>> getNonActiveChildren()
+    @GetMapping("/getInctiveChildren")
+    public ResponseEntity<List<ChildOutboundDTO>> getInactiveChildren()
     {
-        List<ChildOutboundDTO> nonActiveChildren =
-                this.childService.getNonActiveChildren();
+        List<ChildOutboundDTO> inctiveChildren =
+                this.childService.getInactiveChildren();
         return ResponseEntity.ok()
-                .body( nonActiveChildren );
+                .body( inctiveChildren );
     }
 
     @PreAuthorize("hasAnyRole('DIRECTOR','MANAGER')")

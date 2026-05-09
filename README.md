@@ -42,6 +42,8 @@ psql -U BEuser -h localhost -p 5432 malickov
 ```
 to cancel sql command press 'q'
 
+
+
 ## Building
 
 To build the project run:
@@ -73,6 +75,11 @@ java -jar malickov-be.jar \
   --security.secretKey=VERY_SECRET_KEY
 ```
 ### Database
+To log as super user
+```bash
+ sudo -u postgres psql
+```
+
 Creata user and database
 ```bash
 CREATE USER secretApplicationUser WITH PASSWORD;
@@ -90,8 +97,5 @@ To login to the database on the server use
 psql -U secretApplicationUser -h publicIP -d malickov
 ```
 
-To log as super user 
-```bash
- sudo -u postgres psql
-```
+
 

@@ -16,7 +16,7 @@ public interface UserRepository extends JpaRepository<User, Integer> { // <T, ID
 
     Optional<User> findByUserUuid(UUID uuid);
 
-    List<User> findByActiveTrue();
+    List<User> findByActiveTrueOrderByLastNameAsc();
 
-    List<User> findByActiveFalse();
+    List<User> findByActiveFalseOrderByLastNameAsc();
 }

@@ -88,9 +88,8 @@ public class UserService{
      * @return List<userOutboundDTO>
      */
     public List<UserOutboundDTO> getActiveUsers() {
-        List<User> users = userRepository.findByActiveTrue();
+        List<User> users = userRepository.findByActiveTrueOrderByLastNameAsc();
         return users.stream()
-                .sorted(Comparator.comparing(User::getLastName))
                 .map(userMapper::toOutboundDTO)
                 .collect(Collectors.toList());
     }
@@ -100,9 +99,8 @@ public class UserService{
      * @return List<userOutboundDTO>
      */
     public List<UserOutboundDTO> getInactiveUsers() {
-        List<User> users = userRepository.findByActiveFalse();
+        List<User> users = userRepository.findByActiveFalseOrderByLastNameAsc();
         return users.stream()
-                .sorted(Comparator.comparing(User::getLastName))
                 .map(userMapper::toOutboundDTO)
                 .collect(Collectors.toList());
     }
