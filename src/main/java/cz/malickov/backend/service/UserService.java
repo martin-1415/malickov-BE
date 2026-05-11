@@ -72,15 +72,12 @@ public class UserService{
     @PreAuthorize("hasAuthority('ROLE_DIRECTOR') or (hasAuthority('ROLE_MANAGER') and #updatedUserDTO.role.name() == T(cz.malickov.backend.enums.Role).PARENT.name())")
     public UserOutboundDTO updateUser(UserInboundDTO updatedUserDTO) {
 
-        UUID uuid = updatedUserDTO.uuid();
-        User userToUpdate = userRepository.findByUserUuid(uuid)
+        User userToUpdate = userRepository.findByUserUuid(updatedUserDTO.uuid())
                 .orElseThrow(() -> new UserNotFoundException("User with uuid '" + uuid+ "' not found."));
-
         // only names, email, telephone, active and role can be updated here
         userMapper.updateEntity(updatedUserDTO,userToUpdate);
-        User updatedUser = userRepository.save(userToUpdate);
 
-        return userMapper.toOutboundDTO(updatedUser);
+        return userMapper.toOutboundDTO(userToUpdate);
     }
 
     /*

@@ -12,6 +12,7 @@ import cz.malickov.backend.mapper.ChildMapper;
 import cz.malickov.backend.repository.ChildRepository;
 import cz.malickov.backend.repository.IdentificatorRepository;
 import cz.malickov.backend.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -61,26 +62,29 @@ public class ChildService {
         return this.childMapper.toOutboundDTO(child);
     }
 
-    public ChildOutboundDTO editChild(ChildInboundDTO childInboundDTO){
-        Child child = this.childRepository.findByChildUuid(childInboundDTO.childUuid())
-                .orElseThrow(() -> new ChildNotFoundException(childInboundDTO.childUuid()));
-        Integer identificatorId=childInboundDTO.identificator().getIdentificatorId();
 
-        Identificator identificator=this.identificatorRepository.findById(identificatorId)
-                .orElseThrow(() -> new GeneralException("Identificator with ID "+ identificatorId + " not found"));
+    @Transactional
+    public ChildOutboundDTO editChild(ChildInboundDTO dto) {
 
+        Child child = childRepository.findByChildUuid(dto.childUuid())
+                .orElseThrow(() -> new ChildNotFoundException(dto.childUuid()));
 
-        this.childMapper.updateEntity(childInboundDTO,child);
+        Integer identificatorId = dto.identificator().getIdentificatorId();
+        Identificator identificator = identificatorRepository.findById(identificatorId)
+                .orElseThrow(() -> new IdentificatorNotFoundException(identificatorId));
+
+        User parent = userRepository.findByUserUuid(dto.userUuid())
+                .orElseThrow(() -> new ParentNotFoundException(dto.userUuid().toString()));
+
+        // Updating mutable fields only, ignored fields in mapper
+        childMapper.updateEntity(dto, child);
+
         child.setIdentificator(identificator);
-
-        User parent= this.userRepository.findByUserUuid(childInboundDTO.userUuid())
-                .orElseThrow(() -> new ParentNotFoundException(childInboundDTO.userUuid().toString() ));
         child.setUser(parent);
 
-        this.childRepository.save(child);
-
-        return this.childMapper.toOutboundDTO(child);
+        return childMapper.toOutboundDTO(child);
     }
+
 
     public List<ChildOutboundDTO> getActiveChildren() {
         List<Child> activeChildren = this.childRepository.findByActiveTrueOrderByLastNameAsc();
