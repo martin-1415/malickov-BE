@@ -5,12 +5,11 @@ import cz.malickov.backend.dto.UserLoginDTO;
 import cz.malickov.backend.dto.UserOutboundDTO;
 import cz.malickov.backend.entity.User;
 
-import cz.malickov.backend.error.GeneralException;
-import cz.malickov.backend.error.userExceptions.UserAlreadyExistsException;
-import cz.malickov.backend.error.userExceptions.UserNotFoundException;
+import cz.malickov.backend.exception.GeneralException;
+import cz.malickov.backend.exception.userExceptions.UserAlreadyExistsException;
+import cz.malickov.backend.exception.userExceptions.UserNotFoundException;
 import cz.malickov.backend.mapper.UserMapper;
 import cz.malickov.backend.repository.UserRepository;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -19,7 +18,7 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Slf4j
+
 @Service
 public class UserService{
     private final UserRepository userRepository;
@@ -63,7 +62,6 @@ public class UserService{
                           .concat("_").concat(Integer.toUnsignedString(hash, 36).substring(0, 5)));
 
         User savedUser = userRepository.save(user);
-        log.debug("User {} registered successfully", email);
 
         return userMapper.toOutboundDTO(savedUser);
     }
@@ -73,7 +71,7 @@ public class UserService{
     public UserOutboundDTO updateUser(UserInboundDTO updatedUserDTO) {
 
         User userToUpdate = userRepository.findByUserUuid(updatedUserDTO.uuid())
-                .orElseThrow(() -> new UserNotFoundException("User with uuid '" + uuid+ "' not found."));
+                .orElseThrow(() -> new UserNotFoundException("User with uuid '" + updatedUserDTO.uuid() + "' not found."));
         // only names, email, telephone, active and role can be updated here
         userMapper.updateEntity(updatedUserDTO,userToUpdate);
 
@@ -150,7 +148,6 @@ public class UserService{
             user.setPassword(null);
             savedUser = userRepository.save(user);
         }else{
-            log.warn("User with uuid {} does not exists", uuid);
             throw new UserNotFoundException("User with uuid "+ uuid + " does not exists");
         }
         return userMapper.toOutboundDTO(savedUser);

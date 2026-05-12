@@ -3,7 +3,7 @@ package cz.malickov.backend.controller;
 
 import cz.malickov.backend.dto.UserOutboundDTO;
 import cz.malickov.backend.dto.UserInboundDTO;
-import cz.malickov.backend.error.userExceptions.UserNotFoundException;
+import cz.malickov.backend.exception.userExceptions.UserNotFoundException;
 import cz.malickov.backend.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;

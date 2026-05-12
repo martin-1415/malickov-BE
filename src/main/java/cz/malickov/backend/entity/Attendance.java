@@ -5,9 +5,9 @@ import cz.malickov.backend.enums.Department;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Date;
 import java.util.UUID;
 
 @Entity
@@ -28,8 +28,9 @@ public class Attendance {
     @JoinColumn(name = "child_uuid", nullable = false)
     private Child child;
 
-    @Column(name = "date", nullable = false)
-    private Date date;
+    @JsonProperty("attendanceDate")
+    @Column(name = "attendance_date", nullable = false)
+    private LocalDate attendanceDate;
 
     @JsonProperty("planArrival")
     @Column(name = "plan_arrival", nullable = false)
@@ -62,6 +63,8 @@ public class Attendance {
     @Column(name = "modified_by")
     private int modifiedBy;
 
+    // user for keeping history of attendance,
+    // in the case when child change the department
     @JsonProperty("department")
     @Column(name = "department", nullable = false)
     @Enumerated(EnumType.STRING)

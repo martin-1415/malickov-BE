@@ -1,6 +1,6 @@
-package cz.malickov.backend.error;
+package cz.malickov.backend.exception;
 
-import cz.malickov.backend.error.authExceptions.LoginFailedException;
+import cz.malickov.backend.exception.authExceptions.LoginFailedException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +35,7 @@ public class GlobalAuthExceptionHandler {
         log.warn("Unauthorized action attempted by user {}: {}", email, ex.getMessage());
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
                 Map.of(
-                        "message", "You do not have permissions to perform this action."
+                        "message", "You do not have permission to perform this action."
                 )
         );
     }

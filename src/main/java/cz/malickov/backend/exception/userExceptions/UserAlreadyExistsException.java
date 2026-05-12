@@ -1,4 +1,4 @@
-package cz.malickov.backend.error.userExceptions;
+package cz.malickov.backend.exception.userExceptions;
 
 public class UserAlreadyExistsException extends RuntimeException {
   public UserAlreadyExistsException(String email) {

@@ -1,4 +1,4 @@
-package cz.malickov.backend.error.authExceptions;
+package cz.malickov.backend.exception.authExceptions;
 
 public class LoginFailedException extends RuntimeException {
 

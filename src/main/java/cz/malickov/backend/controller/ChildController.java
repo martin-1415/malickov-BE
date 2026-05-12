@@ -2,7 +2,7 @@ package cz.malickov.backend.controller;
 
 import cz.malickov.backend.dto.ChildInboundDTO;
 import cz.malickov.backend.dto.ChildOutboundDTO;
-import cz.malickov.backend.error.childExceptions.ChildNotFoundException;
+import cz.malickov.backend.exception.childExceptions.ChildNotFoundException;
 import cz.malickov.backend.service.ChildService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;

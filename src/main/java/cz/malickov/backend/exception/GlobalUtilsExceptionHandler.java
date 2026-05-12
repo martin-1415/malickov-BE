@@ -1,7 +1,7 @@
-package cz.malickov.backend.error;
+package cz.malickov.backend.exception;
 
 
-import cz.malickov.backend.error.utilsExceptions.IdentifierException;
+import cz.malickov.backend.exception.utilsExceptions.IdentifierNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +12,7 @@ import java.util.Map;
 
 @Slf4j
 @RestControllerAdvice
-public class UtilsExceptionHandler {
+public class GlobalUtilsExceptionHandler {
 
 
     @ExceptionHandler(GeneralException.class)
@@ -27,8 +27,8 @@ public class UtilsExceptionHandler {
     }
 
 
-    @ExceptionHandler(IdentifierException.class)
-    public ResponseEntity<Map<String, String>> IdentifierException(IdentifierException ex) {
+    @ExceptionHandler(IdentifierNotFoundException.class)
+    public ResponseEntity<Map<String, String>> IdentifierException(IdentifierNotFoundException ex) {
         String message = ex.getMessage();
         log.info(message);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(

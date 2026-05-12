@@ -1,4 +1,4 @@
-package cz.malickov.backend.error.childExceptions;
+package cz.malickov.backend.exception.childExceptions;
 
 import java.util.UUID;
 

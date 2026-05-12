@@ -2,20 +2,20 @@ package cz.malickov.backend.service;
 
 
 import cz.malickov.backend.entity.Identificator;
-import cz.malickov.backend.repository.IdentificatorRepository;
+import cz.malickov.backend.repository.IdentifierRepository;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
 public class UtilsService {
-    private final IdentificatorRepository identificatorRepository;
+    private final IdentifierRepository identifierRepository;
 
-    public UtilsService(IdentificatorRepository identificatorRepository) {
-        this.identificatorRepository = identificatorRepository;
+    public UtilsService(IdentifierRepository identifierRepository) {
+        this.identifierRepository = identifierRepository;
     }
 
     public List<Identificator> getFreeIdentificators(){
-        return this.identificatorRepository.getFreeIdentificators();
+        return this.identifierRepository.getFreeIdentificators();
     }
 
 }

@@ -1,7 +1,7 @@
 package cz.malickov.backend.service;
 
 import cz.malickov.backend.dto.UserLoginDTO;
-import cz.malickov.backend.error.authExceptions.LoginFailedException;
+import cz.malickov.backend.exception.authExceptions.LoginFailedException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;

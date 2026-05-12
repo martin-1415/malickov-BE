@@ -5,37 +5,35 @@ import cz.malickov.backend.dto.ChildOutboundDTO;
 import cz.malickov.backend.entity.Child;
 import cz.malickov.backend.entity.Identificator;
 import cz.malickov.backend.entity.User;
-import cz.malickov.backend.error.GeneralException;
-import cz.malickov.backend.error.childExceptions.ChildNotFoundException;
-import cz.malickov.backend.error.childExceptions.ParentNotFoundException;
+import cz.malickov.backend.exception.childExceptions.ChildNotFoundException;
+import cz.malickov.backend.exception.childExceptions.ParentNotFoundException;
+import cz.malickov.backend.exception.utilsExceptions.IdentifierNotFoundException;
 import cz.malickov.backend.mapper.ChildMapper;
 import cz.malickov.backend.repository.ChildRepository;
-import cz.malickov.backend.repository.IdentificatorRepository;
+import cz.malickov.backend.repository.IdentifierRepository;
 import cz.malickov.backend.repository.UserRepository;
 import jakarta.transaction.Transactional;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 
-@Slf4j
 @Service
 public class ChildService {
     private final ChildRepository childRepository;
     private final ChildMapper childMapper;
     private final UserRepository userRepository;
-    private final IdentificatorRepository identificatorRepository;
+    private final IdentifierRepository identifierRepository;
 
     public ChildService(ChildRepository childRepository,
                         ChildMapper childMapper,
                         UserRepository userRepository,
-                        IdentificatorRepository identificatorRepository) {
+                        IdentifierRepository identifierRepository) {
         this.childRepository = childRepository;
         this.childMapper = childMapper;
         this.userRepository = userRepository;
-        this.identificatorRepository = identificatorRepository;
+        this.identifierRepository = identifierRepository;
 
     }
 
@@ -51,9 +49,9 @@ public class ChildService {
         child.setUser(user);
 
         if( childDto.identificator() != null){
-            Integer identificatorId= childDto.identificator().getIdentificatorId();
-            Identificator identificator=this.identificatorRepository.findById(identificatorId)
-                    .orElseThrow(() -> new GeneralException("Identificator with ID "+ identificatorId + " not found"));
+            int identifierId= childDto.identificator().getIdentificatorId();
+            Identificator identificator=this.identifierRepository.findById(identifierId)
+                    .orElseThrow(() -> new IdentifierNotFoundException( identifierId ));
             child.setIdentificator(identificator);
         }
 
@@ -69,9 +67,9 @@ public class ChildService {
         Child child = childRepository.findByChildUuid(dto.childUuid())
                 .orElseThrow(() -> new ChildNotFoundException(dto.childUuid()));
 
-        Integer identificatorId = dto.identificator().getIdentificatorId();
-        Identificator identificator = identificatorRepository.findById(identificatorId)
-                .orElseThrow(() -> new IdentificatorNotFoundException(identificatorId));
+        int identifierId = dto.identificator().getIdentificatorId();
+        Identificator identificator = identifierRepository.findById(identifierId)
+                .orElseThrow(() -> new IdentifierNotFoundException(identifierId));
 
         User parent = userRepository.findByUserUuid(dto.userUuid())
                 .orElseThrow(() -> new ParentNotFoundException(dto.userUuid().toString()));

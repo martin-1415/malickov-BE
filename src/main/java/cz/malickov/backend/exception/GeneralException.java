@@ -1,4 +1,4 @@
-package cz.malickov.backend.error;
+package cz.malickov.backend.exception;
 
 
 /*

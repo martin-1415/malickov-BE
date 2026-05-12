@@ -1,7 +1,7 @@
-package cz.malickov.backend.error;
+package cz.malickov.backend.exception;
 
-import cz.malickov.backend.error.childExceptions.ChildNotFoundException;
-import cz.malickov.backend.error.childExceptions.ParentNotFoundException;
+import cz.malickov.backend.exception.userExceptions.UserAlreadyExistsException;
+import cz.malickov.backend.exception.userExceptions.UserNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,21 +12,22 @@ import java.util.Map;
 
 @Slf4j
 @RestControllerAdvice
-public class GlobalChildExceptionHandler {
+public class GlobalUserExceptionHandler {
 
-    @ExceptionHandler(ParentNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleParentNotFoundException(ParentNotFoundException ex) {
+
+    @ExceptionHandler(UserAlreadyExistsException.class)
+    public ResponseEntity<Map<String, String>> handleUserAlreadyExistsException(UserAlreadyExistsException ex) {
         String message = ex.getMessage();
         log.info(message);
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(
                 Map.of(
                         "message", message
                 )
         );
     }
 
-    @ExceptionHandler(ChildNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleChildNotFoundException(ChildNotFoundException ex) {
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleUserNotFoundException(UserNotFoundException ex) {
         String message = ex.getMessage();
         log.info(message);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(

@@ -3,7 +3,7 @@ package cz.malickov.backend.controller;
 import cz.malickov.backend.dto.UserLoginDTO;
 import cz.malickov.backend.dto.UserOutboundDTO;
 import cz.malickov.backend.entity.User;
-import cz.malickov.backend.error.authExceptions.LoginFailedException;
+import cz.malickov.backend.exception.authExceptions.LoginFailedException;
 import cz.malickov.backend.repository.UserRepository;
 import cz.malickov.backend.service.JWTService;
 import cz.malickov.backend.service.LoginService;

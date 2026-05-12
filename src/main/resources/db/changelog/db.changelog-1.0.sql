@@ -56,7 +56,7 @@ CREATE TABLE child (
 CREATE TABLE attendance (
                             attendance_uuid uuid DEFAULT uuidv7() PRIMARY KEY,
                             child_uuid uuid NOT NULL,
-                            date TIMESTAMP(6) NOT NULL,
+                            attendance_date DATE NOT NULL,
                             plan_arrival TIME NOT NULL,
                             plan_leaving TIME NOT NULL,
                             arrival TIME,
@@ -162,3 +162,8 @@ VALUES
 INSERT INTO "user" (first_name, last_name, email,telephone, active, role_name, password,identifier)
 VALUES
     ('Martin', 'Fischer', 'martin.fischer1415@gmail.com', '+420 777 574 823',TRUE, 'DIRECTOR', Null, '1111');
+
+--changeset Martin_Fischer:7 context:prod,dev
+ALTER TABLE attendance
+    ADD CONSTRAINT uq_attendance_child_date
+        UNIQUE (child_uuid, attendance_date);
