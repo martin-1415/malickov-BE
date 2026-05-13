@@ -32,7 +32,8 @@ public class UserController {
     @DeleteMapping("/deletePassword/{uuid}")
     public ResponseEntity<UserOutboundDTO> deletePassword(@PathVariable String uuid) {
         UserOutboundDTO userOutboundDTO= userService.deletePassword(uuid);
-        return ResponseEntity.ok().body(userOutboundDTO);
+        return ResponseEntity.ok()
+                .body(userOutboundDTO);
     }
 
 
@@ -48,34 +49,29 @@ public class UserController {
 
     @PreAuthorize("hasAnyRole('DIRECTOR','MANAGER')")
     @GetMapping("/getActiveUsers")
-    @ResponseStatus(HttpStatus.OK)
-    public List<UserOutboundDTO> getActiveUsers() {
-        return userService.getActiveUsers();
+    public ResponseEntity<List<UserOutboundDTO>> getActiveUsers()
+    {
+        return ResponseEntity.ok()
+                .body(userService.getActiveUsers());
     }
 
     @PreAuthorize("hasAnyRole('DIRECTOR','MANAGER')")
     @GetMapping("/getInactiveUsers")
-    @ResponseStatus(HttpStatus.OK)
-    public List<UserOutboundDTO> getNonActiveUser() {
-        return userService.getInactiveUsers();
+    public ResponseEntity<List<UserOutboundDTO>> getNonActiveUser() {
+        return  ResponseEntity.ok()
+                .body(userService.getInactiveUsers());
     }
 
     @PreAuthorize("hasAnyRole('DIRECTOR','MANAGER')")
     @PutMapping("/updateUser/{uuid}")
-    @ResponseStatus(HttpStatus.OK)
-    public UserOutboundDTO updateUser(@PathVariable UUID uuid, @RequestBody @Valid UserInboundDTO user2update) {
+    public ResponseEntity<UserOutboundDTO> updateUser(@PathVariable UUID uuid, @RequestBody @Valid UserInboundDTO user2update) {
 
         if (user2update.uuid() != null && !uuid.equals(user2update.uuid())) {
             throw new UserNotFoundException("Path id ("+ uuid + ") and payload id ("+ user2update.uuid()+") mismatch.");
         }
-
-        return userService.updateUser(user2update);
+        return ResponseEntity.ok()
+                .body(userService.updateUser(user2update));
     }
 
-    @GetMapping("/hello")
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<String> hello()
-    {
-        return new ResponseEntity<>("Hello world", HttpStatus.OK);
-    }
+
 }

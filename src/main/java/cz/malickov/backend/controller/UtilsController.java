@@ -32,4 +32,14 @@ public class UtilsController {
                 .body(freeIdentificators);
     }
 
+    /*
+     * test endpoint to ping the pod and the server
+     */
+    @GetMapping("/hello")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<String> hello()
+    {
+        return new ResponseEntity<>("Hello world", HttpStatus.OK);
+    }
+
 }

@@ -138,7 +138,8 @@ public class LoginController {
         }
 
         String email = jwtService.extractEmail(token);
-        return ResponseEntity.ok().body(userService.getUserOutboundDtoByUserEmail(email));
+        return ResponseEntity.ok()
+                .body(userService.getUserOutboundDtoByUserEmail(email));
     }
 
     /*

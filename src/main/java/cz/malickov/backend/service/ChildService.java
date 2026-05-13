@@ -54,8 +54,6 @@ public class ChildService {
                     .orElseThrow(() -> new IdentifierNotFoundException( identifierId ));
             child.setIdentificator(identificator);
         }
-
-
         this.childRepository.save(child);
         return this.childMapper.toOutboundDTO(child);
     }
