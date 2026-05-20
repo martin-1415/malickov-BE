@@ -44,9 +44,13 @@ public class JWTService {
 
         Optional <User> user = userRepository.findByEmail(email);
         List <Role> role = new ArrayList<>();
+        String userUuid = "";
         if(user.isPresent()){
             role = List.of(user.get().getRoleName());
+            userUuid = user.get().getUserUuid().toString();
         }
+
+        claims.put("userUuid", userUuid);
         claims.put("role", role);
 
         return Jwts.builder()
@@ -68,6 +72,11 @@ public class JWTService {
 
     public String extractEmail(String token) {
         return this.extractClaim(token, Claims::getSubject); // subject is email
+    }
+
+    public UUID extractUserUuid(String token) {
+        String userUuid = this.extractClaim(token, claims -> claims.get("userUuid", String.class));
+        return UUID.fromString(userUuid);
     }
 
     private <T> T extractClaim(String token, Function<Claims, T> claimResolver) throws SignatureException {

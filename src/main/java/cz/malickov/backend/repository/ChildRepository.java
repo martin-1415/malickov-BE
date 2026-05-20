@@ -15,8 +15,8 @@ import java.util.UUID;
 @Repository
 public interface ChildRepository  extends JpaRepository<Child, UUID> { // <T, ID>
 
-    @Query("SELECT c FROM Child c WHERE c.user.userUuid = :parentId")
-    List<Child> findChildrenByParentUuid(@Param("parentUuid") UUID parentId);
+    @Query("SELECT c FROM Child c WHERE c.user.userUuid = :parentUuid")
+    List<Child> findChildrenByParentUuid(@Param("parentUuid") UUID parentUuid);
 
     Optional<Child> findByChildUuid(UUID childUuid);
 

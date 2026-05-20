@@ -16,6 +16,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 
@@ -37,9 +38,15 @@ public class ChildService {
 
     }
 
-//    public List<Child> getChildrenByParentUuid(UUID userUuid){
-//        return childRepository.findChildrenByParentUuid( userUuid );
-//    }
+    /*
+     * Get list of user children based on User UUID
+     */
+    public List<ChildOutboundDTO> getChildrenByUserUuid(UUID userUuid) {
+        return this.childRepository.findChildrenByParentUuid(userUuid).stream()
+                .map(childMapper::toOutboundDTO)
+                .collect(Collectors.toList());
+    }
+
 
     public ChildOutboundDTO createChild(ChildInboundDTO childDto){
         Child child = this.childMapper.toEntity(childDto);

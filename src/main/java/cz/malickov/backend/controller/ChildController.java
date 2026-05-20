@@ -4,12 +4,14 @@ import cz.malickov.backend.dto.ChildInboundDTO;
 import cz.malickov.backend.dto.ChildOutboundDTO;
 import cz.malickov.backend.exception.childExceptions.ChildNotFoundException;
 import cz.malickov.backend.service.ChildService;
+import cz.malickov.backend.service.JWTService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
 import java.util.UUID;
 import java.util.List;
 
@@ -17,9 +19,12 @@ import java.util.List;
 @RequestMapping("/api/child")
 public class ChildController {
     private final ChildService childService;
+    private final JWTService jwtService;
 
-    public ChildController(ChildService childService){
+    public ChildController(ChildService childService,
+                           JWTService jwtService){
         this.childService = childService;
+        this.jwtService = jwtService;
     }
 
     @PreAuthorize("hasAnyRole('DIRECTOR','MANAGER')")
@@ -65,6 +70,16 @@ public class ChildController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(savedChild);
+    }
+
+
+    @GetMapping("/getUserChildren")
+    public ResponseEntity<List<ChildOutboundDTO>> getChildrenByUserUUID(
+            @CookieValue(value = "JWT") String token
+    ) {
+        UUID userUuid = jwtService.extractUserUuid(token);
+        List<ChildOutboundDTO> children = this.childService.getChildrenByUserUuid(userUuid);
+        return ResponseEntity.ok().body(children);
     }
 
 }

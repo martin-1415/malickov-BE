@@ -15,6 +15,8 @@ import org.mapstruct.factory.Mappers;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import static org.mockito.Mockito.when;
 import static org.mockito.ArgumentMatchers.any;
 import java.util.Optional;
@@ -31,12 +33,15 @@ class UserServiceTest {
 
     private UserService userService;
 
+    @Mock
+    private PasswordEncoder passwordEncoder;
+
     @Spy
     private UserMapper userMapper = Mappers.getMapper(UserMapper.class);
 
     @BeforeEach
     void setUp() {
-        userService = new UserService(userRepository, 10, userMapper);
+        userService = new UserService(userRepository,  userMapper, passwordEncoder);
     }
 
     @Test
