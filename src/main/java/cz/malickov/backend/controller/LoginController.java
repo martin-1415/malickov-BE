@@ -69,7 +69,7 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UserOutboundDTO> login(@RequestBody UserLoginDTO userLogin) {
+    public ResponseEntity<Optional<UserOutboundDTO>> login(@RequestBody UserLoginDTO userLogin) {
 
         try {
             String jwt = loginService.verify(userLogin);

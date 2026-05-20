@@ -13,16 +13,22 @@ target/
 **/mvnw
 **/mvnw.cmd
 
+######################
 # IDE files
 # IntelliJ
+######################
+
 .idea/
 *.iml
 *.iws
 
-# Logs
+######################
+# LOGS
+######################
+
 /logs/
 malickov-be.log*
-
+/malickov-be.log
 
 # Environment/Sensitive config
 #.env
@@ -35,4 +41,4 @@ malickov-be.log*
 /qodana.yaml
 /src/main/resources/keystore.p12
 
-/malickov-be.log
+
