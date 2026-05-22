@@ -10,6 +10,7 @@ import cz.malickov.backend.exception.userExceptions.UserAlreadyExistsException;
 import cz.malickov.backend.exception.userExceptions.UserNotFoundException;
 import cz.malickov.backend.mapper.UserMapper;
 import cz.malickov.backend.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -70,7 +71,7 @@ public class UserService{
         return userMapper.toOutboundDTO(savedUser);
     }
 
-
+    @Transactional
     @PreAuthorize("hasAuthority('ROLE_DIRECTOR') or (hasAuthority('ROLE_MANAGER') and #updatedUserDTO.role.name() == T(cz.malickov.backend.enums.Role).PARENT.name())")
     public UserOutboundDTO updateUser(UserInboundDTO updatedUserDTO) {
 
@@ -107,6 +108,7 @@ public class UserService{
      * @param UserLoginDTO: email and new password
      * @return userOutboundDTO
      */
+    @Transactional
     public UserOutboundDTO setPassword(UserLoginDTO userLogin){
         User user = this.userRepository.findByEmail(userLogin.email())
                 .orElseThrow(() -> new UserNotFoundException("User with email "+ userLogin.email() + " does not exists"));
@@ -134,6 +136,7 @@ public class UserService{
      * @param String: user_uuid
      * @return void
      */
+    @Transactional
     @PreAuthorize("hasAnyRole('DIRECTOR','MANAGER')")
     public UserOutboundDTO deletePassword(String uuid) {
         User user =
