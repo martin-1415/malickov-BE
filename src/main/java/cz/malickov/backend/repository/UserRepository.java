@@ -10,11 +10,9 @@ import java.util.UUID;
 
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Integer> { // <T, ID>
+public interface UserRepository extends JpaRepository<User, UUID> { // <T, ID>
 
     Optional<User> findByEmail(String email);
-
-    Optional<User> findByUserUuid(UUID uuid);
 
     List<User> findByActiveTrueOrderByLastNameAsc();
 

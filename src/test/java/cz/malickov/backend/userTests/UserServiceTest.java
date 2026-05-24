@@ -125,7 +125,7 @@ class UserServiceTest {
 
         User oldUser = userMapper.toEntity(oldMockUser);
         // When
-        when(userRepository.findByUserUuid(uuid))
+        when(userRepository.findById(uuid))
                 .thenReturn(Optional.of(oldUser));
         // Then
         UserOutboundDTO result = userService.updateUser(newMockUser);

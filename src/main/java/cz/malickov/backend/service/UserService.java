@@ -75,7 +75,7 @@ public class UserService{
     @PreAuthorize("hasAuthority('ROLE_DIRECTOR') or (hasAuthority('ROLE_MANAGER') and #updatedUserDTO.role.name() == T(cz.malickov.backend.enums.Role).PARENT.name())")
     public UserOutboundDTO updateUser(UserInboundDTO updatedUserDTO) {
 
-        User userToUpdate = userRepository.findByUserUuid(updatedUserDTO.uuid())
+        User userToUpdate = userRepository.findById(updatedUserDTO.uuid())
                 .orElseThrow(() -> new UserNotFoundException("User with uuid '" + updatedUserDTO.uuid() + "' not found."));
         // only names, email, telephone, active and role can be updated here
         userMapper.updateEntity(updatedUserDTO,userToUpdate);
@@ -140,7 +140,7 @@ public class UserService{
     @PreAuthorize("hasAnyRole('DIRECTOR','MANAGER')")
     public UserOutboundDTO deletePassword(String uuid) {
         User user =
-                this.userRepository.findByUserUuid(UUID.fromString(uuid))
+                this.userRepository.findById(UUID.fromString(uuid))
                 .orElseThrow(()->new UserNotFoundException("User with uuid "+ uuid + " does not exists"));
         user.setPassword(null);
         return userMapper.toOutboundDTO(user);

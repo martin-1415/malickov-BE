@@ -158,7 +158,7 @@ VALUES
     ('Tereza', 'Montana', 'NURSERY2', '2022-07-01', 3,
      (SELECT user_uuid FROM "user" WHERE email='6@6.cz'));
 
---changeset Martin_Fischer:6 context:prod,dev
+--changeset Martin_Fischer:6 context:prod
 INSERT INTO "user" (first_name, last_name, email,telephone, active, role_name, password,identifier)
 VALUES
     ('Martin', 'Fischer', 'martin.fischer1415@gmail.com', '+420 777 574 823',TRUE, 'DIRECTOR', Null, '1111');
@@ -167,3 +167,4 @@ VALUES
 ALTER TABLE attendance
     ADD CONSTRAINT uq_attendance_child_date
         UNIQUE (child_uuid, attendance_date);
+

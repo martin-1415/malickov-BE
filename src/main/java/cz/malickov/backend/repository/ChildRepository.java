@@ -8,17 +8,14 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 
 @Repository
 public interface ChildRepository  extends JpaRepository<Child, UUID> { // <T, ID>
 
-    @Query("SELECT c FROM Child c WHERE c.user.userUuid = :parentUuid")
-    List<Child> findChildrenByParentUuid(@Param("parentUuid") UUID parentUuid);
-
-    Optional<Child> findByChildUuid(UUID childUuid);
+    @Query("SELECT c FROM Child c WHERE c.user.userUuid = :parentUuid AND c.active=true")
+    List<Child> findActiveChildrenByParentUuid(@Param("parentUuid") UUID parentUuid);
 
     List<Child> findByActiveTrueOrderByLastNameAsc();
 

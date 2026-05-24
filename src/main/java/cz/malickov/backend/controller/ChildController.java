@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
 import java.util.UUID;
 import java.util.List;
 
@@ -73,12 +72,12 @@ public class ChildController {
     }
 
 
-    @GetMapping("/getUserChildren")
-    public ResponseEntity<List<ChildOutboundDTO>> getChildrenByUserUUID(
+    @GetMapping("/getUserActiveChildren")
+    public ResponseEntity<List<ChildOutboundDTO>> getActiveChildrenByUserUUID(
             @CookieValue(value = "JWT") String token
     ) {
         UUID userUuid = jwtService.extractUserUuid(token);
-        List<ChildOutboundDTO> children = this.childService.getChildrenByUserUuid(userUuid);
+        List<ChildOutboundDTO> children = this.childService.getActiveChildrenByUserUuid(userUuid);
         return ResponseEntity.ok().body(children);
     }
 

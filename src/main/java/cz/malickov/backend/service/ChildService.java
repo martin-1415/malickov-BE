@@ -41,8 +41,8 @@ public class ChildService {
     /*
      * Get list of user children based on User UUID
      */
-    public List<ChildOutboundDTO> getChildrenByUserUuid(UUID userUuid) {
-        return this.childRepository.findChildrenByParentUuid(userUuid).stream()
+    public List<ChildOutboundDTO> getActiveChildrenByUserUuid(UUID userUuid) {
+        return this.childRepository.findActiveChildrenByParentUuid(userUuid).stream()
                 .map(childMapper::toOutboundDTO)
                 .collect(Collectors.toList());
     }
@@ -51,7 +51,7 @@ public class ChildService {
     public ChildOutboundDTO createChild(ChildInboundDTO childDto){
         Child child = this.childMapper.toEntity(childDto);
 
-        User user = userRepository.findByUserUuid(childDto.userUuid())
+        User user = userRepository.findById(childDto.userUuid())
                 .orElseThrow(() -> new ParentNotFoundException(childDto.userUuid().toString() ));
         child.setUser(user);
 
@@ -69,14 +69,14 @@ public class ChildService {
     @Transactional
     public ChildOutboundDTO editChild(ChildInboundDTO dto) {
 
-        Child child = childRepository.findByChildUuid(dto.childUuid())
+        Child child = childRepository.findById(dto.childUuid())
                 .orElseThrow(() -> new ChildNotFoundException(dto.childUuid()));
 
         int identifierId = dto.identificator().getIdentificatorId();
         Identificator identificator = identifierRepository.findById(identifierId)
                 .orElseThrow(() -> new IdentifierNotFoundException(identifierId));
 
-        User parent = userRepository.findByUserUuid(dto.userUuid())
+        User parent = userRepository.findById(dto.userUuid())
                 .orElseThrow(() -> new ParentNotFoundException(dto.userUuid().toString()));
 
         // Updating mutable fields only, ignored fields in mapper
