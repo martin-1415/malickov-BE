@@ -2,6 +2,7 @@ package cz.malickov.backend.service;
 
 import cz.malickov.backend.dto.AttendanceFormUserInboundDTO;
 import cz.malickov.backend.dto.ChildOutboundDTO;
+import cz.malickov.backend.repository.AttendanceRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -14,12 +15,15 @@ import java.util.UUID;
 public class AttendanceService {
     private final ChildService childService;
     private final JWTService jwtService;
+    private final AttendanceRepository attendanceRepository;
 
     public AttendanceService(
                              ChildService childService,
-                             JWTService jwtService) {
+                             JWTService jwtService,
+                             AttendanceRepository attendanceRepository) {
         this.childService = childService;
         this.jwtService = jwtService;
+        this.attendanceRepository = attendanceRepository;
     }
 
     @Transactional
@@ -32,6 +36,9 @@ public class AttendanceService {
             if(!this.canParentEditPlan(childUuid, userUuid, month)){
                 throw new AccessDeniedException("You are not authorized to edit this record.");
             }
+
+
+            this.attendanceRepository.save()
 
         }
 

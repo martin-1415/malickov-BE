@@ -23,8 +23,8 @@ public interface ChildMapper {
      */
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "childUuid", ignore = true)
-    @Mapping(target = "user", ignore = true)
-    @Mapping(target = "identificator", ignore = true)
+    //@Mapping(target = "user", ignore = true)
+    //@Mapping(target = "identificator", ignore = true)
     void updateEntity(ChildInboundDTO dto, @MappingTarget Child child);
 
     /**

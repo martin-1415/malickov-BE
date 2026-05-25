@@ -115,7 +115,6 @@ public class UserService{
 
         if( !StringUtils.hasText(user.getPassword()) ) { // false for: null ""  and " "
             user.setPassword(passwordEncoder.encode(userLogin.password()));
-           // userRepository.save(user);
             return userMapper.toOutboundDTO(user);
         }else{
             throw new GeneralException("Old password has to be deleted first.");

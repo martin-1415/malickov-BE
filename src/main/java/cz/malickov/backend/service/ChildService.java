@@ -73,8 +73,12 @@ public class ChildService {
                 .orElseThrow(() -> new ChildNotFoundException(dto.childUuid()));
 
         int identifierId = dto.identificator().getIdentificatorId();
-        Identificator identificator = identifierRepository.findById(identifierId)
-                .orElseThrow(() -> new IdentifierNotFoundException(identifierId));
+        Identificator identificator = null;
+
+        if (identifierId != null) {
+            identificator = identifierRepository.findById(identifierId)
+                    .orElseThrow(() ->  new IdentifierNotFoundException(identifierId));
+        }
 
         User parent = userRepository.findById(dto.userUuid())
                 .orElseThrow(() -> new ParentNotFoundException(dto.userUuid().toString()));

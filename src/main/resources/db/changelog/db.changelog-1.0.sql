@@ -168,3 +168,9 @@ ALTER TABLE attendance
     ADD CONSTRAINT uq_attendance_child_date
         UNIQUE (child_uuid, attendance_date);
 
+--changeset Martin_Fischer:8 context:prod,dev
+ALTER TABLE child
+    ADD CONSTRAINT fk_child_identificator
+        FOREIGN KEY (identificator_id)
+            REFERENCES identificator(identificator_id)
+            ON DELETE SET NULL;
