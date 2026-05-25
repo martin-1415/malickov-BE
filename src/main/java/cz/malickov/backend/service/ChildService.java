@@ -72,7 +72,7 @@ public class ChildService {
         Child child = childRepository.findById(dto.childUuid())
                 .orElseThrow(() -> new ChildNotFoundException(dto.childUuid()));
 
-        int identifierId = dto.identificator().getIdentificatorId();
+        Integer identifierId = dto.identificator().getIdentificatorId();
         Identificator identificator = null;
 
         if (identifierId != null) {
