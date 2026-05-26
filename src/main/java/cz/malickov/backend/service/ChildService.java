@@ -47,6 +47,15 @@ public class ChildService {
                 .collect(Collectors.toList());
     }
 
+    /*
+     * Get list of user deactivated children based on User UUID
+     */
+    public List<ChildOutboundDTO> getActiveChildrenByUserUuid(UUID userUuid) {
+        return this.childRepository.findInctiveChildrenByParentUuid(userUuid).stream()
+                .map(childMapper::toOutboundDTO)
+                .collect(Collectors.toList());
+    }
+
 
     public ChildOutboundDTO createChild(ChildInboundDTO childDto){
         Child child = this.childMapper.toEntity(childDto);
