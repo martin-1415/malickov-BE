@@ -82,11 +82,11 @@ public class ChildController {
     }
 
     @GetMapping("/getInactiveUserChildren")
-    public ResponseEntity<List<ChildOutboundDTO>> getActiveChildrenByUserUUID(
+    public ResponseEntity<List<ChildOutboundDTO>> getInactiveChildrenByUserUUID(
             @CookieValue(value = "JWT") String token
     ) {
         UUID userUuid = jwtService.extractUserUuid(token);
-        List<ChildOutboundDTO> children = this.childService.getInctiveChildrenByUserUuid(userUuid);
+        List<ChildOutboundDTO> children = this.childService.getInactiveChildrenByUserUuid(userUuid);
         return ResponseEntity.ok().body(children);
     }
 

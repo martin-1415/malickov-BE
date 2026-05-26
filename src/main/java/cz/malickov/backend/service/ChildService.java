@@ -50,7 +50,7 @@ public class ChildService {
     /*
      * Get list of user deactivated children based on User UUID
      */
-    public List<ChildOutboundDTO> getActiveChildrenByUserUuid(UUID userUuid) {
+    public List<ChildOutboundDTO> getInactiveChildrenByUserUuid(UUID userUuid) {
         return this.childRepository.findInctiveChildrenByParentUuid(userUuid).stream()
                 .map(childMapper::toOutboundDTO)
                 .collect(Collectors.toList());
@@ -81,11 +81,11 @@ public class ChildService {
         Child child = childRepository.findById(dto.childUuid())
                 .orElseThrow(() -> new ChildNotFoundException(dto.childUuid()));
 
-        Integer identifierId = dto.identificator().getIdentificatorId();
-        Identificator identificator = null;
+        int identifierId = dto.identificator().getIdentificatorId();
+        Identificator identifier = null;
 
-        if (identifierId != null) {
-            identificator = identifierRepository.findById(identifierId)
+        if (identifierId != 0) { // null was converted to 0 by controler
+            identifier = identifierRepository.findById(identifierId)
                     .orElseThrow(() ->  new IdentifierNotFoundException(identifierId));
         }
 
@@ -95,7 +95,7 @@ public class ChildService {
         // Updating mutable fields only, ignored fields in mapper
         childMapper.updateEntity(dto, child);
 
-        child.setIdentificator(identificator);
+        child.setIdentificator(identifier);
         child.setUser(parent);
 
         return childMapper.toOutboundDTO(child);

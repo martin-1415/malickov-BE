@@ -3,7 +3,6 @@ package cz.malickov.backend.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 @Entity
@@ -15,12 +14,11 @@ public class Identificator {
 
     @Id
     @JsonProperty("identificatorId")
-    @Column(name = "identificator_id",nullable = false,columnDefinition = "uniqueidentifier")
+    @Column(name = "identificator_id",columnDefinition = "uniqueidentifier")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int identificatorId;
 
     @JsonProperty("identificatorName")
     @Column(name = "identificator_name")
-    @NotBlank(message = "Identificator description is required")
     private String identificatorName;
 }
