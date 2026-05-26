@@ -14,11 +14,11 @@ import java.util.UUID;
 @Repository
 public interface ChildRepository  extends JpaRepository<Child, UUID> { // <T, ID>
 
-    @Query("SELECT c FROM Child c WHERE c.user.userUuid = :parentUuid AND c.active=true ORDER BY c.firstName; ")
+    @Query("SELECT c FROM Child c WHERE c.user.userUuid = :parentUuid AND c.active=true ORDER BY c.firstName")
     List<Child> findActiveChildrenByParentUuid(@Param("parentUuid") UUID parentUuid);
 
-    @Query("SELECT c FROM Child c WHERE c.user.userUuid = :parentUuid AND c.active=false" ORDER BY c.firstName)
-    List<Child> findActiveChildrenByParentUuid(@Param("parentUuid") UUID parentUuid);
+    @Query("SELECT c FROM Child c WHERE c.user.userUuid = :parentUuid AND c.active=false ORDER BY c.firstName")
+    List<Child> findInctiveChildrenByParentUuid(@Param("parentUuid") UUID parentUuid);
 
     List<Child> findByActiveTrueOrderByLastNameAsc();
 
