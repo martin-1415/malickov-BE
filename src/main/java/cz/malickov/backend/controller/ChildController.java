@@ -72,7 +72,7 @@ public class ChildController {
     }
 
 
-    @GetMapping("/getUserActiveChildren")
+    @GetMapping("/getActiveUserChildren")
     public ResponseEntity<List<ChildOutboundDTO>> getActiveChildrenByUserUUID(
             @CookieValue(value = "JWT") String token
     ) {
