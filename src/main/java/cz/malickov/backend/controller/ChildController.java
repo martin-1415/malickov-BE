@@ -37,7 +37,7 @@ public class ChildController {
     }
 
     @PreAuthorize("hasAnyRole('DIRECTOR','MANAGER')")
-    @GetMapping("/getInctiveChildren")
+    @GetMapping("/getInactiveChildren")
     public ResponseEntity<List<ChildOutboundDTO>> getInactiveChildren()
     {
         List<ChildOutboundDTO> inctiveChildren =
