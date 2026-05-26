@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: malickov-be
-          image: docker4asinkan/malickov-be:v3.4
+          image: docker4asinkan/malickov-be:v3.5
           imagePullPolicy: Always
           ports:
             - containerPort: 8080

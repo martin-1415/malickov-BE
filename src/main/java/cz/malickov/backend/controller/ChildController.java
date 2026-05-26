@@ -72,7 +72,7 @@ public class ChildController {
     }
 
 
-    @GetMapping("/getActiveUserChildren")
+    @GetMapping("/getUserActiveChildren")
     public ResponseEntity<List<ChildOutboundDTO>> getActiveChildrenByUserUUID(
             @CookieValue(value = "JWT") String token
     ) {
@@ -81,7 +81,7 @@ public class ChildController {
         return ResponseEntity.ok().body(children);
     }
 
-    @GetMapping("/getInactiveUserChildren")
+    @GetMapping("/getUserInactiveChildren")
     public ResponseEntity<List<ChildOutboundDTO>> getInactiveChildrenByUserUUID(
             @CookieValue(value = "JWT") String token
     ) {

@@ -35,7 +35,6 @@ public class ChildService {
         this.childMapper = childMapper;
         this.userRepository = userRepository;
         this.identifierRepository = identifierRepository;
-
     }
 
     /*
@@ -84,10 +83,13 @@ public class ChildService {
         int identifierId = dto.identificator().getIdentificatorId();
         Identificator identifier = null;
 
-        if (identifierId != 0) { // null was converted to 0 by controler
-            identifier = identifierRepository.findById(identifierId)
-                    .orElseThrow(() ->  new IdentifierNotFoundException(identifierId));
-        }
+        if(dto.active()) { //delete identifier in the case of deactivating the child
+            if (identifierId != 0) { // null was converted to 0 by controller
+                identifier = identifierRepository.findById(identifierId)
+                        .orElseThrow(() -> new IdentifierNotFoundException(identifierId));
+            }
+        }// else keep it null
+
 
         User parent = userRepository.findById(dto.userUuid())
                 .orElseThrow(() -> new ParentNotFoundException(dto.userUuid().toString()));
@@ -97,6 +99,7 @@ public class ChildService {
 
         child.setIdentificator(identifier);
         child.setUser(parent);
+
 
         return childMapper.toOutboundDTO(child);
     }
