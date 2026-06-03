@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.UUID;
 
 
-public record AttendanceFormUserInboundDTO(
+public record AttendancePlanDTO(
         List<monthPlan> monthPlans
 ) {
 
@@ -26,8 +26,7 @@ public record AttendanceFormUserInboundDTO(
             @NotNull
             LocalDateTime planArrival, // only time is taken, not day, month or year
             @NotNull
-            LocalDateTime planLeaving, // only time is taken, not day, month or year
-            String excuse
+            LocalDateTime planLeaving // only time is taken, not day, month or year
     ) {
     }
 }

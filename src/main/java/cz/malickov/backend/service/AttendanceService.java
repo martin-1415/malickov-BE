@@ -1,6 +1,6 @@
 package cz.malickov.backend.service;
 
-import cz.malickov.backend.dto.AttendanceFormUserInboundDTO;
+import cz.malickov.backend.dto.AttendancePlanDTO;
 import cz.malickov.backend.dto.ChildOutboundDTO;
 import cz.malickov.backend.repository.AttendanceRepository;
 import jakarta.transaction.Transactional;
@@ -27,7 +27,7 @@ public class AttendanceService {
     }
 
     @Transactional
-    public void savePlan(AttendanceFormUserInboundDTO attendancePlanForm, String token) {
+    public void savePlan(AttendancePlanDTO attendancePlanForm, String token) {
         UUID userUuid = jwtService.extractUserUuid(token);
         for (var plan : attendancePlanForm.monthPlans()) {
             UUID childUuid = plan.childUUID();

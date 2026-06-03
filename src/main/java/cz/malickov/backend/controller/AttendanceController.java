@@ -1,6 +1,6 @@
 package cz.malickov.backend.controller;
 
-import cz.malickov.backend.dto.AttendanceFormUserInboundDTO;
+import cz.malickov.backend.dto.AttendancePlanDTO;
 import cz.malickov.backend.service.AttendanceService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -22,7 +22,7 @@ public class AttendanceController {
 
     @PostMapping("/savePlan")
     public ResponseEntity<Void> saveMonthlyAttendance(
-            @RequestBody @Valid AttendanceFormUserInboundDTO attendancePlanForm,
+            @RequestBody @Valid AttendancePlanDTO attendancePlanForm,
             @CookieValue(value = "JWT") String token
     ) {
 

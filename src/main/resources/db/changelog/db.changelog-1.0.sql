@@ -20,12 +20,12 @@ CREATE TABLE "user" (
 --changeset Martin_Fischer:2 context:dev, password is abc
 INSERT INTO "user" (first_name, last_name, email,telephone, active, role_name, password,identifier)
 VALUES
-    ('Martin', 'Fischer', '1@1.cz','123 456 347' ,TRUE, 'DIRECTOR', '$2a$12$KeVi5xNQGqtFqALo355CMudCpNEiwDbv5O/75ML7wnqu4cdcpHzf.', '1111'),
-    ('Sarka', 'Fischer','2@2.cz','+420 777 282 591', TRUE, 'MANAGER', '$2a$12$KeVi5xNQGqtFqALo355CMudCpNEiwDbv5O/75ML7wnqu4cdcpHzf.', '2222'),
-    ('Charlie', 'Brown','3@3.cz', '123456789',TRUE, 'TEACHER', '$2a$12$KeVi5xNQGqtFqALo355CMudCpNEiwDbv5O/75ML7wnqu4cdcpHzf.','3333'),
-    ('Sam', 'Quited','4@4.cz', '123456789',FALSE, 'PARENT', '$2a$12$KeVi5xNQGqtFqALo355CMudCpNEiwDbv5O/75ML7wnqu4cdcpHzf.','4444'),
-    ('Tom', 'Skala','5@5.cz', '123456789',TRUE, 'PARENT', '$2a$12$KeVi5xNQGqtFqALo355CMudCpNEiwDbv5O/75ML7wnqu4cdcpHzf.','5555'),
-    ('Jack', 'Montana','6@6.cz', '123456789',TRUE, 'PARENT', '$2a$12$KeVi5xNQGqtFqALo355CMudCpNEiwDbv5O/75ML7wnqu4cdcpHzf.','6666');
+    ('Martin', 'Fischer', 'director@cz.cz','123 456 347' ,TRUE, 'DIRECTOR', '$2a$12$KeVi5xNQGqtFqALo355CMudCpNEiwDbv5O/75ML7wnqu4cdcpHzf.', '1111'),
+    ('Sarka', 'Fischer','manager@cz.cz','+420 777 282 591', TRUE, 'MANAGER', '$2a$12$KeVi5xNQGqtFqALo355CMudCpNEiwDbv5O/75ML7wnqu4cdcpHzf.', '2222'),
+    ('Charlie', 'Brown','teacher@cz.cz', '123456789',TRUE, 'TEACHER', '$2a$12$KeVi5xNQGqtFqALo355CMudCpNEiwDbv5O/75ML7wnqu4cdcpHzf.','3333'),
+    ('Sam', 'Quited','parentQuit@4.cz', '123456789',FALSE, 'PARENT', '$2a$12$KeVi5xNQGqtFqALo355CMudCpNEiwDbv5O/75ML7wnqu4cdcpHzf.','4444'),
+    ('Tom', 'Skala','parent2@cz.cz', '123456789',TRUE, 'PARENT', '$2a$12$KeVi5xNQGqtFqALo355CMudCpNEiwDbv5O/75ML7wnqu4cdcpHzf.','5555'),
+    ('Jack', 'Montana','parent@cz.cz', '123456789',TRUE, 'PARENT', '$2a$12$KeVi5xNQGqtFqALo355CMudCpNEiwDbv5O/75ML7wnqu4cdcpHzf.','6666');
 
 --changeset Martin_Fischer:3 context:dev,prod
 
@@ -150,13 +150,13 @@ INSERT INTO identificator (identificator_name) VALUES
 INSERT INTO child (first_name, last_name, department, birthday, identificator_id, user_uuid)
 VALUES
     ('Laura', 'Skala', 'KINDERGARTEN', '2020-01-17', 1,
-     (SELECT user_uuid FROM "user" WHERE email='5@5.cz')),
+     (SELECT user_uuid FROM "user" WHERE email='parent2@cz.cz')),
     ('Mia', 'Skala', 'NURSERY2', '2022-02-01', 4,
-     (SELECT user_uuid FROM "user" WHERE email='5@5.cz')),
+     (SELECT user_uuid FROM "user" WHERE email='parent2@cz.cz')),
     ('Lucie', 'Montana', 'NURSERY1', '2021-05-17', 2,
-     (SELECT user_uuid FROM "user" WHERE email='6@6.cz')),
+     (SELECT user_uuid FROM "user" WHERE email='parent@cz.cz')),
     ('Tereza', 'Montana', 'NURSERY2', '2022-07-01', 3,
-     (SELECT user_uuid FROM "user" WHERE email='6@6.cz'));
+     (SELECT user_uuid FROM "user" WHERE email='parent@cz.cz'));
 
 --changeset Martin_Fischer:6 context:prod
 INSERT INTO "user" (first_name, last_name, email,telephone, active, role_name, password,identifier)
