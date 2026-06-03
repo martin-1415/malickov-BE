@@ -79,6 +79,11 @@ public class JWTService {
         return UUID.fromString(userUuid);
     }
 
+    public Role extractUserRole(String token) {
+        String role = this.extractClaim(token, claims -> claims.get("role", String.class));
+        return Role.valueOf(role);
+    }
+
     private <T> T extractClaim(String token, Function<Claims, T> claimResolver) throws SignatureException {
         final Claims claims = extractAllClaims(token);
         return claimResolver.apply(claims);

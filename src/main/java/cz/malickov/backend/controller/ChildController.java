@@ -2,6 +2,7 @@ package cz.malickov.backend.controller;
 
 import cz.malickov.backend.dto.ChildInboundDTO;
 import cz.malickov.backend.dto.ChildOutboundDTO;
+import cz.malickov.backend.enums.Role;
 import cz.malickov.backend.exception.childExceptions.ChildNotFoundException;
 import cz.malickov.backend.service.ChildService;
 import cz.malickov.backend.service.JWTService;
@@ -71,13 +72,22 @@ public class ChildController {
                 .body(savedChild);
     }
 
-
+    /*
+     *  For teachers and higher controller returns all active children
+     * For a parent only his children
+     */
     @GetMapping("/getUserActiveChildren")
     public ResponseEntity<List<ChildOutboundDTO>> getActiveChildrenByUserUUID(
             @CookieValue(value = "JWT") String token
     ) {
-        UUID userUuid = jwtService.extractUserUuid(token);
-        List<ChildOutboundDTO> children = this.childService.getActiveChildrenByUserUuid(userUuid);
+        List<ChildOutboundDTO> children;
+        Role role = jwtService.extractUserRole(token);
+        if(role.equals(Role.TEACHER) || role.equals(Role.MANAGER) || role.equals(Role.DIRECTOR) ){
+            children = this.childService.getActiveChildren();
+        }else {
+            UUID userUuid = jwtService.extractUserUuid(token);
+            children = this.childService.getActiveChildrenByUserUuid(userUuid);
+        }
         return ResponseEntity.ok().body(children);
     }
 
