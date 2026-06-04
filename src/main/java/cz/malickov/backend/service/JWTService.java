@@ -12,9 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
-import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.function.Function;
 import cz.malickov.backend.enums.Role;
@@ -22,7 +20,7 @@ import cz.malickov.backend.enums.Role;
 @Service
 public class JWTService {
 
-    private final int JwtValidityMillis;
+    private final long JwtValidityMillis;
 
     private final String secretKey;
     private final UserRepository userRepository;
@@ -33,7 +31,7 @@ public class JWTService {
                       @Value("${security.secretKey}") String secretKey
     ) {
         this.userRepository = userRepository;
-        this.JwtValidityMillis = (int) jwtValidityMillis;
+        this.JwtValidityMillis = jwtValidityMillis;
         this.secretKey = secretKey;
 
     }
@@ -112,16 +110,4 @@ public class JWTService {
         return extractClaim(token, Claims::getExpiration);
     }
 
-    /*
-     *  Just a helper to generate a random secret key for tokens
-     *  used by admin when deployed to production or acc
-     */
-    private void generateSecretKey(){
-        try {
-            KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
-            System.out.print( Base64.getEncoder().encodeToString(keyGenerator.generateKey().getEncoded()));
-        }catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
-    }
 }

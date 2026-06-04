@@ -1,4 +1,4 @@
-package cz.malickov.backend.config ;
+package cz.malickov.backend.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -42,10 +42,26 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         return http
-                .csrf( customizer -> customizer.disable()) // I am not using csrf tokens
+                .csrf(customizer -> customizer.disable()) // stateless JWT-based API — no CSRF tokens needed
                 .cors(Customizer.withDefaults())  // will look for CorsConfigurationSource by default
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Spring will NOT create an HTTP session; No security context stored in server memory; Every request must provide authentication (JWT)
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/swagger-resources/**",
+                                "/webjars/**"
+                        ).permitAll()
+                        .requestMatchers(
+                                "/api/auth/login",
+                                "/api/auth/authentication",
+                                "/api/auth/logout",
+                                "/api/auth/setPassword"
+                        ).permitAll()
+                        .requestMatchers("/api/utils/hello").permitAll()
+                        .anyRequest().authenticated()
+                )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }

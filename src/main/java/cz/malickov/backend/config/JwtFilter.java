@@ -40,7 +40,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
         String uri = request.getRequestURI();
 
-        // Skip JWT filter for Swagger and login endpoints
+        // Skip JWT filter for Swagger, login and health-check endpoints
         if (uri.startsWith("/swagger-ui")
                 || uri.startsWith("/v3/api-docs")
                 || uri.startsWith("/swagger-resources")
@@ -49,7 +49,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 || uri.equals("/api/auth/authentication")
                 || uri.equals("/api/auth/logout")
                 || uri.equals("/api/auth/setPassword")
-                || uri.equals("/api/user/hello")
+                || uri.equals("/api/utils/hello")
         ) {
 
             filterChain.doFilter(request, response);
@@ -93,6 +93,10 @@ public class JwtFilter extends OncePerRequestFilter {
                 usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 // put user into security context for this session
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+            } else {
+                log.info("JWT token validation failed for email: {}", email);
+                writeUnauthorized(response);
+                return;
             }
         }
 

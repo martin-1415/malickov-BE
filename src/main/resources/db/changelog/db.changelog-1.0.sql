@@ -161,7 +161,7 @@ VALUES
 --changeset Martin_Fischer:6 context:prod
 INSERT INTO "user" (first_name, last_name, email,telephone, active, role_name, password,identifier)
 VALUES
-    ('Martin', 'Fischer', 'martin.fischer1415@gmail.com', '+420 777 574 823',TRUE, 'DIRECTOR', Null, '1111');
+    ('Šárka', 'Fischer', 'info@malickov.cz', '+420 777 574 823',TRUE, 'DIRECTOR', Null, '1111');
 
 --changeset Martin_Fischer:7 context:prod,dev
 ALTER TABLE attendance
