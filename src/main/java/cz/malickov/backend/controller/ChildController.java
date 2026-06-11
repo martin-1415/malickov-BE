@@ -3,7 +3,7 @@ package cz.malickov.backend.controller;
 import cz.malickov.backend.dto.ChildInboundDTO;
 import cz.malickov.backend.dto.ChildOutboundDTO;
 import cz.malickov.backend.enums.Role;
-import cz.malickov.backend.exception.childExceptions.ChildNotFoundException;
+import cz.malickov.backend.exception.childExceptions.ChildUuidMismatchException;
 import cz.malickov.backend.service.ChildService;
 import cz.malickov.backend.service.JWTService;
 import jakarta.validation.Valid;
@@ -62,7 +62,7 @@ public class ChildController {
     public ResponseEntity<ChildOutboundDTO> editChild(@PathVariable UUID childUuid, @RequestBody @Valid ChildInboundDTO childInboundDTO) {
 
         if (childInboundDTO.childUuid() != null && !childUuid.equals(childInboundDTO.childUuid())) {
-            throw new ChildNotFoundException("Path id ("+ childUuid + ") and payload id ("+ childInboundDTO.childUuid()+") mismatch.");
+            throw new ChildUuidMismatchException(childUuid, childInboundDTO.childUuid());
         }
 
         ChildOutboundDTO savedChild = this.childService.editChild(childInboundDTO);
@@ -76,6 +76,7 @@ public class ChildController {
      *  For teachers and higher controller returns all active children
      * For a parent only his children
      */
+    @PreAuthorize("hasAnyRole('DIRECTOR','MANAGER','TEACHER','PARENT')")
     @GetMapping("/getUserActiveChildren")
     public ResponseEntity<List<ChildOutboundDTO>> getActiveChildrenByUserUUID(
             @CookieValue(value = "JWT") String token
@@ -91,6 +92,7 @@ public class ChildController {
         return ResponseEntity.ok().body(children);
     }
 
+    @PreAuthorize("hasAnyRole('DIRECTOR','MANAGER','TEACHER','PARENT')")
     @GetMapping("/getUserInactiveChildren")
     public ResponseEntity<List<ChildOutboundDTO>> getInactiveChildrenByUserUUID(
             @CookieValue(value = "JWT") String token

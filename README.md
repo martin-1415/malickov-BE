@@ -46,7 +46,12 @@ to cancel sql command press 'q'
 
 ## Building
 
-To build the project run:
+To build the the project run:
+
+```bash
+sudo docker build -t docker4asinkan/malickov_sql:v3.6 . 
+```
+
 
 ```bash
 mvn clean package 
@@ -55,6 +60,8 @@ To skipp tests
 ```bash
 mvn clean package -DskipTests
 ```
+
+
 
 ## Test
 
