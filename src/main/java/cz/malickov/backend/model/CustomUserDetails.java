@@ -1,6 +1,8 @@
 package cz.malickov.backend.model;
 
 import cz.malickov.backend.entity.User;
+import cz.malickov.backend.enums.Role;
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -8,11 +10,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.UUID;
 
 // Used in spring security
+@Getter
 public class CustomUserDetails implements UserDetails {
 
-    private User user;
+    private final User user;
 
     public CustomUserDetails(User user) {
         this.user = user;
@@ -39,4 +43,11 @@ public class CustomUserDetails implements UserDetails {
         return this.user.isActive();
     }
 
+    public Role getRole() {
+        return user.getRoleName();
+    }
+
+    public UUID getUserUuid() {
+        return user.getUserUuid();
+    }
 }

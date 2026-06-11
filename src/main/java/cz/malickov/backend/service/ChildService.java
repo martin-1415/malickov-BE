@@ -83,12 +83,12 @@ public class ChildService {
         int identifierId = dto.identificator().getIdentificatorId();
         Identificator identifier = null;
 
-        if(dto.active()) { //delete identifier in the case of deactivating the child
-            if (identifierId != 0) { // null was converted to 0 by controller
+        if(dto.active()) {
+            if (identifierId != 0) {
                 identifier = identifierRepository.findById(identifierId)
                         .orElseThrow(() -> new IdentifierNotFoundException(identifierId));
             }
-        }// else keep it null
+        }// else keep it null, delete identifier in the case of deactivating the child
 
 
         User parent = userRepository.findById(dto.userUuid())

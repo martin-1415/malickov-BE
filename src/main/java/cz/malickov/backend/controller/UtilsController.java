@@ -1,10 +1,7 @@
 package cz.malickov.backend.controller;
 
-
-import cz.malickov.backend.dto.ChildOutboundDTO;
 import cz.malickov.backend.entity.Identificator;
 import cz.malickov.backend.service.UtilsService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +25,7 @@ public class UtilsController {
         List<Identificator> freeIdentificators = this.utilsService.getFreeIdentificators();
 
         return ResponseEntity
-                .status(HttpStatus.OK)
+                .ok()
                 .body(freeIdentificators);
     }
 
@@ -36,10 +33,11 @@ public class UtilsController {
      * test endpoint to ping the pod and the server
      */
     @GetMapping("/hello")
-    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<String> hello()
     {
-        return new ResponseEntity<>("Hello world", HttpStatus.OK);
+        return ResponseEntity
+                .ok()
+                .body("Hello world");
     }
 
 }

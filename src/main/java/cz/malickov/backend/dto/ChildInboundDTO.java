@@ -25,7 +25,7 @@ public record ChildInboundDTO (
     String notes,
     @NotNull
     UUID userUuid,
-    Identificator identificator,
+    Identificator identificator, // leaking of entity is not a problem
     Boolean mon,
     Boolean tue,
     Boolean wed,

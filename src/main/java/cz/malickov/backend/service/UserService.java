@@ -9,8 +9,11 @@ import cz.malickov.backend.exception.GeneralException;
 import cz.malickov.backend.exception.userExceptions.UserAlreadyExistsException;
 import cz.malickov.backend.exception.userExceptions.UserNotFoundException;
 import cz.malickov.backend.mapper.UserMapper;
+import cz.malickov.backend.model.CustomUserDetails;
 import cz.malickov.backend.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -125,6 +128,7 @@ public class UserService{
     /*
       Used during login to get user based on his email which was extracted from cookies
      */
+    @Deprecated
     public Optional<UserOutboundDTO> getUserOutboundDtoByUserEmail(String email){
         return userRepository.findByEmail(email)
                 .map(userMapper::toOutboundDTO);
@@ -142,6 +146,15 @@ public class UserService{
                 this.userRepository.findById(UUID.fromString(uuid))
                 .orElseThrow(()->new UserNotFoundException("User with uuid "+ uuid + " does not exists"));
         user.setPassword(null);
+        return userMapper.toOutboundDTO(user);
+    }
+
+    public Optional<User> getByEmail(@NotBlank @Email(message = "Email is not valid") String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    public UserOutboundDTO getLoggedUserOutboundDTO( CustomUserDetails userDetails){
+        User user = userDetails.getUser();
         return userMapper.toOutboundDTO(user);
     }
 }

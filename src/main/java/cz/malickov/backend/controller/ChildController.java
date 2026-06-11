@@ -4,14 +4,16 @@ import cz.malickov.backend.dto.ChildInboundDTO;
 import cz.malickov.backend.dto.ChildOutboundDTO;
 import cz.malickov.backend.enums.Role;
 import cz.malickov.backend.exception.childExceptions.ChildUuidMismatchException;
+import cz.malickov.backend.model.CustomUserDetails;
 import cz.malickov.backend.service.ChildService;
-import cz.malickov.backend.service.JWTService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.UUID;
 import java.util.List;
 
@@ -19,14 +21,12 @@ import java.util.List;
 @RequestMapping("/api/child")
 public class ChildController {
     private final ChildService childService;
-    private final JWTService jwtService;
 
-    public ChildController(ChildService childService,
-                           JWTService jwtService){
+    public ChildController(ChildService childService){
         this.childService = childService;
-        this.jwtService = jwtService;
     }
 
+    @Deprecated
     @PreAuthorize("hasAnyRole('DIRECTOR','MANAGER')")
     @GetMapping("/getActiveChildren")
     public ResponseEntity<List<ChildOutboundDTO>> getActiveChildren()
@@ -37,14 +37,15 @@ public class ChildController {
                 .body( activeChildren );
     }
 
+    @Deprecated
     @PreAuthorize("hasAnyRole('DIRECTOR','MANAGER')")
     @GetMapping("/getInactiveChildren")
     public ResponseEntity<List<ChildOutboundDTO>> getInactiveChildren()
     {
-        List<ChildOutboundDTO> inctiveChildren =
+        List<ChildOutboundDTO> inactiveChildren =
                 this.childService.getInactiveChildren();
         return ResponseEntity.ok()
-                .body( inctiveChildren );
+                .body( inactiveChildren );
     }
 
     @PreAuthorize("hasAnyRole('DIRECTOR','MANAGER')")
@@ -68,7 +69,7 @@ public class ChildController {
         ChildOutboundDTO savedChild = this.childService.editChild(childInboundDTO);
 
         return ResponseEntity
-                .status(HttpStatus.OK)
+                .ok()
                 .body(savedChild);
     }
 
@@ -79,26 +80,35 @@ public class ChildController {
     @PreAuthorize("hasAnyRole('DIRECTOR','MANAGER','TEACHER','PARENT')")
     @GetMapping("/getUserActiveChildren")
     public ResponseEntity<List<ChildOutboundDTO>> getActiveChildrenByUserUUID(
-            @CookieValue(value = "JWT") String token
+            @AuthenticationPrincipal
+            CustomUserDetails userDetails
     ) {
         List<ChildOutboundDTO> children;
-        Role role = jwtService.extractUserRole(token);
-        if(role.equals(Role.TEACHER) || role.equals(Role.MANAGER) || role.equals(Role.DIRECTOR) ){
+
+        if(Arrays.asList(Role.TEACHER, Role.MANAGER,Role.DIRECTOR).contains(userDetails.getRole()) ){
             children = this.childService.getActiveChildren();
         }else {
-            UUID userUuid = jwtService.extractUserUuid(token);
-            children = this.childService.getActiveChildrenByUserUuid(userUuid);
+            children = this.childService.getActiveChildrenByUserUuid(userDetails.getUserUuid());
         }
         return ResponseEntity.ok().body(children);
     }
 
+    /*
+     *  For teachers and higher controller returns all inctive children
+     * For a parent only his inactive children
+     */
     @PreAuthorize("hasAnyRole('DIRECTOR','MANAGER','TEACHER','PARENT')")
     @GetMapping("/getUserInactiveChildren")
     public ResponseEntity<List<ChildOutboundDTO>> getInactiveChildrenByUserUUID(
-            @CookieValue(value = "JWT") String token
+            @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        UUID userUuid = jwtService.extractUserUuid(token);
-        List<ChildOutboundDTO> children = this.childService.getInactiveChildrenByUserUuid(userUuid);
+        List<ChildOutboundDTO> children;
+
+        if(Arrays.asList(Role.TEACHER, Role.MANAGER,Role.DIRECTOR).contains(userDetails.getRole()) ){
+            children = this.childService.getInactiveChildren();
+        }else {
+            children = this.childService.getInactiveChildrenByUserUuid(userDetails.getUserUuid());
+        }
         return ResponseEntity.ok().body(children);
     }
 
