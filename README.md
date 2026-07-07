@@ -105,4 +105,7 @@ psql -U secretApplicationUser -h publicIP -d malickov
 ```
 
 
+GDPR compliance
+type missmatch int and long for cookeis expiration date
+
 

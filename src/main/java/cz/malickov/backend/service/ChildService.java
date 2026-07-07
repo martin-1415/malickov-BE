@@ -50,12 +50,11 @@ public class ChildService {
      * Get list of user deactivated children based on User UUID
      */
     public List<ChildOutboundDTO> getInactiveChildrenByUserUuid(UUID userUuid) {
-        return this.childRepository.findInctiveChildrenByParentUuid(userUuid).stream()
-                .map(childMapper::toOutboundDTO)
-                .collect(Collectors.toList());
+        return this.childRepository.findInactiveChildrenByParentUuid(userUuid).stream()
+                .map(childMapper::toOutboundDTO).toList();
     }
 
-
+    @Transactional
     public ChildOutboundDTO createChild(ChildInboundDTO childDto){
         Child child = this.childMapper.toEntity(childDto);
 
@@ -65,9 +64,9 @@ public class ChildService {
 
         if( childDto.identificator() != null){
             int identifierId= childDto.identificator().getIdentificatorId();
-            Identificator identificator=this.identifierRepository.findById(identifierId)
+            Identificator identifier=this.identifierRepository.findById(identifierId)
                     .orElseThrow(() -> new IdentifierNotFoundException( identifierId ));
-            child.setIdentificator(identificator);
+            child.setIdentificator(identifier);
         }
         this.childRepository.save(child);
         return this.childMapper.toOutboundDTO(child);
@@ -80,14 +79,11 @@ public class ChildService {
         Child child = childRepository.findById(dto.childUuid())
                 .orElseThrow(() -> new ChildNotFoundException(dto.childUuid()));
 
-        int identifierId = dto.identificator().getIdentificatorId();
-        Identificator identifier = null;
-
-        if(dto.active()) {
-            if (identifierId != 0) {
-                identifier = identifierRepository.findById(identifierId)
-                        .orElseThrow(() -> new IdentifierNotFoundException(identifierId));
-            }
+        if (dto.active() && dto.identificator() != null) {
+            int identifierId = dto.identificator().getIdentificatorId();
+            Identificator identifier = identifierRepository.findById(identifierId)
+                    .orElseThrow(() -> new IdentifierNotFoundException(identifierId));
+            child.setIdentificator(identifier);
         }// else keep it null, delete identifier in the case of deactivating the child
 
 
@@ -97,7 +93,6 @@ public class ChildService {
         // Updating mutable fields only, ignored fields in mapper
         childMapper.updateEntity(dto, child);
 
-        child.setIdentificator(identifier);
         child.setUser(parent);
 
 
@@ -113,8 +108,8 @@ public class ChildService {
     }
 
     public List<ChildOutboundDTO> getInactiveChildren() {
-        List<Child> activeChildren = this.childRepository.findByActiveFalseOrderByLastNameAsc();
-        return activeChildren.stream()
+        List<Child> inactiveChildren = this.childRepository.findByActiveFalseOrderByLastNameAsc();
+        return inactiveChildren.stream()
                 .map(childMapper::toOutboundDTO)
                 .collect(Collectors.toList());
     }

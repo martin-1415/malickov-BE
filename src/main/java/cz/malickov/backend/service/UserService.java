@@ -14,6 +14,7 @@ import cz.malickov.backend.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -44,12 +45,13 @@ public class UserService{
      * @return userOutboundDTO object
     */
     @PreAuthorize("hasAuthority('ROLE_DIRECTOR') or (hasAuthority('ROLE_MANAGER') and #userInboundDTO.role.name() == T(cz.malickov.backend.enums.Role).PARENT.name())")
+    @Transactional
     public UserOutboundDTO registerUser(UserInboundDTO userInboundDTO) {
 
         String email = userInboundDTO.email();
         userRepository.findByEmail(email)
                 .ifPresent(user -> {
-                    throw new UserAlreadyExistsException(email);
+                    throw new DataIntegrityViolationException("Email already exists.",new UserAlreadyExistsException(email));
                 });
 
         User user = userMapper.toEntity(userInboundDTO);
@@ -69,9 +71,9 @@ public class UserService{
         user.setIdentifier(userInboundDTO.firstName().concat("_").concat(userInboundDTO.lastName())
                           .concat("_").concat(hash));
 
-        User savedUser = userRepository.save(user);
+        userRepository.saveAndFlush(user);
 
-        return userMapper.toOutboundDTO(savedUser);
+        return userMapper.toOutboundDTO(user);
     }
 
     @Transactional
@@ -114,7 +116,7 @@ public class UserService{
     @Transactional
     public UserOutboundDTO setPassword(UserLoginDTO userLogin){
         User user = this.userRepository.findByEmail(userLogin.email())
-                .orElseThrow(() -> new UserNotFoundException("User with email "+ userLogin.email() + " does not exists"));
+                .orElseThrow(() -> new UserNotFoundException("User with such an email does not exist"));
 
         if( !StringUtils.hasText(user.getPassword()) ) { // false for: null ""  and " "
             user.setPassword(passwordEncoder.encode(userLogin.password()));
@@ -128,10 +130,9 @@ public class UserService{
     /*
       Used during login to get user based on his email which was extracted from cookies
      */
-    @Deprecated
-    public Optional<UserOutboundDTO> getUserOutboundDtoByUserEmail(String email){
-        return userRepository.findByEmail(email)
-                .map(userMapper::toOutboundDTO);
+    public UserOutboundDTO getUserOutboundDtoByUserEmail(String email){
+        User user= userRepository.findByEmail(email).orElseThrow(()->new UserNotFoundException("User with email "+ email + " does not exists"));
+        return userMapper.toOutboundDTO(user);
     }
 
     /*
@@ -149,6 +150,7 @@ public class UserService{
         return userMapper.toOutboundDTO(user);
     }
 
+    @Deprecated
     public Optional<User> getByEmail(@NotBlank @Email(message = "Email is not valid") String email) {
         return userRepository.findByEmail(email);
     }

@@ -72,6 +72,4 @@ public class UserController {
         return ResponseEntity.ok()
                 .body(userService.updateUser(user2update));
     }
-
-
 }

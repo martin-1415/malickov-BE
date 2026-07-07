@@ -18,7 +18,7 @@ public interface ChildRepository  extends JpaRepository<Child, UUID> { // <T, ID
     List<Child> findActiveChildrenByParentUuid(@Param("parentUuid") UUID parentUuid);
 
     @Query("SELECT c FROM Child c WHERE c.user.userUuid = :parentUuid AND c.active=false ORDER BY c.firstName")
-    List<Child> findInctiveChildrenByParentUuid(@Param("parentUuid") UUID parentUuid);
+    List<Child> findInactiveChildrenByParentUuid(@Param("parentUuid") UUID parentUuid);
 
     List<Child> findByActiveTrueOrderByLastNameAsc();
 

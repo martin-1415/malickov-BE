@@ -8,20 +8,20 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /*
- * Controler to get what ever is not connected to main classes
+ * Controller to get what ever is not connected to main classes
  */
 @RestController
 @RequestMapping("/api/utils")
 public class UtilsController {
-    public final UtilsService utilsService;
+    private final UtilsService utilsService;
 
     public UtilsController(UtilsService utilsService) {
         this.utilsService = utilsService;
     }
 
     @PreAuthorize("hasAnyRole('DIRECTOR','MANAGER')")
-    @GetMapping("/getFreeIdentificators")
-    public ResponseEntity<List<Identificator>> getFreeIdentificators() {
+    @GetMapping("/getFreeIdentifiers")
+    public ResponseEntity<List<Identificator>> getFreeIdentifiers() {
         List<Identificator> freeIdentificators = this.utilsService.getFreeIdentificators();
 
         return ResponseEntity
@@ -33,8 +33,7 @@ public class UtilsController {
      * test endpoint to ping the pod and the server
      */
     @GetMapping("/hello")
-    public ResponseEntity<String> hello()
-    {
+    public ResponseEntity<String> hello(){
         return ResponseEntity
                 .ok()
                 .body("Hello world");

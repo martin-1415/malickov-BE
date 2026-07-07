@@ -2,8 +2,6 @@ package cz.malickov.backend.controller;
 
 import cz.malickov.backend.dto.UserLoginDTO;
 import cz.malickov.backend.dto.UserOutboundDTO;
-import cz.malickov.backend.entity.User;
-import cz.malickov.backend.exception.authExceptions.LoginFailedException;
 import cz.malickov.backend.model.CustomUserDetails;
 import cz.malickov.backend.service.JWTService;
 import cz.malickov.backend.service.LoginService;
@@ -18,7 +16,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
-import java.util.Optional;
 
 
 @RestController
@@ -27,7 +24,7 @@ import java.util.Optional;
 public class LoginController {
 
     private final LoginService loginService;
-    private final int maxAgeMillis;
+    private final long maxAgeMillis;
     private final JWTService jwtService;
     private final UserService userService;
 
@@ -50,7 +47,7 @@ public class LoginController {
 
         UserOutboundDTO outboundUser = userService.setPassword(userLogin);
         String jwt = jwtService.generateAuthToken(userLogin.email());
-        ResponseCookie cookie = this.buildJwtCookie(jwt);
+        ResponseCookie cookie = this.buildJwtCookie(jwt, false);
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, cookie.toString())
@@ -58,43 +55,27 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Optional<UserOutboundDTO>> login(@RequestBody @Valid UserLoginDTO userLogin
+    public ResponseEntity<UserOutboundDTO> login(@RequestBody @Valid UserLoginDTO userLogin
                                                            ) {
-        try {
-            String jwt = loginService.verify(userLogin);
+        String jwt = loginService.verify(userLogin);
 
-            Optional<User> userOptional = this.userService.getByEmail(userLogin.email());
-            if (userOptional.isPresent()) {
-                User loggedUser = userOptional.get();
+        UserOutboundDTO userDTO = this.userService.getUserOutboundDtoByUserEmail(userLogin.email());
+        ResponseCookie cookie = this.buildJwtCookie(jwt, false);
 
-                ResponseCookie cookie = this.buildJwtCookie(jwt);
-                return ResponseEntity.ok()
-                        .header(HttpHeaders.SET_COOKIE, cookie.toString())
-                        .body( userService.getUserOutboundDtoByUserEmail(loggedUser.getEmail()) );
-            }
-            else{
-                log.info("User with email {} not found.", userLogin.email());
-                throw new LoginFailedException();
-            }
-        }catch(Exception e){
-            log.info("Verifying login for email: {} failed", userLogin.email(), e);
-            throw new LoginFailedException();
-        }
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .body( userDTO);
     }
 
     /**
      * Function used to return user info based on JWT, it also validates JWT token
+     *  AuthenticationPrincipal already proves JWT authentication, so no more checks needed here
      */
     // @TODO send back new refresh and auth tokens in cookies
-    @GetMapping("/authentication")
+    @GetMapping("/authenticationBasedOnCookies")
     public ResponseEntity<UserOutboundDTO> returnUserBasedOnJWT(
-            @CookieValue(value="JWT", required=false) String token,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        if (token == null || jwtService.isTokenExpired(token)) {
-            log.info("Token expired or not valid");
-            throw new LoginFailedException();
-        }
 
         return ResponseEntity.ok()
                 .body(this.userService.getLoggedUserOutboundDTO(userDetails));
@@ -105,21 +86,22 @@ public class LoginController {
      */
     @PostMapping("/logout")
     public ResponseEntity<Map<String,String>> clearCookies() {
-        ResponseCookie cookie = this.buildJwtCookie("");
+        ResponseCookie cookie = this.buildJwtCookie("",true);
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, cookie.toString())
                 .body(Map.of("message", "Logged out successfully"));
     }
 
-    private ResponseCookie buildJwtCookie(String jwt) {
+    private ResponseCookie buildJwtCookie(String jwt, boolean clearCookie) {
+        long maxAge= clearCookie ? 0 : maxAgeMillis/1000;
+
         return ResponseCookie.from("JWT", jwt)
                 .httpOnly(true)
                 .secure(true)
                 .path("/")
-                .maxAge(maxAgeMillis / 1000)
+                .maxAge(maxAge)
                 .sameSite("None")
                 .build();
     }
-
 }
