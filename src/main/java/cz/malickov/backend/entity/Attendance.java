@@ -61,10 +61,10 @@ public class Attendance {
     private LocalDateTime modifiedAt;
 
     @Column(name = "modified_by")
-    private int modifiedBy;
+    private UUID modifiedBy;
 
-    // user for keeping history of attendance,
-    // in the case when child change the department
+    // used for keeping history of attendance,
+    // in the case when child changes the department
     @JsonProperty("department")
     @Column(name = "department", nullable = false)
     @Enumerated(EnumType.STRING)

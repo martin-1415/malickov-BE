@@ -80,8 +80,7 @@ public class ChildController {
     @PreAuthorize("hasAnyRole('DIRECTOR','MANAGER','TEACHER','PARENT')")
     @GetMapping("/getUserActiveChildren")
     public ResponseEntity<List<ChildOutboundDTO>> getActiveChildrenByUserUUID(
-            @AuthenticationPrincipal
-            CustomUserDetails userDetails
+            @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         List<ChildOutboundDTO> children;
 

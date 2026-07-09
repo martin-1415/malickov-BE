@@ -1,5 +1,6 @@
 package cz.malickov.backend.controller;
 
+import cz.malickov.backend.entity.Holiday;
 import cz.malickov.backend.entity.Identificator;
 import cz.malickov.backend.service.UtilsService;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +28,15 @@ public class UtilsController {
         return ResponseEntity
                 .ok()
                 .body(freeIdentificators);
+    }
+
+    @GetMapping("/getHolidays")
+    public ResponseEntity<List<Holiday>> getHolidays() {
+        List<Holiday> holidays = this.utilsService.getHolidays();
+
+        return ResponseEntity
+                .ok()
+                .body(holidays);
     }
 
     /*

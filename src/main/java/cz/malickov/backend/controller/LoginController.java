@@ -85,8 +85,8 @@ public class LoginController {
      * Logoutfunction sends back empty cookies
      */
     @PostMapping("/logout")
-    public ResponseEntity<Map<String,String>> clearCookies() {
-        ResponseCookie cookie = this.buildJwtCookie("",true);
+    public ResponseEntity<Map<String,String>> logout() {
+        ResponseCookie cookie = this.buildJwtCookie("Good_Bye",true);
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, cookie.toString())

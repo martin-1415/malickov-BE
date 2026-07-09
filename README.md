@@ -87,21 +87,29 @@ To log as super user
  sudo -u postgres psql
 ```
 
-Creata user and database
+Drop database
 ```bash
-CREATE USER secretApplicationUser WITH PASSWORD;
+DROP database malickov;
+```
+```bash
+CREATE DATABASE malickov;
+```
+
+Create user and database
+```bash
+CREATE USER beuser WITH PASSWORD 'mypassword';
 ```
 Add user to database malickov
 
 ```bash
-ALTER DATABASE malickov OWNER TO secretApplicationUser;
+ALTER DATABASE malickov OWNER TO beuser;
 
-GRANT ALL PRIVILEGES ON DATABASE malickov TO secretApplicationUser;
+GRANT ALL PRIVILEGES ON DATABASE malickov TO beuser;
 ```
 
 To login to the database on the server use
 ```bash
-psql -U secretApplicationUser -h publicIP -d malickov
+psql -U beuser -h publicIP -d malickov
 ```
 
 

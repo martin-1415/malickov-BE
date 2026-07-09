@@ -1,10 +1,12 @@
 package cz.malickov.backend.controller;
 
-import cz.malickov.backend.dto.AttendancePlanDTO;
+import cz.malickov.backend.dto.AttendancePlanParentInboundDTO;
+import cz.malickov.backend.model.CustomUserDetails;
 import cz.malickov.backend.service.AttendanceService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -20,15 +22,14 @@ public class AttendanceController {
     }
 
 
-    @PostMapping("/savePlan")
-    public ResponseEntity<Void> saveMonthlyAttendance(
-            @RequestBody @Valid AttendancePlanDTO attendancePlanForm,
-            @CookieValue(value = "JWT") String token
+    @PostMapping("/parentSavePlan")
+    public ResponseEntity<String> parentSaveAttendancePlan(
+            @RequestBody @Valid AttendancePlanParentInboundDTO attendancePlanForm,
+            @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
 
-        attendanceService.savePlan(attendancePlanForm, token);
-        return ResponseEntity
-                .status(HttpStatus.OK).build();
+        attendanceService.savePlan(attendancePlanForm, userDetails);
+        return ResponseEntity.ok().body("Plan saved");
     }
 
 }
